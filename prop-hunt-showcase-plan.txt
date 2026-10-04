@@ -1,0 +1,63 @@
+PROP HUNT — PORTFOLIO EVIDENCE AND RECORDING PLAN
+Inspection date: 4 October 2026
+Source: live Monolith read-only inspection of SheeshhPropHuntYT, Unreal 5.7.4.
+Scope: seven resolved gameplay Blueprints; variable and graph summaries; full EventGraphs for prop character, hunter character, and game mode. This is a static implementation inspection, not a multiplayer playtest or an authorship verification.
+
+FIRST EXHIBIT: BECOME THE ENVIRONMENT
+Feature the prop transformation system as the main interactive portfolio exhibit.
+Show a short gameplay clip first, then an optional technical breakdown and a link to the complete game case study.
+Use three stages: select a prop, transform, observe the disguise from the hunter's view.
+The website may offer a simplified visual recreation later; label it separately from real Unreal footage.
+
+1. PROP TRANSFORMATION AND PIVOT HANDLING
+Evidence: BP_propChar contains IA_ChangeProp -> ChangePropOnServer; sphere trace; static-mesh actor cast; tag/allowed-mesh checks; UpdateMeshMulticast and Set Static Mesh. PropChangesLeft is replicated; MaxPropChanges defaults to 10. MeshWithFAlsePivot selects between fixed relative-location adjustments.
+Record: transform into three differently sized props, show the same change from a second player's view, then show rotation lock. Capture a side view of a normal prop and a prop using the pivot adjustment.
+Breakdown: annotate selection, eligibility, server request, mesh update, and pivot correction.
+Accurate framing: mesh selection and pivot-specific corrections. The inspected graph does not substantiate the dossier's general dynamic capsule-resizing formula or collision-safe placement claim.
+
+2. DECOY PROPS
+Evidence: Spawnproponserver, SpawnActor BP_SPawnedProp, MulticastSetMesh; replicated SpawnPropsLeft with MaxSpawnProps defaulting to 5. BP_SPawnedProp includes physics and gravity setup.
+Record: spawn a decoy, move away, and show a hunter interacting with it. Show the limit being reached if the current build supports that reliably.
+Breakdown: reuse the current prop mesh, spawn the actor, assign its visual representation, consume the available count.
+Validation needed: verify destruction on both host and remote client. A hunter event named Server_DestroyFakeProp is actually configured as an owning-client RPC; names alone do not establish server authority.
+
+3. HUNTER SHOOTING, DAMAGE, AND SPECTATING
+Evidence: StartFireOnServer drives a looping 0.1-second timer; StopFireOnServer clears it. A client-camera request feeds LineTraceOnserver and F_RifleLinerace. The rifle graph summary contains line tracing, damage, hit effects, and crosshair feedback. BP_propChar handles AnyDamage behind an authority check, health updates, hiding/collision disable, and spectator spawning/possession.
+Record: shoot a real prop, show feedback and health loss, then show elimination from both players' views and the eliminated player's spectator view.
+Breakdown: input -> firing timer -> aim information -> trace/damage -> presentation -> death/spectator transition.
+Do not claim lag compensation, rewind buffers, anti-cheat validation, or measured latency performance from this inspection.
+
+4. TAUNTS AND VOICE CHAT
+Evidence: reliable server and multicast taunt events, a sound array, Spawn Sound at Location, a one-second cooldown delay, and an automatic-taunt timer. The hunter has VOIPTalker registration, replicated VoiceMode, voice settings, and voice start/stop calls. C++ UVOIPLIB::ClearVoicePackets calls the online voice interface's ClearVoicePackets.
+Record: a taunt from two players' perspectives; then voice mode changes with another player speaking. Include captions and label the active mode.
+Breakdown: positional clue, cooldown, voice-state propagation, and voice cleanup.
+Do not claim verified occlusion, specific falloff curves, or flawless network audio without inspecting settings and recording a playtest.
+
+5. ROUND FLOW AND MULTIPLAYER PRESENTATION
+Evidence: GM_ProphuntGameMode tracks players, hunter/prop groups, SeekerCount, alive props, round timers, win-screen calls, and travel. BP_ThirdPersonPlayerController bridges gameplay events to client HUD, countdown, health, kill feed, role setup, and player list. PlayerState01 replicates player name and voice mode.
+Record: two-player entry, role assignment, countdown, elimination/round result, and the next round. Include the player list and kill feed.
+Validation needed: inspect which role-selection branches are active. GameMode exists on the server, so multicast labels on GameMode events alone do not prove delivery to clients; confirm the downstream controller calls and actual client presentation.
+
+6. ANIMATION AND CHARACTER CUSTOMISATION
+Evidence: hunter graph has server/multicast emotes, montage selection, cosmetic mesh switching, and construction-script leader-pose setup. Retargeting and animation assets exist, but their rig configuration was not deeply inspected in this pass.
+Record: locomotion, rifle action, two emotes, and a cosmetic change from another player's view. Add a rig/retargeting editor clip after its setup is verified.
+Credit imported characters and animation sources. Confirm which models, rigs, materials, and animations you authored before presenting them as original work.
+
+RECOMMENDED WEBSITE CONTENT STRUCTURE
+One main Prop Hunt project page: premise, gameplay video, contribution, tools, status, credits, links.
+Six linked system exhibits using the sections above; avoid duplicating the full project description.
+Each exhibit: final-result clip, problem, implementation evidence, tradeoffs, result, optional deeper explanation.
+Suggested recordings: a 45–60 second project overview, 15–30 second focused system clips, and optional longer breakdowns. These are editorial targets, not footage already captured.
+
+PRIORITY BEFORE RECORDING
+1. Confirm personal contribution and third-party credits.
+2. Run a host-and-remote-client check of transformation, decoys, shooting, taunts, voice, and round transitions.
+3. Check PropAllowedMesh and TauntSoundz arrays for empty entries; several None values were returned. Their runtime impact is not established here.
+4. Use only observed results in public copy. Treat the master dossier as a source of questions, not verified marketing claims.
+
+BATCH RESULTS AND ERROR HANDLING
+24 initial queries ran sequentially and continued after individual failures.
+21 queries succeeded; 3 calls against RPC_prophuntcontroller could not resolve a Blueprint.
+Follow-up asset inspection identified RPC_prophuntcontroller as an ObjectRedirector pointing to BP_ThirdPersonPlayerController, already inspected. This is an explained redirect, not evidence of a missing gameplay system. No retry or asset repair was needed.
+Three full EventGraph reads then succeeded. No gameplay assets were intentionally edited, compiled, saved, or played during this inspection.
+Detailed raw evidence: prop-hunt-inspection.json and prop-hunt-graphs.json in this folder.
