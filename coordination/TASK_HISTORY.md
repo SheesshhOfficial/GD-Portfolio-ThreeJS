@@ -10,4 +10,6 @@
 | P003-R1 | Correct claims, controls, focus behavior, and budget reporting | COMPLETE | Approved by Codex |
 | P004 | Complete the first immersive Prop Hunt vertical slice | COMPLETE | Changes requested |
 | P004-R1 | Correct performance measurements, evidence text, and reduced-motion state | COMPLETE | Approved by Codex |
-| P005 | Add the remaining Prop Hunt gameplay-system exhibits | READY | Pending |
+| P005 | Add the remaining Prop Hunt gameplay-system exhibits | COMPLETE | Changes requested |
+| P005-R1 | Remove invented implementation details and production diagnostics | COMPLETE | Approved by Codex |
+| P006 | Add the Decoy Placement exhibit and finish the Prop Hunt collection | READY | Pending |

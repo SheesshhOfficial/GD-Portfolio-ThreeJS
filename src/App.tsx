@@ -3,8 +3,14 @@ import { PortfolioProvider, usePortfolio } from './context/PortfolioContext';
 import { TopBar } from './components/ui/TopBar';
 import { DirectNavigationMenu } from './components/ui/DirectNavigationMenu';
 import { CinematicSkipButton } from './components/ui/CinematicSkipButton';
-import { Static2DView } from './components/ui/Static2DView';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
+
+// Lazy-load static 2D view for non-3D / fallback modes
+const Static2DView = lazy(() =>
+  import('./components/ui/Static2DView').then((m) => ({
+    default: m.Static2DView,
+  }))
+);
 
 // Lazy-load 3D canvas bundle to keep initial HTML/CSS/2D shell minimal
 const CanvasContainer = lazy(() => import('./components/3d/CanvasContainer'));
@@ -66,7 +72,11 @@ const PortfolioApp: React.FC = () => {
           <CinematicSkipButton />
 
           <ErrorBoundary
-            fallback={<Static2DView />}
+            fallback={
+              <Suspense fallback={<div style={{ padding: '2rem', textAlign: 'center', color: '#94a3b8' }}>Loading gallery...</div>}>
+                <Static2DView />
+              </Suspense>
+            }
             onError={handleCanvasError}
           >
             <Suspense
@@ -103,7 +113,9 @@ const PortfolioApp: React.FC = () => {
         </main>
       ) : (
         <>
-          <Static2DView />
+          <Suspense fallback={<div style={{ padding: '2rem', textAlign: 'center', color: '#94a3b8' }}>Loading gallery...</div>}>
+            <Static2DView />
+          </Suspense>
           <Suspense fallback={null}>
             <TransformationBreakdownDrawer />
           </Suspense>

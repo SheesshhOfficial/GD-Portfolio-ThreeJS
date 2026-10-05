@@ -1,5 +1,5 @@
 export type ViewMode = '3d' | '2d';
-export type CameraFocus = 'center' | 'transformation-bench';
+export type CameraFocus = 'center' | 'transformation-bench' | 'systems-console';
 
 export interface PortfolioState {
   viewMode: ViewMode;
@@ -23,15 +23,38 @@ export type PortfolioAction =
   | { type: 'COMPLETE_ENTRANCE' }
   | { type: 'SET_BREAKDOWN_OPEN'; payload: boolean };
 
+export interface ExhibitStep {
+  title: string;
+  tag: string;
+  desc: string;
+  codeSnippet: string;
+}
+
+export interface MediaPlaceholder {
+  id: string;
+  label: string;
+  duration: string;
+  requirement: 'RUNTIME_VERIFIED' | 'VERIFIED_IMPLEMENTATION' | 'USER_CONFIRMED';
+  description: string;
+  whatCaptureProves: string;
+}
+
 export interface ExhibitData {
   id: string;
+  shortId: string;
   title: string;
+  shortTitle: string;
   subtitle: string;
+  category: string;
   role: string;
   engine: string;
   tools: string[];
   summary: string;
+  mediaPlaceholders: MediaPlaceholder[];
+  steps: ExhibitStep[];
+  boundaryTitle: string;
+  boundaryFormula?: string;
+  boundaryDescription: string;
   provenanceNote: string;
-  mediaOverviewId: string;
-  mediaTransformId: string;
+  authorshipStatus: string;
 }

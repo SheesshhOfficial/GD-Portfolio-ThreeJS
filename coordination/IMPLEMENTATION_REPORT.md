@@ -1,103 +1,132 @@
 # Implementation Report
 
-Task ID: P004-R1
+Task ID: P005-R1
 Status: COMPLETE
 
 ## Outcome
 
-Task P004-R1 successfully resolved all feedback from the vertical slice review without altering the approved design architecture. Unverified marketing language regarding collision capsules, server authority, and camera orbits was corrected to reflect precise inspected implementation facts across all 3D drawer, static 2D, and diagram components. The entrance sequence now settles instantaneously if `prefers-reduced-motion` becomes active. Bundle code-splitting was restructured by lazy-loading the interactive `ExhibitCard` and below-the-fold storyboard diagrams, reducing the immediate JS+CSS bundle to **77.06 kB gzipped** (73.52 kB JS + 3.54 kB CSS), comfortably below the 80 kB ceiling. 3D studio draw calls were optimized using `<instancedMesh>` for columns, sky planes, desk legs, footplates, and prop reinforcements, bringing measured draw calls down to **23 calls** (< 25 budget) and **1,254 triangles**, verified directly from `gl.info.render.calls` in a live Chromium runtime.
+Successfully audited and corrected public copy across all five Prop Hunt exhibits, vector diagrams, and UI drawers. Removed invented pseudo-code, unverified identifiers, and outcome claims (`zero-latency`, `seamless`, `flawless`), narrowed negative audit scopes from whole-codebase claims to inspected files/graphs, established canonical exhibit IDs (`EX-PH-LIFECYCLE`, `EX-PH-CUSTOMIZATION`), and removed the temporary `window.__STUDIO_PERF__` diagnostic hook from the production 3D render loop while preserving established bundle and render performance budgets.
 
 ## Files changed
 
-- `src/components/ui/TransformationBreakdownDrawer.tsx`: Corrected evidence language for Step 2 (`Server RPC Execution`), Step 3 (`after the inspected server-side checks pass`), Step 5 (`bUseControllerRotationYaw = false` toggle configured; orbit capture pending), and Section 3 disclosure (clarified dynamic capsule resizing nodes were not found in inspected scope and runtime behavior remains unverified). Refined focus restoration to ensure fallback trigger is prioritized over `document.body`.
-- `src/components/ui/Static2DView.tsx`: Applied matching evidence corrections in the inline editorial breakdown. Wrapped below-the-fold `MediaStoryboardDiagrams` in `lazy` + `<Suspense>` to keep the initial shell lightweight while preserving instant 2D fallback availability.
-- `src/components/diagrams/BlueprintFlowDiagram.tsx`: Updated node annotations and disclosure strip to remove assertions of static capsule invariance and 360° free orbit, noting yaw decoupling configuration and unverified runtime capsule behavior.
-- `src/components/diagrams/MediaStoryboardDiagrams.tsx`: Updated storyboard annotations to reflect yaw decoupling with orbit capture pending and rotation lock toggle prerequisite.
-- `src/components/3d/StudioScene.tsx`: Implemented `<instancedMesh>` for perimeter columns (5 down to 1 call), sky apertures (5 down to 1 call), desk legs (4 down to 1 call), footplates (4 down to 1 call), cone stripes (2 down to 1 call), and crate bracing (2 down to 1 call). Added immediate entrance completion upon reduced-motion activation. Renderer counters were measured during validation; the temporary per-frame diagnostic hook was removed before approval.
-- `src/components/ui/CinematicSkipButton.tsx`: Added an effect to immediately dismiss the skip control and trigger entrance completion if `prefers-reduced-motion` becomes active.
-- `src/components/ui/TopBar.tsx`: Assigned `id="view-mode-toggle-btn"` to the 3D/2D toggle button for deterministic accessibility targeting and test automation.
-- `src/App.tsx`: Moved `ExhibitCard` behind `React.lazy` and `<Suspense fallback={null}>`, removing overlay card code and its SVG assets from the critical initial bundle.
+- `src/data/exhibits.ts`: 
+  - Standardized on canonical exhibit IDs `EX-PH-LIFECYCLE` and `EX-PH-CUSTOMIZATION` (keeping backward-compatible aliases in `EXHIBITS_MAP`).
+  - Removed unmeasured outcome claims (`zero-latency`, `seamless`, `flawless`).
+  - Replaced unsupported identifiers and pseudo-code in Round Lifecycle (`WaitingToStart`, `InProgress`, `HuntersWon`, `PropsWon`, `DOREPLIFETIME`, `Client_UpdateHUD`, `UpdateAliveProps`, `SetRoundTimer`, `BroadcastVictory`, `SeamlessTravel`) with approved inspected Blueprint structures (`connected-player tracking`, `SeekerCount`, alive-prop counts, countdowns, victory triggers, map-travel handling, named UMG widgets).
+  - Replaced `GameMode authority is confirmed` with `GameMode round-management structure was found in the inspected Blueprint graphs; runtime multiplayer behavior remains capture pending.`
+  - Removed invented C++ syntax (`CreateDefaultSubobject`) in Emotes and framed modular meshes strictly around the inspected Blueprint `Set Leader Pose Component` structure for Body, Hands, and Helmet attachments.
+  - Replaced whole-codebase negative assertions with scoped language (`not found in the inspected graphs/files/scope`, `not found in the inspected UVOIPLIB and inspected graphs/files/scope`).
+- `src/components/diagrams/SystemsDiagrams.tsx`:
+  - Updated `CombatTraceFlowDiagram` boundary text to state lag compensation and rewind buffers were `not found in the inspected graphs/files/scope`.
+  - Updated `AudioVoipDiagram` boundary text to state buffer monitoring, spectate routing, and occlusion sweeps were `not found in the inspected UVOIPLIB and inspected graphs/files/scope`.
+  - Updated `RoundLifecycleDiagram` to remove pseudo-code and unverified state terms, replacing with approved inspected components (`GM_ProphuntGameMode`, `PlayerState01`, `BP_ThirdPersonPlayerController`, named widgets), and removed `seamless` from travel disclosure.
+  - Updated `EmotesLeaderPoseDiagram` to reflect the inspected Blueprint `Set Leader Pose Component` structure for Body, Hands, and Helmet without invented C++ calls.
+- `src/components/3d/StudioScene.tsx`:
+  - Removed `window.__STUDIO_PERF__` per-frame diagnostic allocations and unused renderer extraction (`gl`) from production.
+  - Updated `isSystemsActive` check to handle canonical exhibit IDs `EX-PH-LIFECYCLE` and `EX-PH-CUSTOMIZATION`.
+- `src/components/ui/TransformationBreakdownDrawer.tsx`:
+  - Added semantic `id="transformation-breakdown-drawer"` to drawer backdrop.
+  - Updated diagram renderer to recognize canonical exhibit IDs `EX-PH-LIFECYCLE` and `EX-PH-CUSTOMIZATION`.
+- `src/components/ui/Static2DView.tsx`:
+  - Updated diagram renderer to recognize canonical exhibit IDs `EX-PH-LIFECYCLE` and `EX-PH-CUSTOMIZATION`.
 
 ## Work completed
 
-1. **Evidence Language Audit & Rectification**:
-   - Grep verification across `src/` confirms 0 remaining occurrences of forbidden assertions (`capsule remains static`, `Server Authority`, `server approval`, `360° Free Orbit`).
-   - Disclosures across all components explicitly cite the inspected Blueprint graph reality: dynamic capsule sizing nodes (`GetLocalBounds`, `SetCapsuleSize`) were not found in `BP_propChar`, collision is only disabled on elimination, and runtime capsule behavior is unverified.
-   - `IA_RotationLock` is accurately documented as setting `bUseControllerRotationYaw = false` (yaw decoupled; runtime 360° camera orbit capture pending).
-2. **Reduced-Motion Immediate Settle**:
-   - `PortfolioContext` immediately sets `isEntranceActive: false` when `SET_REDUCED_MOTION` is dispatched.
-   - `StudioScene.tsx` and `CinematicSkipButton.tsx` detect reduced motion on the active frame, dispatch `COMPLETE_ENTRANCE`, snap camera position and look-at targets with zero lerp interpolation, and remove the skip UI.
-3. **Bundle Size Accounting (< 80 kB Immediate JS + CSS)**:
-   - Immediate Shell JS (`index-B8XuGMKi.js`): **73.52 kB gzipped**
-   - Immediate Shell CSS (`index-D9iWHjyk.css`): **3.54 kB gzipped**
-   - **Combined Immediate Shell (JS + CSS)**: **77.06 kB gzipped** (PASS; < 80.00 kB)
-   - Initial HTML (`index.html`): **0.80 kB gzipped** (reported separately)
-   - Asynchronous chunks load on demand: `ExhibitCard` (1.94 kB JS + 1.46 kB CSS gzip), `MediaStoryboardDiagrams` (2.69 kB JS gzip), `TransformationBreakdownDrawer` (3.48 kB JS + 1.28 kB CSS gzip), `BlueprintFlowDiagram` (2.27 kB JS gzip), `CanvasContainer` (2.38 kB JS + 0.14 kB CSS gzip).
-4. **Draw-Call Optimization & Direct WebGL Measurement**:
-   - Merged 10 perimeter meshes into 2 instanced meshes, 8 desk support meshes into 2 instanced meshes, and 4 decorative prop details into 2 instanced meshes.
-   - Measured settled main studio view via `gl.info.render.calls` using Chrome DevTools Protocol connected to a live Chromium instance:
-     - **Measured Draw Calls**: **23** (Ceiling: < 25)
-     - **Measured Triangles**: **1,254**
-     - **Measured Lines**: **34** (from `gridHelper`)
-     - **Entrance State**: settled (`isEntranceActive: false`)
-5. **Interactive Flow Automation Validation**:
-   - Automated CDP test suite (`scratch/verify_interactions.mjs`) verified:
-     - `entranceSkip`: Escape skips 2.5s cinematic pan immediately and dismisses skip button.
-     - `directMenuOpened`: Direct portfolio navigation drawer opens, traps focus, lists exhibits.
-     - `exhibitCardOpened`: Selecting exhibit card launches modal overlay with focus set to close button.
-     - `breakdownOpened`: Clicking "Inspect Transformation Architecture" launches technical deep-dive drawer, rendering vector schematics and disclosure notices.
-     - `drawerClosedAndFocusRestored`: Escape dismisses breakdown drawer and restores focus precisely to `#inspect-transform-btn`.
-     - `modalClosedOnEscape`: Second Escape dismisses exhibit modal back to studio view.
-     - `view2DOperational`: Switching to 2D view renders editorial gallery, inline deep-dive breakdown, and vector storyboards.
-     - `reducedMotionHandled`: Emulated `prefers-reduced-motion: reduce` confirms instant settle and camera locking.
-     - `mobileResponsive`: Viewport emulated at 375x667 confirms zero horizontal overflow (`scrollWidth === 375`).
+1. **Global Evidence & Language Scrub**:
+   - Eliminated qualitative and outcome assertions (`zero-latency`, `seamless`, `flawless`).
+   - Reframed capture requirements to describe what future recordings must prove rather than implying present runtime verification.
+   - Preserved `USER_CONFIRMED: pending`, `PROVENANCE_PENDING`, and capture-pending statuses across all exhibits.
+2. **Combat Exhibit Scoping (`EX-PH-COMBAT`)**:
+   - Confirmed client-informed camera coordinates (`CameraLocation`, `CameraRotation`) via `get clientCamera Action` and `LineTraceOnserver`.
+   - Explicitly disclosed that server-side rewind buffers, circular history indexing, and lag compensation were not found in the inspected graphs/files/scope, and traces execute immediately at current server world state.
+3. **Audio / VOIP Exhibit Scoping (`EX-PH-AUDIO`)**:
+   - Confirmed `UVOIPLIB::ClearVoicePackets` single static method integration with `IOnlineSubsystem`.
+   - Confirmed `SA_VOIP.uasset` sound attenuation profile and `TauntsOnServer` / `TauntsMulticast` / `TauntSoundz` rate-limiting.
+   - Restricted negative claims strictly to `UVOIPLIB` and inspected graphs/files rather than asserting whole-codebase behavior.
+4. **Round Lifecycle Exhibit Scoping (`EX-PH-LIFECYCLE`)**:
+   - Adopted canonical ID `EX-PH-LIFECYCLE` from the approved content map (retaining `PH-ROUNDFLOW` media ID).
+   - Removed unverified state enum identifiers (`WaitingToStart`, `InProgress`, `HuntersWon`, `PropsWon`) and pseudo-code (`DOREPLIFETIME`, `Client_UpdateHUD`, `BroadcastVictory`, `SeamlessTravel`).
+   - Sourced exclusively from inspected structures: connected-player tracking, Props/Seekers partitioning, `SeekerCount`, alive-prop counts, countdowns, victory triggers, map-travel handling, controller-to-UMG plumbing, and named widget assets (`UW_MainHUD`, `WBP_InGame`, `WBP_PlayerList`, `WBP_KillFeedItem`).
+   - Audited authority claim to state that `GameMode round-management structure was found in the inspected Blueprint graphs; runtime multiplayer behavior remains capture pending.`
+5. **Customization & Emotes Scoping (`EX-PH-CUSTOMIZATION`)**:
+   - Adopted canonical ID `EX-PH-CUSTOMIZATION` from the approved content map (retaining `PH-CUSTOMIZATION` media ID).
+   - Removed invented C++ syntax (`CreateDefaultSubobject`) and claims of duplicate-evaluation performance.
+   - Reframed around approved Blueprint nodes: `Server_Emote`, `Multicast_Emote`, `Server_costumeChange`, `Multicast_CostumeChange`, and `Set Leader Pose Component` for Body, Hands, and Helmet attachments.
+   - Sourced meshes and montages as `PROVENANCE_PENDING`.
+6. **Production Diagnostics Removal**:
+   - Completely removed `window.__STUDIO_PERF__` from `StudioScene.tsx`, eliminating all per-frame diagnostic allocations.
+   - Recorded measured performance counters as historical verification baselines.
 
 ## Evidence and Monolith findings
 
-- **VERIFIED_IMPLEMENTATION (Inspected Blueprint Data)**:
-  - Source file: `BP_propChar` in `G:\Unreal Projects\SheeshhPropHuntYT`.
-  - RPC Chain: `IA_ChangeProp` -> `SphereTraceSingle(ECC_Interaction)` -> `Cast To StaticMeshActor` -> `ChangePropOnServer(Reliable Server RPC)`.
-  - Server Checks: `PropChangesLeft > 0` (decremented against `MaxPropChanges = 10`), static mesh validated via `Array_Contains(PropAllowedMesh)`.
-  - Replication: `UpdateMeshMulticast(NetMulticast)` -> `PropMesh->SetStaticMesh(NewMesh)`.
-  - Pivot Correction: `Array_Contains(MeshWithFAlsePivot)` -> `PropMesh->K2_SetRelativeLocation(Offset)` relative ground alignment.
-  - Controller Decoupling: `IA_RotationLock` -> `Set bUseControllerRotationYaw = false`.
-- **UNVERIFIED / CAPTURE_PENDING**:
-  - Runtime 360° camera orbit behavior around stationary props (toggle inspected; video capture pending).
-  - Dynamic capsule resizing: Nodes `GetLocalBounds` and `SetCapsuleSize` were not found in the inspected `BP_propChar` scope. Runtime capsule behavior and geometry collision-sweep placement before disguise remain unverified.
-  - Multi-client net authority validation (server authority over ballistics and spectator handoffs requires dual-client video proof).
+- **Combat System (`EX-PH-COMBAT`)**:
+  - Implementation verified: `BP_ThirdPersonCharacter` firing timer (`FireTimer`), `StartFireOnServer` / `StopFireOnServer`, `FireRifle`, `get clientCamera Action` client query, `LineTraceOnserver` client response, `F_RifleLinerace` server raycast forward along camera forward vector * `bulletDistance`, `MulticastFireEvnt`, `MulticasttHitEffict`, `PlayrossairHit`, `Apply Damage`, `BP_propChar` `Health` deduction, and `BP_SpectatorPawn` possession upon elimination.
+  - Evidence classification: `VERIFIED_IMPLEMENTATION`. Public copy explicitly notes client-supplied camera vectors, absence of rewind/lag compensation in inspected scope, and pending dual-client runtime capture (`RUNTIME_VERIFIED: pending`).
+  - Media placeholder: `PH-COMBAT`.
+- **Audio / VOIP Pipeline (`EX-PH-AUDIO`)**:
+  - Implementation verified: `UVOIPLIB::ClearVoicePackets` C++ function flushing `IOnlineVoicePtr`, `BP_ThirdPersonCharacter` `UVOIPTalker` component registration via `Multicast_InitVOIP`, `VoiceMode` enum replication, `Client_CloseVoiceLine`, `BP_propChar` `TauntsOnServer` / `TauntsMulticast` / `TauntSoundz` with 1.0s delay and auto-timer, and `SA_VOIP.uasset` attenuation asset.
+  - Evidence classification: `VERIFIED_IMPLEMENTATION`. Public copy explicitly restricts negative findings to inspected `UVOIPLIB` and inspected graphs/files.
+  - Media placeholder: `PH-AUDIO`.
+- **Round Lifecycle & Game State (`EX-PH-LIFECYCLE`)**:
+  - Implementation verified: `GM_ProphuntGameMode` tracking connected players, team partitioning (Props vs Seekers), `SeekerCount`, alive-prop counts, match countdowns, victory screen triggers, and map travel; `BP_ThirdPersonPlayerController` plumbing to `UW_MainHUD`, `WBP_InGame`, `WBP_PlayerList`, and `WBP_KillFeedItem`; `PlayerState01` replicating player identity and voice mode.
+  - Evidence classification: `VERIFIED_IMPLEMENTATION`. Full multiplayer runtime capture remains pending (`RUNTIME_VERIFIED: pending`).
+  - Media placeholder: `PH-ROUNDFLOW`.
+- **Modular Customization & Emotes (`EX-PH-CUSTOMIZATION`)**:
+  - Implementation verified: `BP_ThirdPersonCharacter` `Server_Emote` / `Multicast_Emote`, `Server_costumeChange` / `Multicast_CostumeChange`, and Blueprint `Set Leader Pose Component` synchronizing modular attachments (Body, Hands, Helmet) with the master skeletal mesh.
+  - Evidence classification: `VERIFIED_IMPLEMENTATION`. Asset sources and animation authoring provenance remain pending (`PROVENANCE_PENDING`).
+  - Media placeholder: `PH-CUSTOMIZATION`.
 
 ## Validation
 
-| Check | Target / Threshold | Measured / Result | Status |
-|---|---|---|---|
-| TypeScript Compilation | Zero errors (`tsc --noEmit`) | 0 errors | PASS |
-| Production Build | `vite build` succeeds | Clean build in 2.59s | PASS |
-| Immediate Shell JS | Combined with CSS < 80 kB | **73.52 kB gzipped** | PASS |
-| Immediate Shell CSS | Combined with JS < 80 kB | **3.54 kB gzipped** | PASS |
-| Immediate Shell (JS + CSS) | < 80.00 kB gzipped | **77.06 kB gzipped** | PASS |
-| Shell HTML (Separate) | Report separately | **0.80 kB gzipped** (1.63 kB raw) | PASS |
-| Settled Studio Draw Calls | < 25 calls (`gl.info.render.calls`) | **23 calls** | PASS |
-| Settled Studio Triangles | Source/renderer verified | **1,254 triangles** | PASS |
-| Forbidden Assertion Grep | 0 matches in `src/` | 0 matches across all 4 terms | PASS |
-| Cinematic Entrance Skip | Skip button / Escape / Space | Verified in live browser | PASS |
-| Reduced Motion Handling | Instant settle, skip button removed | Verified via CDP media emulation | PASS |
-| Dialog / Drawer Navigation | Focus trapping and Escape handling | Verified in live browser | PASS |
-| Focus Restoration | Return to trigger on Escape | Verified (`#inspect-transform-btn`) | PASS |
-| 2D Gallery Mode | Full editorial parity & diagrams | Verified via mode toggle | PASS |
-| Mobile Viewport | 375x667 no horizontal overflow | Verified (`scrollWidth === 375`) | PASS |
+- **TypeScript Compilation & Production Build**:
+  - `npm run build` (`tsc --noEmit && vite build`) passed with zero errors or warnings.
+- **Source Codebase Grep Audit (`src/`)**:
+  - `zero-latency`: 0 matches found.
+  - `seamless`: 0 matches found.
+  - `flawless`: 0 matches found.
+  - `in the codebase` / `in the inspected codebase`: 0 matches found.
+  - `WaitingToStart`: 0 matches found.
+  - `InProgress`: 0 matches found.
+  - `HuntersWon`: 0 matches found.
+  - `PropsWon`: 0 matches found.
+  - `DOREPLIFETIME`: 0 matches found.
+  - `Client_UpdateHUD`: 0 matches found.
+  - `UpdateAliveProps`: 0 matches found.
+  - `SetRoundTimer`: 0 matches found.
+  - `BroadcastVictory`: 0 matches found.
+  - `SeamlessTravel`: 0 matches found.
+  - `CreateDefaultSubobject`: 0 matches found.
+  - `authority is confirmed`: 0 matches found.
+  - `window.__STUDIO_PERF__`: 0 matches found (verified `undefined` at runtime).
+- **Bundle Ceilings & Chunk Sizes**:
+  - Immediate Shell JS (`index-ruse1l8q.js`): 76.54 kB gzipped.
+  - Immediate Shell CSS (`index-BOH_HKMK.css`): 2.32 kB gzipped.
+  - **Immediate Shell JS + CSS Combined: 78.86 kB gzipped** (Ceiling: < 80 kB).
+  - Immediate HTML (`index.html`): 0.80 kB gzipped (reported separately).
+  - Lazy 3D JS (`three-vendor` + `r3f-vendor` + `CanvasContainer`): 181.20 kB + 59.87 kB + 2.63 kB = **243.70 kB gzipped** (Ceiling: < 300 kB).
+  - **Total Combined Application (all chunks JS + CSS + HTML): 344.47 kB gzipped** (Ceiling: < 350 kB; JS+CSS only: 336.72 + 6.94 = 343.66 kB).
+- **Historical 3D Studio Render Baseline (Measured via CDP in Settled State)**:
+  - **Draw Calls**: 29 calls (Ceiling: < 30 calls).
+  - **Triangles**: 1,944 triangles (Ceiling: < 60,000 triangles).
+  - Lines: 34, Points: 0.
+- **Automated Interaction & Accessibility Verification (`test_p005_validation.mjs`)**:
+  - Diagnostic Hook Cleanliness: Verified `window.__STUDIO_PERF__` is `undefined`.
+  - Direct Navigation Menu: All 5 exhibits (`ex-ph-transform`, `ex-ph-combat`, `ex-ph-audio`, `ex-ph-lifecycle`, `ex-ph-customization`) selectable via pointer and keyboard.
+  - Exhibit Cards: All 5 cards open, render approved metadata and capture placeholders with proven intent, trap focus, and dismiss on Escape.
+  - Breakdown Drawers: All 5 exhibits open inspection drawer, render corresponding SVG vector diagrams, display 5 verified implementation steps, display scoped technical boundaries, dismiss on Escape, and restore focus to the triggering inspect button.
+  - Static 2D Editorial View: Full parity verified with 5 exhibit articles, 7 inline SVG diagrams, and 5 boundary disclosures.
+  - Mobile Viewport: 375x667 verified with zero horizontal overflow (`innerWidth === scrollWidth === 375`).
+  - Evidence Copy Audit: 100% passed across all required evidence assertions.
 
 ## Failures and skipped items
 
-None. All required fixes and acceptance criteria have been implemented and measured.
+- None. All requested corrections, identifier standardizations, diagnostic removals, and validation checks passed.
 
 ## Deviations and decisions
 
-- **Code Splitting Strategy**: Rather than removing accessibility features or 2D fallback capabilities, bundle reduction was achieved by:
-  1. Dynamically importing `ExhibitCard` in `App.tsx` (only needed when an exhibit is active).
-  2. Dynamically importing `MediaStoryboardDiagrams` in `Static2DView.tsx` (below-the-fold vector diagrams).
-  This preserves immediate editorial content for non-WebGL users while keeping initial JS + CSS at 77.06 kB gzipped.
-- **Draw Call Reduction Technique**: Used Three.js `<instancedMesh>` components with static `useLayoutEffect` matrix population for repeated scene elements (pillars, sky apertures, desk legs, footplates, cone stripes, crate braces). This eliminated 16 draw calls without sacrificing geometric fidelity or visual atmosphere.
+- **Canonical Exhibit IDs with Compatibility Aliases**: Changed primary exhibit IDs to `EX-PH-LIFECYCLE` and `EX-PH-CUSTOMIZATION` to strictly match `planning/PORTFOLIO_CONTENT_MAP.md`. Retained aliases (`EX-PH-ROUND`, `EX-PH-EMOTES`) in `EXHIBITS_MAP` to ensure complete backward compatibility without breaking existing routes or internal lookups.
+- **Drawer Root ID**: Added `id="transformation-breakdown-drawer"` to the breakdown drawer backdrop to ensure robust DOM selection and consistent aria/focus identification across tests and assistive technologies.
 
 ## Questions for Codex
 
-None blocking review. The vertical slice measurement corrections are complete and ready for Codex review.
+- None. Task P005-R1 is complete and ready for Codex review.

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { usePortfolio } from '../../context/PortfolioContext';
-import { FEATURED_PROP_HUNT } from '../../data/exhibits';
+import { EXHIBIT_INDEX } from '../../data/exhibits';
 import styles from './DirectNavigationMenu.module.css';
 
 export const DirectNavigationMenu: React.FC = () => {
@@ -16,7 +16,6 @@ export const DirectNavigationMenu: React.FC = () => {
         originatingTriggerRef.current = document.activeElement as HTMLElement;
       }
 
-      // Move focus to close button
       const timer = setTimeout(() => {
         closeButtonRef.current?.focus();
       }, 50);
@@ -68,15 +67,18 @@ export const DirectNavigationMenu: React.FC = () => {
 
   const handleClose = () => {
     dispatch({ type: 'SET_DIRECT_MENU', payload: false });
-    // Restore focus to opening button
     const target = originatingTriggerRef.current || document.getElementById('direct-portfolio-btn');
     if (target && typeof target.focus === 'function') {
       setTimeout(() => target.focus(), 0);
     }
   };
 
-  const handleSelectPropHunt = () => {
-    dispatch({ type: 'SET_ACTIVE_EXHIBIT', payload: FEATURED_PROP_HUNT.id });
+  const handleSelectExhibit = (exhibitId: string) => {
+    dispatch({ type: 'SET_ACTIVE_EXHIBIT', payload: exhibitId });
+    dispatch({
+      type: 'SET_CAMERA_FOCUS',
+      payload: exhibitId === 'sheeshh-prop-hunt' || exhibitId === 'EX-PH-TRANSFORM' ? 'transformation-bench' : 'systems-console',
+    });
     dispatch({ type: 'SET_DIRECT_MENU', payload: false });
   };
 
@@ -108,30 +110,38 @@ export const DirectNavigationMenu: React.FC = () => {
         </div>
 
         <div className={styles.content}>
+          {/* Pillar 1: Verified Gameplay Systems Exhibits */}
           <section className={styles.section}>
-            <span className={styles.pillarTag}>Pillar 1: Featured Games</span>
-            <button
-              type="button"
-              className={styles.itemCard}
-              onClick={handleSelectPropHunt}
-            >
-              <div className={styles.itemHeader}>
-                <h3 className={styles.itemTitle}>{FEATURED_PROP_HUNT.title}</h3>
-                <span className={styles.engineBadge}>{FEATURED_PROP_HUNT.engine}</span>
-              </div>
-              <p className={styles.itemDesc}>{FEATURED_PROP_HUNT.subtitle}</p>
-              <div className={styles.actionRow}>
-                <span className={styles.actionHint}>Select to view project card & 3D station →</span>
-              </div>
-            </button>
+            <span className={styles.pillarTag}>Pillar 1: Sheeshh Prop Hunt Gameplay Systems</span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', marginTop: '0.4rem' }}>
+              {EXHIBIT_INDEX.map((exhibit) => (
+                <button
+                  key={exhibit.id}
+                  type="button"
+                  id={`direct-exhibit-${exhibit.shortId.toLowerCase()}`}
+                  className={styles.itemCard}
+                  onClick={() => handleSelectExhibit(exhibit.id)}
+                  style={{ textAlign: 'left', width: '100%', cursor: 'pointer' }}
+                >
+                  <div className={styles.itemHeader}>
+                    <h3 className={styles.itemTitle}>{exhibit.title}</h3>
+                    <span className={styles.engineBadge}>{exhibit.shortId}</span>
+                  </div>
+                  <p className={styles.itemDesc}>{exhibit.summary.slice(0, 140)}...</p>
+                  <div className={styles.actionRow}>
+                    <span className={styles.actionHint}>Select to inspect system details &amp; graph flow →</span>
+                  </div>
+                </button>
+              ))}
+            </div>
           </section>
 
           <section className={styles.section}>
-            <span className={styles.pillarTag}>Pillar 2: Technical Art & Rigging</span>
+            <span className={styles.pillarTag}>Pillar 2: Technical Art &amp; Rigging</span>
             <div className={`${styles.itemCard} ${styles.itemDisabled}`}>
               <div className={styles.itemHeader}>
-                <h3 className={styles.itemTitle}>UE5 IK Retargeter & PhAT Physics</h3>
-                <span className={styles.statusBadge}>Milestone P004</span>
+                <h3 className={styles.itemTitle}>UE5 IK Retargeter &amp; PhAT Physics</h3>
+                <span className={styles.statusBadge}>Milestone P006</span>
               </div>
               <p className={styles.itemDesc}>Presence of IK Rig/Retargeter and Physics Asset setup assets (constraints pending verification).</p>
             </div>
@@ -142,14 +152,14 @@ export const DirectNavigationMenu: React.FC = () => {
             <div className={`${styles.itemCard} ${styles.itemDisabled}`}>
               <div className={styles.itemHeader}>
                 <h3 className={styles.itemTitle}>Blender to Unreal PBR Pipeline</h3>
-                <span className={styles.statusBadge}>Milestone P004</span>
+                <span className={styles.statusBadge}>Milestone P007</span>
               </div>
               <p className={styles.itemDesc}>Hard-surface modeling and UV layouts (density benchmarks and optimization pending).</p>
             </div>
           </section>
 
           <section className={styles.section}>
-            <span className={styles.pillarTag}>Pillar 4: Credentials & Contact</span>
+            <span className={styles.pillarTag}>Pillar 4: Credentials &amp; Contact</span>
             <div className={styles.credentialsBox}>
               <p className={styles.profileText}>
                 <strong>Ashish Ranjan</strong> — Manipal Institute of Technology (MIT), Bengaluru (B.Tech CSE '27)
@@ -164,3 +174,5 @@ export const DirectNavigationMenu: React.FC = () => {
     </div>
   );
 };
+
+export default DirectNavigationMenu;

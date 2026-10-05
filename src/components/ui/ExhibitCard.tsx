@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { usePortfolio } from '../../context/PortfolioContext';
-import { FEATURED_PROP_HUNT } from '../../data/exhibits';
+import { EXHIBITS_MAP } from '../../data/exhibits';
 import { OverviewStoryboardSvg, TransformStoryboardSvg } from '../diagrams/MediaStoryboardDiagrams';
 import styles from './ExhibitCard.module.css';
 
@@ -10,9 +10,11 @@ export const ExhibitCard: React.FC = () => {
   const closeBtnRef = useRef<HTMLButtonElement>(null);
   const originatingElementRef = useRef<HTMLElement | null>(null);
 
+  const exhibit = state.activeExhibitId ? EXHIBITS_MAP[state.activeExhibitId] : null;
+
   // Capture originating focus and move focus into card
   useEffect(() => {
-    if (state.activeExhibitId === FEATURED_PROP_HUNT.id) {
+    if (exhibit) {
       if (document.activeElement && document.activeElement !== document.body) {
         originatingElementRef.current = document.activeElement as HTMLElement;
       }
@@ -21,11 +23,11 @@ export const ExhibitCard: React.FC = () => {
       }, 50);
       return () => clearTimeout(timer);
     }
-  }, [state.activeExhibitId]);
+  }, [exhibit]);
 
   // Handle Escape key and Tab trapping inside the card
   useEffect(() => {
-    if (state.activeExhibitId !== FEATURED_PROP_HUNT.id) return;
+    if (!exhibit) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       // If breakdown drawer is open, let breakdown drawer handle Escape
@@ -63,9 +65,9 @@ export const ExhibitCard: React.FC = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [state.activeExhibitId, state.isBreakdownOpen]);
+  }, [exhibit, state.isBreakdownOpen]);
 
-  if (state.activeExhibitId !== FEATURED_PROP_HUNT.id) {
+  if (!exhibit) {
     return null;
   }
 
@@ -77,22 +79,27 @@ export const ExhibitCard: React.FC = () => {
     }
   };
 
+  const inspectBtnId =
+    exhibit.id === 'sheeshh-prop-hunt' || exhibit.id === 'EX-PH-TRANSFORM'
+      ? 'inspect-transform-btn'
+      : 'inspect-architecture-btn';
+
   return (
     <aside
       className={styles.cardContainer}
       role="dialog"
       aria-modal="true"
-      aria-label={`${FEATURED_PROP_HUNT.title} Exhibit Card`}
+      aria-label={`${exhibit.title} Exhibit Card`}
     >
       <div ref={cardRef} className={styles.card}>
         <div className={styles.header}>
           <div>
             <div className={styles.metaRow}>
-              <span className={styles.engineBadge}>{FEATURED_PROP_HUNT.engine}</span>
-              <span className={styles.roleBadge}>Role: Confirmation pending</span>
+              <span className={styles.engineBadge}>{exhibit.engine}</span>
+              <span className={styles.roleBadge}>{exhibit.role}</span>
             </div>
-            <h2 className={styles.title}>{FEATURED_PROP_HUNT.title}</h2>
-            <p className={styles.subtitle}>{FEATURED_PROP_HUNT.subtitle}</p>
+            <h2 className={styles.title}>{exhibit.title}</h2>
+            <p className={styles.subtitle}>{exhibit.subtitle}</p>
           </div>
           <button
             ref={closeBtnRef}
@@ -106,64 +113,53 @@ export const ExhibitCard: React.FC = () => {
         </div>
 
         <div className={styles.body}>
-          {/* Tool Stack Badges */}
-          <div className={styles.tagList}>
-            {FEATURED_PROP_HUNT.tools.map((t) => (
-              <span key={t} className={styles.toolTag}>{t}</span>
+          {/* Tool Badges */}
+          <div className={styles.tagList} aria-label="Key Technologies">
+            {exhibit.tools.map((tool) => (
+              <span key={tool} className={styles.toolTag}>
+                {tool}
+              </span>
             ))}
           </div>
 
-          <p className={styles.summary}>{FEATURED_PROP_HUNT.summary}</p>
+          {/* System Summary */}
+          <p className={styles.summary}>{exhibit.summary}</p>
 
-          {/* Primary Action Button: Open Transformation Architecture Drawer */}
+          {/* Deep-Dive Drawer Action Button */}
           <div className={styles.actionSection}>
             <button
-              id="inspect-transform-btn"
+              id={inspectBtnId}
               type="button"
               className={styles.inspectButton}
               onClick={() => dispatch({ type: 'SET_BREAKDOWN_OPEN', payload: true })}
             >
-              <span>Inspect Transformation Architecture →</span>
+              <span>Inspect {exhibit.shortTitle} Architecture →</span>
             </button>
           </div>
 
-          {/* Structured Media Placeholders with Inline Vector Storyboards */}
+          {/* Structured Media Placeholders with Inline Storyboards */}
           <div className={styles.placeholderGrid}>
-            <div className={styles.placeholderCard}>
-              <div className={styles.placeholderHeader}>
-                <span className={styles.badgePending}>Capture pending</span>
-                <span className={styles.mediaId}>{FEATURED_PROP_HUNT.mediaOverviewId}</span>
+            {exhibit.mediaPlaceholders.map((media) => (
+              <div key={media.id} className={styles.placeholderCard}>
+                <div className={styles.placeholderHeader}>
+                  <span className={styles.badgePending}>Capture pending</span>
+                  <span className={styles.mediaId}>{media.id}</span>
+                </div>
+                <h4 className={styles.placeholderTitle}>{media.label}</h4>
+                {media.id === 'PH-OVERVIEW' && <OverviewStoryboardSvg />}
+                {media.id === 'PH-TRANSFORM' && <TransformStoryboardSvg />}
+                <p className={styles.placeholderDesc}>{media.description}</p>
+                <div className={styles.placeholderFooter}>
+                  <span className={styles.evidenceReq}>Required: {media.requirement}</span>
+                </div>
               </div>
-              <h4 className={styles.placeholderTitle}>Gameplay Overview Reel</h4>
-              <OverviewStoryboardSvg />
-              <p className={styles.placeholderDesc}>
-                45–60s video evidence showing asymmetric hide-and-seek loop from hunter and prop perspectives.
-              </p>
-              <div className={styles.placeholderFooter}>
-                <span className={styles.evidenceReq}>Required: RUNTIME_VERIFIED</span>
-              </div>
-            </div>
-
-            <div className={styles.placeholderCard}>
-              <div className={styles.placeholderHeader}>
-                <span className={styles.badgePending}>Capture pending</span>
-                <span className={styles.mediaId}>{FEATURED_PROP_HUNT.mediaTransformId}</span>
-              </div>
-              <h4 className={styles.placeholderTitle}>Multi-View Transformation Clip</h4>
-              <TransformStoryboardSvg />
-              <p className={styles.placeholderDesc}>
-                20–30s split-screen recording validating host targeting, replicated mesh swap, and pivot correction.
-              </p>
-              <div className={styles.placeholderFooter}>
-                <span className={styles.evidenceReq}>Required: RUNTIME_VERIFIED</span>
-              </div>
-            </div>
+            ))}
           </div>
 
-          {/* Sourcing and Evidence Note */}
+          {/* Sourcing and Evidence Boundaries */}
           <div className={styles.provenanceBox}>
-            <span className={styles.provenanceTag}>Provenance & Sourcing</span>
-            <p className={styles.provenanceText}>{FEATURED_PROP_HUNT.provenanceNote}</p>
+            <span className={styles.provenanceTag}>Provenance &amp; Sourcing</span>
+            <p className={styles.provenanceText}>{exhibit.provenanceNote}</p>
           </div>
         </div>
 
@@ -176,3 +172,5 @@ export const ExhibitCard: React.FC = () => {
     </aside>
   );
 };
+
+export default ExhibitCard;

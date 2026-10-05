@@ -166,6 +166,46 @@ const CrateBracing: React.FC = () => {
   );
 };
 
+// Instanced triple telemetry screen array for Systems Console station
+const ConsoleScreens: React.FC = () => {
+  const screensRef = useRef<THREE.InstancedMesh>(null);
+
+  useLayoutEffect(() => {
+    if (!screensRef.current) return;
+    const dummy = new THREE.Object3D();
+
+    // Screen 1: Center Primary Telemetry Screen
+    dummy.position.set(0, 1.18, -0.05);
+    dummy.rotation.set(-0.2, 0, 0);
+    dummy.scale.set(0.75, 0.46, 1);
+    dummy.updateMatrix();
+    screensRef.current.setMatrixAt(0, dummy.matrix);
+
+    // Screen 2: Left Diagnostic Screen (angled inward)
+    dummy.position.set(-0.58, 1.16, 0.02);
+    dummy.rotation.set(-0.2, 0.35, 0);
+    dummy.scale.set(0.42, 0.40, 1);
+    dummy.updateMatrix();
+    screensRef.current.setMatrixAt(1, dummy.matrix);
+
+    // Screen 3: Right Combat/Audio Telemetry Screen (angled inward)
+    dummy.position.set(0.58, 1.16, 0.02);
+    dummy.rotation.set(-0.2, -0.35, 0);
+    dummy.scale.set(0.42, 0.40, 1);
+    dummy.updateMatrix();
+    screensRef.current.setMatrixAt(2, dummy.matrix);
+
+    screensRef.current.instanceMatrix.needsUpdate = true;
+  }, []);
+
+  return (
+    <instancedMesh ref={screensRef} args={[undefined, undefined, 3]}>
+      <planeGeometry args={[1, 1]} />
+      <meshBasicMaterial color="#0284c7" />
+    </instancedMesh>
+  );
+};
+
 export const StudioScene: React.FC = () => {
   const { state, dispatch } = usePortfolio();
   const { camera } = useThree();
@@ -176,19 +216,23 @@ export const StudioScene: React.FC = () => {
   const targetLookAt = useRef(new THREE.Vector3(0, 1.2, 0));
 
   // Cinematic Entrance parameters
-  // Threshold start: [-6, 3, 8], looking towards [0, 1.5, 0]
   const entranceStartPos = useRef(new THREE.Vector3(-6, 3, 8));
   const entranceStartLook = useRef(new THREE.Vector3(0, 1.5, 0));
   const entranceTime = useRef(0);
 
-  // Mesh references for restrained subtle micro-animations
-  const reticleRef = useRef<THREE.Mesh>(null);
+  // Mesh references for micro-animations
+  const benchReticleRef = useRef<THREE.Mesh>(null);
+  const systemsReticleRef = useRef<THREE.Mesh>(null);
   const benchGlowRef = useRef<THREE.PointLight>(null);
+  const systemsGlowRef = useRef<THREE.PointLight>(null);
 
   // Update target coordinates based on focus mode
   if (state.cameraFocus === 'transformation-bench') {
     targetPosition.current.set(2.4, 1.6, 2.2);
     targetLookAt.current.set(2.2, 0.9, 0);
+  } else if (state.cameraFocus === 'systems-console') {
+    targetPosition.current.set(-2.4, 1.6, 2.2);
+    targetLookAt.current.set(-2.2, 0.9, 0);
   } else {
     targetPosition.current.set(0, 2.2, 5.5);
     targetLookAt.current.set(0, 1.2, 0);
@@ -228,15 +272,18 @@ export const StudioScene: React.FC = () => {
       return;
     }
 
-    // 3. Standard Camera Damping (mutating Three.js vectors directly without React re-renders)
+    // 3. Standard Camera Damping
     const dampFactor = Math.min(delta * 3.5, 0.25);
     camera.position.lerp(targetPosition.current, dampFactor);
     currentLookAt.current.lerp(targetLookAt.current, dampFactor);
     camera.lookAt(currentLookAt.current);
 
-    // Subtle idle hover on hotspot reticle
-    if (reticleRef.current) {
-      reticleRef.current.rotation.z += delta * 0.4;
+    // Subtle idle hover on hotspot reticles
+    if (benchReticleRef.current) {
+      benchReticleRef.current.rotation.z += delta * 0.4;
+    }
+    if (systemsReticleRef.current) {
+      systemsReticleRef.current.rotation.z -= delta * 0.4;
     }
   });
 
@@ -245,7 +292,17 @@ export const StudioScene: React.FC = () => {
     if (state.isEntranceActive) {
       dispatch({ type: 'COMPLETE_ENTRANCE' });
     }
+    dispatch({ type: 'SET_CAMERA_FOCUS', payload: 'transformation-bench' });
     dispatch({ type: 'SET_ACTIVE_EXHIBIT', payload: 'sheeshh-prop-hunt' });
+  };
+
+  const handleSystemsConsoleClick = (e: { stopPropagation: () => void }) => {
+    e.stopPropagation();
+    if (state.isEntranceActive) {
+      dispatch({ type: 'COMPLETE_ENTRANCE' });
+    }
+    dispatch({ type: 'SET_CAMERA_FOCUS', payload: 'systems-console' });
+    dispatch({ type: 'SET_ACTIVE_EXHIBIT', payload: 'EX-PH-COMBAT' });
   };
 
   const handlePointerOver = () => {
@@ -255,6 +312,15 @@ export const StudioScene: React.FC = () => {
   const handlePointerOut = () => {
     document.body.style.cursor = 'auto';
   };
+
+  const isBenchActive = state.activeExhibitId === 'sheeshh-prop-hunt' || state.activeExhibitId === 'EX-PH-TRANSFORM';
+  const isSystemsActive =
+    state.activeExhibitId === 'EX-PH-COMBAT' ||
+    state.activeExhibitId === 'EX-PH-AUDIO' ||
+    state.activeExhibitId === 'EX-PH-LIFECYCLE' ||
+    state.activeExhibitId === 'EX-PH-CUSTOMIZATION' ||
+    state.activeExhibitId === 'EX-PH-ROUND' ||
+    state.activeExhibitId === 'EX-PH-EMOTES';
 
   return (
     <>
@@ -270,7 +336,7 @@ export const StudioScene: React.FC = () => {
         color="#93c5fd"
         castShadow={false}
       />
-      {/* Warm focused studio lighting over the Transformation Bench */}
+      {/* Warm focused studio lighting over Transformation Bench */}
       <spotLight
         position={[2.2, 4.5, 0.5]}
         target-position={[2.2, 0.8, 0]}
@@ -279,12 +345,29 @@ export const StudioScene: React.FC = () => {
         angle={0.65}
         penumbra={0.7}
       />
-      {/* Subtle local workbench diagnostic glow */}
+      {/* Cool cyan focused studio lighting over Systems Console */}
+      <spotLight
+        position={[-2.2, 4.5, 0.5]}
+        target-position={[-2.2, 0.8, 0]}
+        intensity={3.4}
+        color="#38bdf8"
+        angle={0.65}
+        penumbra={0.7}
+      />
+
+      {/* Subtle local diagnostic glows */}
       <pointLight
         ref={benchGlowRef}
         position={[2.2, 1.2, 0.2]}
         intensity={0.6}
         color="#38bdf8"
+        distance={3.5}
+      />
+      <pointLight
+        ref={systemsGlowRef}
+        position={[-2.2, 1.3, 0.2]}
+        intensity={0.5}
+        color="#0ea5e9"
         distance={3.5}
       />
 
@@ -301,7 +384,7 @@ export const StudioScene: React.FC = () => {
       {/* Curved Observatory Wall Pillars & Window Apertures (Instanced: 2 draw calls for 10 meshes) */}
       <ObservatoryPerimeter />
 
-      {/* ================= REFINED TRANSFORMATION BENCH STATION ================= */}
+      {/* ================= STATION 1: TRANSFORMATION BENCH ================= */}
       <group
         position={[2.2, 0, 0]}
         onClick={handleBenchClick}
@@ -335,20 +418,17 @@ export const StudioScene: React.FC = () => {
           <meshStandardMaterial color="#1e293b" roughness={0.8} />
         </mesh>
 
-        {/* --- PROPS ON THE BENCH --- */}
+        {/* Props on Bench */}
         {/* 1. Prototype Disguise Cone (with instanced reflective stripes) */}
         <group position={[-0.55, 0.8, 0.15]}>
-          {/* Base plate */}
           <mesh position={[0, 0.015, 0]}>
             <boxGeometry args={[0.38, 0.03, 0.38]} />
             <meshStandardMaterial color="#c2410c" roughness={0.6} />
           </mesh>
-          {/* Cone body */}
           <mesh position={[0, 0.26, 0]}>
             <coneGeometry args={[0.16, 0.5, 16]} />
             <meshStandardMaterial color="#ea580c" roughness={0.35} />
           </mesh>
-          {/* Reflective White Stripes (Instanced: 1 draw call for 2 rings) */}
           <ConeStripes />
         </group>
 
@@ -358,7 +438,6 @@ export const StudioScene: React.FC = () => {
             <boxGeometry args={[0.36, 0.32, 0.36]} />
             <meshStandardMaterial color="#78350f" roughness={0.85} />
           </mesh>
-          {/* Diagonal Corner Bracing (Instanced: 1 draw call for 2 braces) */}
           <CrateBracing />
         </group>
 
@@ -374,7 +453,7 @@ export const StudioScene: React.FC = () => {
           </mesh>
         </group>
 
-        {/* 4. Blueprint Drafting Schematic on Table */}
+        {/* 4. Blueprint Drafting Schematic */}
         <mesh position={[0.05, 0.795, -0.08]} rotation={[-Math.PI / 2, 0, 0.12]}>
           <planeGeometry args={[0.48, 0.34]} />
           <meshStandardMaterial color="#0369a1" roughness={0.8} />
@@ -390,7 +469,6 @@ export const StudioScene: React.FC = () => {
             <boxGeometry args={[0.26, 0.18, 0.015]} />
             <meshStandardMaterial color="#0f172a" roughness={0.3} metalness={0.8} />
           </mesh>
-          {/* Luminous Terminal Display */}
           <mesh position={[0, 0.14, 0.009]} rotation={[-0.2, 0, 0]}>
             <planeGeometry args={[0.23, 0.15]} />
             <meshBasicMaterial color="#0284c7" />
@@ -399,22 +477,69 @@ export const StudioScene: React.FC = () => {
 
         {/* 6. Hotspot Floating Reticle */}
         <group position={[0, 1.6, 0]}>
-          <mesh ref={reticleRef}>
+          <mesh ref={benchReticleRef}>
             <torusGeometry args={[0.24, 0.02, 8, 24]} />
             <meshStandardMaterial
-              color={state.activeExhibitId === 'sheeshh-prop-hunt' ? '#38bdf8' : '#f59e0b'}
-              emissive={state.activeExhibitId === 'sheeshh-prop-hunt' ? '#0ea5e9' : '#d97706'}
+              color={isBenchActive ? '#38bdf8' : '#f59e0b'}
+              emissive={isBenchActive ? '#0ea5e9' : '#d97706'}
               emissiveIntensity={0.8}
               roughness={0.2}
             />
           </mesh>
-          {/* Center Pulsing Reticle Core */}
           <mesh>
             <sphereGeometry args={[0.04, 12, 12]} />
-            <meshBasicMaterial color={state.activeExhibitId === 'sheeshh-prop-hunt' ? '#38bdf8' : '#fbbf24'} />
+            <meshBasicMaterial color={isBenchActive ? '#38bdf8' : '#fbbf24'} />
+          </mesh>
+        </group>
+      </group>
+
+      {/* ================= STATION 2: SYSTEMS CONSOLE ================= */}
+      <group
+        position={[-2.2, 0, 0]}
+        onClick={handleSystemsConsoleClick}
+        onPointerOver={handlePointerOver}
+        onPointerOut={handlePointerOut}
+      >
+        {/* Base Pedestal */}
+        <mesh position={[0, 0.45, 0]}>
+          <boxGeometry args={[1.5, 0.9, 0.9]} />
+          <meshStandardMaterial color="#0f172a" roughness={0.7} metalness={0.5} />
+        </mesh>
+
+        {/* Angled Control Deck */}
+        <mesh position={[0, 0.92, 0.05]} rotation={[-0.25, 0, 0]}>
+          <boxGeometry args={[1.52, 0.05, 0.95]} />
+          <meshStandardMaterial color="#1e293b" roughness={0.4} metalness={0.6} />
+        </mesh>
+
+        {/* Emissive Edge Accent */}
+        <mesh position={[0, 0.93, 0.52]} rotation={[-0.25, 0, 0]}>
+          <boxGeometry args={[1.54, 0.04, 0.02]} />
+          <meshStandardMaterial color="#38bdf8" roughness={0.2} metalness={0.9} />
+        </mesh>
+
+        {/* Triple Telemetry Screens (Instanced: 1 draw call for 3 screens) */}
+        <ConsoleScreens />
+
+        {/* Hotspot Floating Reticle */}
+        <group position={[0, 1.6, 0]}>
+          <mesh ref={systemsReticleRef}>
+            <torusGeometry args={[0.24, 0.02, 8, 24]} />
+            <meshStandardMaterial
+              color={isSystemsActive ? '#38bdf8' : '#0ea5e9'}
+              emissive={isSystemsActive ? '#38bdf8' : '#0284c7'}
+              emissiveIntensity={0.8}
+              roughness={0.2}
+            />
+          </mesh>
+          <mesh>
+            <sphereGeometry args={[0.04, 12, 12]} />
+            <meshBasicMaterial color={isSystemsActive ? '#38bdf8' : '#0ea5e9'} />
           </mesh>
         </group>
       </group>
     </>
   );
 };
+
+export default StudioScene;

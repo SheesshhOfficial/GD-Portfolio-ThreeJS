@@ -1,6 +1,9 @@
 import React, { lazy, Suspense } from 'react';
 import { usePortfolio } from '../../context/PortfolioContext';
-import { FEATURED_PROP_HUNT } from '../../data/exhibits';
+import { ALL_EXHIBITS } from '../../data/exhibits';
+import styles from './Static2DView.module.css';
+
+// Lazy-load diagrams so immediate 2D shell remains minimal
 const OverviewStoryboardSvg = lazy(() =>
   import('../diagrams/MediaStoryboardDiagrams').then((m) => ({
     default: m.OverviewStoryboardSvg,
@@ -13,16 +16,43 @@ const TransformStoryboardSvg = lazy(() =>
   }))
 );
 
-import styles from './Static2DView.module.css';
-
 const BlueprintFlowDiagram = lazy(() =>
   import('../diagrams/BlueprintFlowDiagram').then((m) => ({
     default: m.BlueprintFlowDiagram,
   }))
 );
 
+const CombatTraceFlowDiagram = lazy(() =>
+  import('../diagrams/SystemsDiagrams').then((m) => ({
+    default: m.CombatTraceFlowDiagram,
+  }))
+);
+
+const AudioVoipDiagram = lazy(() =>
+  import('../diagrams/SystemsDiagrams').then((m) => ({
+    default: m.AudioVoipDiagram,
+  }))
+);
+
+const RoundLifecycleDiagram = lazy(() =>
+  import('../diagrams/SystemsDiagrams').then((m) => ({
+    default: m.RoundLifecycleDiagram,
+  }))
+);
+
+const EmotesLeaderPoseDiagram = lazy(() =>
+  import('../diagrams/SystemsDiagrams').then((m) => ({
+    default: m.EmotesLeaderPoseDiagram,
+  }))
+);
+
 export const Static2DView: React.FC = () => {
   const { state, dispatch } = usePortfolio();
+
+  const handleOpenBreakdown = (exhibitId: string) => {
+    dispatch({ type: 'SET_ACTIVE_EXHIBIT', payload: exhibitId });
+    dispatch({ type: 'SET_BREAKDOWN_OPEN', payload: true });
+  };
 
   return (
     <main id="main-content" className={styles.container} role="main">
@@ -42,7 +72,7 @@ export const Static2DView: React.FC = () => {
             Ashish Ranjan
           </h1>
           <p className={styles.heroSubtitle}>
-            Gameplay Systems Programming & Technical Art · Unreal Engine 5 & Blender Pipelines
+            Gameplay Systems Programming &amp; Technical Art · Unreal Engine 5 &amp; Blender Pipelines
           </p>
           <p className={styles.heroDescription}>
             A technical development portfolio exploring server-routed RPC and multicast replication (runtime authority validation pending),
@@ -61,203 +91,187 @@ export const Static2DView: React.FC = () => {
           )}
         </section>
 
-        {/* Featured Project Showcase */}
-        <section className={styles.projectSection} aria-labelledby="project-title">
-          <div className={styles.sectionHeader}>
-            <span className={styles.sectionPillar}>Pillar 1: Featured Game System</span>
-            <h2 id="project-title" className={styles.projectTitle}>
-              {FEATURED_PROP_HUNT.title}
-            </h2>
-            <p className={styles.projectSubtitle}>{FEATURED_PROP_HUNT.subtitle}</p>
-          </div>
+        {/* Section Header for Featured Exhibits */}
+        <div style={{ marginBottom: '2rem' }}>
+          <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#38bdf8', fontWeight: 600 }}>
+            Pillar 1: Featured Gameplay Systems Collection
+          </span>
+          <h2 style={{ fontSize: '1.75rem', fontWeight: 700, color: '#f8fafc', margin: '0.25rem 0' }}>
+            Sheeshh: Prop Hunt Multiplayer Systems
+          </h2>
+          <p style={{ fontSize: '0.875rem', color: '#94a3b8', margin: 0 }}>
+            Inspected C++ &amp; Blueprint gameplay engineering in Unreal Engine 5.7.4. All implementations are categorized by verified engine findings and evidence boundaries.
+          </p>
+        </div>
 
-          <div className={styles.projectCard}>
-            <div className={styles.metaRow}>
-              <span className={styles.engineBadge}>{FEATURED_PROP_HUNT.engine}</span>
-              <span className={styles.roleBadge}>Role: Confirmation pending</span>
-            </div>
-
-            <div className={styles.tagList}>
-              {FEATURED_PROP_HUNT.tools.map((tool) => (
-                <span key={tool} className={styles.toolTag}>{tool}</span>
-              ))}
-            </div>
-
-            <p className={styles.summaryText}>{FEATURED_PROP_HUNT.summary}</p>
-
-            <button
-              type="button"
-              className={styles.openDrawerBtn}
-              onClick={() => dispatch({ type: 'SET_BREAKDOWN_OPEN', payload: true })}
+        {/* All 5 Prop Hunt System Exhibits Rendered Sequentially */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
+          {ALL_EXHIBITS.map((exhibit, exIdx) => (
+            <article
+              key={exhibit.id}
+              className={styles.card}
+              aria-labelledby={`exhibit-${exhibit.shortId.toLowerCase()}-title`}
             >
-              Open Architecture Breakdown Drawer →
-            </button>
-
-            {/* Media Placeholders with Inline Vector Storyboards */}
-            <div className={styles.placeholderGrid}>
-              <div className={styles.placeholderBox}>
-                <div className={styles.placeholderTop}>
-                  <span className={styles.badgePending}>Capture pending</span>
-                  <span className={styles.mediaId}>{FEATURED_PROP_HUNT.mediaOverviewId}</span>
+              <div className={styles.cardHeader}>
+                <div className={styles.badgeRow}>
+                  <span className={styles.engineBadge}>{exhibit.shortId}</span>
+                  <span className={styles.engineBadge}>{exhibit.engine}</span>
+                  <span className={styles.roleBadge}>{exhibit.category}</span>
                 </div>
-                <h3 className={styles.boxTitle}>Gameplay Overview Reel</h3>
-                <Suspense fallback={<div className={styles.diagramSkeleton}>Loading storyboard...</div>}>
-                  <OverviewStoryboardSvg />
-                </Suspense>
-                <p className={styles.boxDesc}>
-                  45–60s video evidence demonstrating round loop, disguise, taunts, and elimination from hunter and prop viewpoints.
-                </p>
-                <span className={styles.evidenceTag}>Requirement: RUNTIME_VERIFIED</span>
+                <h3
+                  id={exIdx === 0 ? 'breakdown-title' : `exhibit-${exhibit.shortId.toLowerCase()}-title`}
+                  className={styles.projectTitle}
+                >
+                  {exhibit.title}
+                </h3>
+                <p className={styles.projectSubtitle}>{exhibit.subtitle}</p>
               </div>
 
-              <div className={styles.placeholderBox}>
-                <div className={styles.placeholderTop}>
-                  <span className={styles.badgePending}>Capture pending</span>
-                  <span className={styles.mediaId}>{FEATURED_PROP_HUNT.mediaTransformId}</span>
+              <div className={styles.cardBody}>
+                {/* Tools */}
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+                  {exhibit.tools.map((t) => (
+                    <span
+                      key={t}
+                      style={{
+                        fontSize: '0.6875rem',
+                        padding: '0.15rem 0.5rem',
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        color: '#94a3b8',
+                        borderRadius: '4px',
+                        fontFamily: 'monospace',
+                      }}
+                    >
+                      {t}
+                    </span>
+                  ))}
                 </div>
-                <h3 className={styles.boxTitle}>Multi-View Transformation Clip</h3>
-                <Suspense fallback={<div className={styles.diagramSkeleton}>Loading storyboard...</div>}>
-                  <TransformStoryboardSvg />
-                </Suspense>
-                <p className={styles.boxDesc}>
-                  20–30s split-screen recording validating host targeting, replicated mesh swap, and pivot correction.
-                </p>
-                <span className={styles.evidenceTag}>Requirement: RUNTIME_VERIFIED</span>
-              </div>
-            </div>
 
-            {/* Sourcing and Evidence Boundaries */}
-            <div className={styles.provenanceNotice}>
-              <strong>Provenance & Sourcing:</strong> {FEATURED_PROP_HUNT.provenanceNote}
-            </div>
-          </div>
-        </section>
+                {/* Summary */}
+                <p className={styles.projectDescription}>{exhibit.summary}</p>
 
-        {/* Deep-Dive Architectural Breakdown Section (Inline Editorial) */}
-        <section className={styles.breakdownSection} aria-labelledby="breakdown-title">
-          <div className={styles.sectionHeader}>
-            <span className={styles.sectionPillar}>Technical Deep-Dive: EX-PH-TRANSFORM</span>
-            <h2 id="breakdown-title" className={styles.projectTitle}>
-              Real-Time Prop Disguise &amp; Pivot Offset Architecture
-            </h2>
-            <p className={styles.projectSubtitle}>
-              Inspected Blueprint graph analysis · Unreal Engine 5.7.4 (BP_propChar)
-            </p>
-          </div>
-
-          <div className={styles.stepGrid}>
-            <div className={styles.stepCard}>
-              <div className={styles.stepHeader}>
-                <h3 className={styles.stepTitle}>1. Input &amp; Interaction Trace</h3>
-                <span className={styles.stepTag}>Client Initiated</span>
-              </div>
-              <p className={styles.stepDesc}>
-                Enhanced Input Action <code>IA_ChangeProp</code> fires a <code>SphereTraceSingle</code> on the interaction channel to detect environmental static mesh actors.
-              </p>
-              <div className={styles.codeSnippet}>
-                IA_ChangeProp -&gt; SphereTraceSingle(ECC_Interaction) -&gt; Cast To StaticMeshActor
-              </div>
-            </div>
-
-            <div className={styles.stepCard}>
-              <div className={styles.stepHeader}>
-                <h3 className={styles.stepTitle}>2. Server RPC &amp; Resource Validation</h3>
-                <span className={styles.stepTag}>Server RPC Execution</span>
-              </div>
-              <p className={styles.stepDesc}>
-                Client calls Server RPC <code>ChangePropOnServer</code>. The server checks <code>PropChangesLeft</code> against <code>MaxPropChanges = 10</code> and validates mesh against <code>PropAllowedMesh</code>.
-              </p>
-              <div className={styles.codeSnippet}>
-                ChangePropOnServer(Reliable) -&gt; Check(PropChangesLeft &gt; 0) -&gt; Array_Contains(PropAllowedMesh)
-              </div>
-            </div>
-
-            <div className={styles.stepCard}>
-              <div className={styles.stepHeader}>
-                <h3 className={styles.stepTitle}>3. Multicast Replication</h3>
-                <span className={styles.stepTag}>Multicast Event</span>
-              </div>
-              <p className={styles.stepDesc}>
-                Server broadcasts <code>UpdateMeshMulticast</code>, calling <code>SetStaticMesh</code> on the replicated <code>PropMesh</code> component across all client proxies.
-              </p>
-              <div className={styles.codeSnippet}>
-                UpdateMeshMulticast(NetMulticast) -&gt; PropMesh-&gt;SetStaticMesh(NewMesh)
-              </div>
-            </div>
-
-            <div className={styles.stepCard}>
-              <div className={styles.stepHeader}>
-                <h3 className={styles.stepTitle}>4. Pivot Offset Correction</h3>
-                <span className={styles.stepTag}>Ground Alignment</span>
-              </div>
-              <p className={styles.stepDesc}>
-                Queries <code>MeshWithFAlsePivot</code> array and applies relative offset via <code>K2_SetRelativeLocation</code> to ground non-standard asset pivots.
-              </p>
-              <div className={styles.codeSnippet}>
-                Array_Contains(MeshWithFAlsePivot) == True -&gt; PropMesh-&gt;K2_SetRelativeLocation(Offset)
-              </div>
-            </div>
-
-            <div className={styles.stepCard}>
-              <div className={styles.stepHeader}>
-                <h3 className={styles.stepTitle}>5. Camera Decoupling &amp; Free Look</h3>
-                <span className={styles.stepTag}>Pawn Control</span>
-              </div>
-              <p className={styles.stepDesc}>
-                <code>IA_RotationLock</code> sets <code>bUseControllerRotationYaw = false</code>, decoupling controller yaw from actor rotation. Resulting runtime 360° camera orbit behavior remains capture pending.
-              </p>
-              <div className={styles.codeSnippet}>
-                IA_RotationLock -&gt; Set bUseControllerRotationYaw = false (Yaw Decoupled; Orbit Capture Pending)
-              </div>
-            </div>
-          </div>
-
-          {/* Interactive Blueprint Flow Diagram */}
-          <div>
-            <h3 style={{ fontSize: '1rem', fontWeight: 600, color: '#f8fafc', marginBottom: '0.75rem' }}>
-              Blueprint Graph Execution Flow
-            </h3>
-            <Suspense
-              fallback={
-                <div style={{ padding: '2rem', textAlign: 'center', color: '#94a3b8', background: '#0b111a', borderRadius: '6px' }}>
-                  Loading Blueprint diagram...
+                {/* Implementation Steps Grid */}
+                <div>
+                  <h4 style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#f8fafc', marginBottom: '0.75rem' }}>
+                    Inspected Implementation Sequence
+                  </h4>
+                  <div className={styles.stepGrid}>
+                    {exhibit.steps.map((step, sIdx) => (
+                      <div key={sIdx} className={styles.stepCard}>
+                        <div className={styles.stepHeader}>
+                          <h5 className={styles.stepTitle}>{step.title}</h5>
+                          <span className={styles.stepTag}>{step.tag}</span>
+                        </div>
+                        <p className={styles.stepDesc}>{step.desc}</p>
+                        <div className={styles.codeSnippet}>{step.codeSnippet}</div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              }
-            >
-              <BlueprintFlowDiagram />
-            </Suspense>
-          </div>
 
-          {/* Architectural Boundary Disclosure */}
-          <div className={styles.boundaryCard}>
-            <div className={styles.boundaryHeader}>
-              <span>⚠️ Architectural Audit Disclosure</span>
-            </div>
-            <p className={styles.boundaryText}>
-              Early design dossiers claimed dynamic collision bounds calculation where the character capsule automatically resizes to match the transformed prop dimensions:
-            </p>
-            <div className={styles.boundaryFormula}>
-              CapsuleRadius = 0.5 * max(Extent.X, Extent.Y) | CapsuleHalfHeight = max(Extent.Z, CapsuleRadius)
-            </div>
-            <p className={styles.boundaryText}>
-              <strong>Inspected Reality:</strong> Functions such as <code>GetLocalBounds</code>, <code>SetCapsuleSize</code>, and dynamic ground offsets were <em>not found</em> in the inspected <code>BP_propChar</code> scope. Dynamic capsule resizing nodes were not found in the inspected Blueprint scope, and runtime capsule behavior remains unverified; collision is only disabled upon elimination. Pre-transform geometry collision sweeps were likewise not found in the inspected graphs. These claims are classified as <strong>UNVERIFIED</strong>; runtime verification remains pending.
-            </p>
-          </div>
-        </section>
+                {/* Interactive Vector Graph Diagram */}
+                <div>
+                  <h4 style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#f8fafc', marginBottom: '0.75rem' }}>
+                    Graph Execution Architecture
+                  </h4>
+                  <Suspense
+                    fallback={
+                      <div style={{ padding: '2rem', textAlign: 'center', color: '#94a3b8', background: '#0b111a', borderRadius: '6px' }}>
+                        Loading system diagram...
+                      </div>
+                    }
+                  >
+                    {exhibit.shortId === 'EX-PH-TRANSFORM' && <BlueprintFlowDiagram />}
+                    {exhibit.shortId === 'EX-PH-COMBAT' && <CombatTraceFlowDiagram />}
+                    {exhibit.shortId === 'EX-PH-AUDIO' && <AudioVoipDiagram />}
+                    {(exhibit.shortId === 'EX-PH-LIFECYCLE' || exhibit.shortId === 'EX-PH-ROUND') && <RoundLifecycleDiagram />}
+                    {(exhibit.shortId === 'EX-PH-CUSTOMIZATION' || exhibit.shortId === 'EX-PH-EMOTES') && <EmotesLeaderPoseDiagram />}
+                  </Suspense>
+                </div>
+
+                {/* Technical Boundary Disclosure */}
+                <div className={styles.boundaryCard}>
+                  <div className={styles.boundaryHeader}>
+                    <span>⚠️ {exhibit.boundaryTitle}</span>
+                  </div>
+                  {exhibit.boundaryFormula && (
+                    <div className={styles.boundaryFormula}>{exhibit.boundaryFormula}</div>
+                  )}
+                  <p className={styles.boundaryText}>{exhibit.boundaryDescription}</p>
+                </div>
+
+                {/* Media Placeholders with Storyboard Views */}
+                <div>
+                  <h4 style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#f8fafc', marginBottom: '0.75rem' }}>
+                    Media Evidence Placeholders &amp; Verification Criteria
+                  </h4>
+                  <div className={styles.placeholderGrid}>
+                    {exhibit.mediaPlaceholders.map((media) => (
+                      <div key={media.id} className={styles.placeholderBox}>
+                        <div className={styles.placeholderTop}>
+                          <span className={styles.badgePending}>Capture pending</span>
+                          <span className={styles.mediaId}>{media.id}</span>
+                        </div>
+                        <h4 className={styles.boxTitle}>{media.label}</h4>
+                        {media.id === 'PH-OVERVIEW' && (
+                          <Suspense fallback={<div className={styles.diagramSkeleton}>Loading storyboard...</div>}>
+                            <OverviewStoryboardSvg />
+                          </Suspense>
+                        )}
+                        {media.id === 'PH-TRANSFORM' && (
+                          <Suspense fallback={<div className={styles.diagramSkeleton}>Loading storyboard...</div>}>
+                            <TransformStoryboardSvg />
+                          </Suspense>
+                        )}
+                        <p className={styles.boxDesc}>{media.description}</p>
+                        <p style={{ fontSize: '0.75rem', color: '#64748b', fontStyle: 'italic', margin: '0.25rem 0' }}>
+                          Proof: {media.whatCaptureProves}
+                        </p>
+                        <span className={styles.evidenceTag}>Requirement: {media.requirement}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Drawer Launch Action */}
+                <div style={{ marginTop: '0.5rem' }}>
+                  <button
+                    type="button"
+                    className={styles.switch3dButton}
+                    onClick={() => handleOpenBreakdown(exhibit.id)}
+                    style={{ fontSize: '0.8125rem', padding: '0.6rem 1.2rem' }}
+                  >
+                    Open Focused {exhibit.shortTitle} Breakdown Drawer →
+                  </button>
+                </div>
+
+                {/* Provenance and Authorship */}
+                <div className={styles.provenanceNotice}>
+                  <strong>Provenance &amp; Sourcing:</strong> {exhibit.provenanceNote}
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
 
         {/* Future Milestones Summary */}
-        <section className={styles.roadmapSection} aria-label="Additional Pillars">
+        <section className={styles.roadmapSection} aria-label="Additional Pillars" style={{ marginTop: '4rem' }}>
           <h2 className={styles.roadmapTitle}>Additional Engineering Pillars</h2>
           <div className={styles.roadmapGrid}>
             <div className={styles.roadmapCard}>
-              <h3>Technical Art & Rigging</h3>
+              <h3>Technical Art &amp; Rigging</h3>
               <p>Presence of UE5 IK Rig, IK Retargeter, and Physics Asset setup assets (joint constraint and motion quality evidence pending).</p>
-              <span className={styles.roadmapStatus}>Milestone P004</span>
+              <span className={styles.roadmapMilestone}>Scheduled: Milestone P006</span>
             </div>
             <div className={styles.roadmapCard}>
-              <h3>3D Asset Pipelines</h3>
-              <p>Blender-to-Unreal hard-surface modeling pipeline and UV layouts (density benchmarks and optimization evidence pending).</p>
-              <span className={styles.roadmapStatus}>Milestone P004</span>
+              <h3>3D Asset Production &amp; Shaders</h3>
+              <p>Hard-surface Blender modeling, UV unwrap layouts, texel density benchmarks, and PBR material setup.</p>
+              <span className={styles.roadmapMilestone}>Scheduled: Milestone P007</span>
+            </div>
+            <div className={styles.roadmapCard}>
+              <h3>Academic Background &amp; Profile</h3>
+              <p>Computer Science foundation (MIT Bengaluru, B.Tech CSE '27) and verified personal contributions.</p>
+              <span className={styles.roadmapMilestone}>Scheduled: Milestone P008</span>
             </div>
           </div>
         </section>
@@ -265,3 +279,5 @@ export const Static2DView: React.FC = () => {
     </main>
   );
 };
+
+export default Static2DView;

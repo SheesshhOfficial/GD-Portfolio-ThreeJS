@@ -1,6 +1,13 @@
 import React, { useEffect, useRef } from 'react';
 import { usePortfolio } from '../../context/PortfolioContext';
+import { EXHIBITS_MAP, EXHIBIT_TRANSFORM } from '../../data/exhibits';
 import { BlueprintFlowDiagram } from '../diagrams/BlueprintFlowDiagram';
+import {
+  CombatTraceFlowDiagram,
+  AudioVoipDiagram,
+  RoundLifecycleDiagram,
+  EmotesLeaderPoseDiagram,
+} from '../diagrams/SystemsDiagrams';
 import { TransformStoryboardSvg } from '../diagrams/MediaStoryboardDiagrams';
 import styles from './TransformationBreakdownDrawer.module.css';
 
@@ -8,11 +15,15 @@ interface TransformationBreakdownDrawerProps {
   originatingButtonRef?: React.RefObject<HTMLElement | null>;
 }
 
-export const TransformationBreakdownDrawer: React.FC<TransformationBreakdownDrawerProps> = ({ originatingButtonRef }) => {
+export const TransformationBreakdownDrawer: React.FC<TransformationBreakdownDrawerProps> = ({
+  originatingButtonRef,
+}) => {
   const { state, dispatch } = usePortfolio();
   const drawerRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const cachedTriggerRef = useRef<HTMLElement | null>(null);
+
+  const exhibit = state.activeExhibitId ? EXHIBITS_MAP[state.activeExhibitId] || EXHIBIT_TRANSFORM : EXHIBIT_TRANSFORM;
 
   useEffect(() => {
     if (state.isBreakdownOpen) {
@@ -68,13 +79,16 @@ export const TransformationBreakdownDrawer: React.FC<TransformationBreakdownDraw
 
   const handleClose = () => {
     dispatch({ type: 'SET_BREAKDOWN_OPEN', payload: false });
-    const fallback = document.getElementById('inspect-transform-btn');
+    const inspectBtn =
+      document.getElementById('inspect-transform-btn') ||
+      document.getElementById('inspect-architecture-btn');
     const target =
       originatingButtonRef?.current && originatingButtonRef.current !== document.body
         ? originatingButtonRef.current
-        : cachedTriggerRef.current && cachedTriggerRef.current !== document.body
-        ? cachedTriggerRef.current
-        : fallback;
+        : inspectBtn ||
+          (cachedTriggerRef.current && cachedTriggerRef.current !== document.body
+            ? cachedTriggerRef.current
+            : null);
     if (target && typeof target.focus === 'function') {
       setTimeout(() => target.focus(), 10);
     }
@@ -82,11 +96,12 @@ export const TransformationBreakdownDrawer: React.FC<TransformationBreakdownDraw
 
   return (
     <div
+      id="transformation-breakdown-drawer"
       className={styles.backdrop}
       onClick={handleClose}
       role="dialog"
       aria-modal="true"
-      aria-label="Real-Time Prop Disguise & Pivot Offset Architecture Deep Dive"
+      aria-label={`${exhibit.title} Architecture Deep Dive`}
     >
       <div
         ref={drawerRef}
@@ -96,13 +111,11 @@ export const TransformationBreakdownDrawer: React.FC<TransformationBreakdownDraw
         <div className={styles.header}>
           <div className={styles.headerTitleGroup}>
             <div className={styles.idBadgeRow}>
-              <span className={styles.idBadge}>EX-PH-TRANSFORM</span>
+              <span className={styles.idBadge}>{exhibit.shortId}</span>
               <span className={styles.statusBadge}>VERIFIED_IMPLEMENTATION</span>
             </div>
-            <h2 className={styles.title}>Prop Disguise &amp; Pivot Offset Architecture</h2>
-            <p className={styles.subtitle}>
-              Inspected Blueprint graph analysis · Unreal Engine 5.7.4 (BP_propChar)
-            </p>
+            <h2 className={styles.title}>{exhibit.title}</h2>
+            <p className={styles.subtitle}>{exhibit.subtitle}</p>
           </div>
           <button
             ref={closeButtonRef}
@@ -116,84 +129,34 @@ export const TransformationBreakdownDrawer: React.FC<TransformationBreakdownDraw
         </div>
 
         <div className={styles.content}>
-          {/* Section 1: Verified Execution Pipeline */}
+          {/* Section 1: Inspected Implementation Steps */}
           <section className={styles.section}>
-            <h3 className={styles.sectionHeading}>1. Verified Implementation Pipeline</h3>
+            <h3 className={styles.sectionHeading}>1. Inspected Implementation Steps</h3>
             <div className={styles.stepGrid}>
-              <div className={styles.stepCard}>
-                <div className={styles.stepHeader}>
-                  <h4 className={styles.stepTitle}>Step 1: Input &amp; Interaction Trace</h4>
-                  <span className={styles.stepTag}>Client Initiated</span>
+              {exhibit.steps.map((step, idx) => (
+                <div key={idx} className={styles.stepCard}>
+                  <div className={styles.stepHeader}>
+                    <h4 className={styles.stepTitle}>{step.title}</h4>
+                    <span className={styles.stepTag}>{step.tag}</span>
+                  </div>
+                  <p className={styles.stepDesc}>{step.desc}</p>
+                  <div className={styles.codeSnippet}>{step.codeSnippet}</div>
                 </div>
-                <p className={styles.stepDesc}>
-                  Enhanced Input Action <code>IA_ChangeProp</code> binds to pressing the interaction key (E). Executes a <code>SphereTraceSingle</code> along the player camera interaction channel. Hits on valid world actors are cast to <code>StaticMeshActor</code>.
-                </p>
-                <div className={styles.codeSnippet}>
-                  IA_ChangeProp -&gt; SphereTraceSingle(ECC_Interaction) -&gt; Cast To StaticMeshActor
-                </div>
-              </div>
-
-              <div className={styles.stepCard}>
-                <div className={styles.stepHeader}>
-                  <h4 className={styles.stepTitle}>Step 2: Server RPC &amp; Resource Validation</h4>
-                  <span className={styles.stepTag}>Server RPC Execution</span>
-                </div>
-                <p className={styles.stepDesc}>
-                  Client invokes reliable Server RPC <code>ChangePropOnServer</code>. The server queries <code>PropChangesLeft</code> bounded by <code>MaxPropChanges = 10</code>. The targeted static mesh is validated against the permitted prop array <code>PropAllowedMesh</code> using <code>Array_Contains</code>.
-                </p>
-                <div className={styles.codeSnippet}>
-                  ChangePropOnServer(Reliable) -&gt; Check(PropChangesLeft &gt; 0) -&gt; Array_Contains(PropAllowedMesh)
-                </div>
-              </div>
-
-              <div className={styles.stepCard}>
-                <div className={styles.stepHeader}>
-                  <h4 className={styles.stepTitle}>Step 3: Multicast Replication &amp; Mesh Swap</h4>
-                  <span className={styles.stepTag}>Multicast Event</span>
-                </div>
-                <p className={styles.stepDesc}>
-                  After the inspected server-side checks pass, the server broadcasts <code>UpdateMeshMulticast</code> passing the new <code>StaticMesh</code> reference. All client proxies receive the event and call <code>SetStaticMesh</code> on their replicated <code>PropMesh</code> component.
-                </p>
-                <div className={styles.codeSnippet}>
-                  UpdateMeshMulticast(NetMulticast) -&gt; PropMesh-&gt;SetStaticMesh(NewMesh)
-                </div>
-              </div>
-
-              <div className={styles.stepCard}>
-                <div className={styles.stepHeader}>
-                  <h4 className={styles.stepTitle}>Step 4: Pivot Offset Correction</h4>
-                  <span className={styles.stepTag}>Ground Alignment</span>
-                </div>
-                <p className={styles.stepDesc}>
-                  Props with non-centered or non-ground pivot points are indexed in the <code>MeshWithFAlsePivot</code> array. When matched, hardcoded relative translation adjustments are applied via <code>K2_SetRelativeLocation</code> to keep the disguised mesh grounded.
-                </p>
-                <div className={styles.codeSnippet}>
-                  Array_Contains(MeshWithFAlsePivot) == True -&gt; PropMesh-&gt;K2_SetRelativeLocation(Offset)
-                </div>
-              </div>
-
-              <div className={styles.stepCard}>
-                <div className={styles.stepHeader}>
-                  <h4 className={styles.stepTitle}>Step 5: Camera Decoupling &amp; Free Look</h4>
-                  <span className={styles.stepTag}>Pawn Control</span>
-                </div>
-                <p className={styles.stepDesc}>
-                  <code>EnhancedInputAction IA_RotationLock</code> toggles <code>bUseControllerRotationYaw</code> to false, decoupling controller yaw from actor rotation. Resulting runtime 360° camera orbit behavior remains capture pending.
-                </p>
-                <div className={styles.codeSnippet}>
-                  IA_RotationLock -&gt; Set bUseControllerRotationYaw = false (Yaw Decoupled; Orbit Capture Pending)
-                </div>
-              </div>
+              ))}
             </div>
           </section>
 
           {/* Section 2: Interactive Blueprint Flow Diagram */}
           <section className={styles.section}>
-            <h3 className={styles.sectionHeading}>2. Blueprint Graph Execution Flow</h3>
+            <h3 className={styles.sectionHeading}>2. System Graph Execution Flow</h3>
             <p className={styles.stepDesc}>
-              Vector schematic reflecting the verified Blueprint node connectivity inspected inside <code>BP_propChar</code>:
+              Vector schematic reflecting the verified Blueprint node connectivity and execution paths inspected in the project source:
             </p>
-            <BlueprintFlowDiagram />
+            {exhibit.shortId === 'EX-PH-TRANSFORM' && <BlueprintFlowDiagram />}
+            {exhibit.shortId === 'EX-PH-COMBAT' && <CombatTraceFlowDiagram />}
+            {exhibit.shortId === 'EX-PH-AUDIO' && <AudioVoipDiagram />}
+            {(exhibit.shortId === 'EX-PH-LIFECYCLE' || exhibit.shortId === 'EX-PH-ROUND') && <RoundLifecycleDiagram />}
+            {(exhibit.shortId === 'EX-PH-CUSTOMIZATION' || exhibit.shortId === 'EX-PH-EMOTES') && <EmotesLeaderPoseDiagram />}
           </section>
 
           {/* Section 3: Technical Boundary & Unverified Claims Disclosure */}
@@ -201,48 +164,66 @@ export const TransformationBreakdownDrawer: React.FC<TransformationBreakdownDraw
             <h3 className={styles.sectionHeading}>3. Technical Boundaries &amp; Unverified Claims Disclosure</h3>
             <div className={styles.boundaryCard}>
               <div className={styles.boundaryHeader}>
-                <span>⚠️ Architectural Audit Disclosure</span>
+                <span>⚠️ {exhibit.boundaryTitle}</span>
               </div>
-              <p className={styles.boundaryText}>
-                Early design dossiers claimed dynamic collision bounds calculation where the character capsule automatically resizes to match the transformed prop dimensions:
-              </p>
-              <div className={styles.boundaryFormula}>
-                CapsuleRadius = 0.5 * max(Extent.X, Extent.Y) | CapsuleHalfHeight = max(Extent.Z, CapsuleRadius)
-              </div>
-              <p className={styles.boundaryText}>
-                <strong>Inspected Reality:</strong> Functions such as <code>GetLocalBounds</code>, <code>SetCapsuleSize</code>, and dynamic ground offsets were <em>not found</em> in the inspected <code>BP_propChar</code> scope. Dynamic capsule resizing nodes were not found in the inspected Blueprint scope, and runtime capsule behavior remains unverified; collision is only disabled upon elimination. Pre-transform geometry collision sweeps were likewise not found in the inspected graphs. These claims are classified as <strong>UNVERIFIED</strong>; runtime verification remains pending.
-              </p>
+              {exhibit.boundaryFormula && (
+                <div className={styles.boundaryFormula}>{exhibit.boundaryFormula}</div>
+              )}
+              <p className={styles.boundaryText}>{exhibit.boundaryDescription}</p>
             </div>
           </section>
 
-          {/* Section 4: Video Proof Viewport */}
+          {/* Section 4: Capture Viewport & Verification Requirements */}
           <section className={styles.section}>
-            <h3 className={styles.sectionHeading}>4. Split-Screen Evidence Viewport (PH-TRANSFORM)</h3>
+            <h3 className={styles.sectionHeading}>4. Capture Prerequisite &amp; Media Viewport</h3>
             <p className={styles.stepDesc}>
-              Structured storyboard demonstrating the dual-client recording required to substantiate multiplayer replication:
+              Verified capture criteria required to transition this system from VERIFIED_IMPLEMENTATION to RUNTIME_VERIFIED:
             </p>
-            <TransformStoryboardSvg />
+            {exhibit.shortId === 'EX-PH-TRANSFORM' ? (
+              <TransformStoryboardSvg />
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.5rem' }}>
+                {exhibit.mediaPlaceholders.map((media) => (
+                  <div
+                    key={media.id}
+                    style={{
+                      background: 'rgba(10, 14, 20, 0.75)',
+                      border: '1px dashed rgba(56, 189, 248, 0.4)',
+                      borderRadius: '6px',
+                      padding: '1rem',
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.35rem' }}>
+                      <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#f59e0b' }}>
+                        PREREQUISITE: {media.id} ({media.duration})
+                      </span>
+                      <span style={{ fontSize: '0.75rem', fontFamily: 'monospace', color: '#38bdf8' }}>
+                        {media.requirement}
+                      </span>
+                    </div>
+                    <p style={{ fontSize: '0.8125rem', color: '#cbd5e1', margin: '0 0 0.5rem 0' }}>
+                      {media.description}
+                    </p>
+                    <p style={{ fontSize: '0.75rem', color: '#94a3b8', margin: 0, fontStyle: 'italic' }}>
+                      Target Proof: {media.whatCaptureProves}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
           </section>
 
           {/* Section 5: Provenance & Sourcing */}
           <section className={styles.section}>
             <h3 className={styles.sectionHeading}>5. Provenance &amp; Authorship</h3>
             <div className={styles.provenanceBox}>
-              <p className={styles.provenanceText}>
-                <strong>Logic Authorship:</strong> <code>USER_CONFIRMED: pending</code> (project repository <code>BP_propChar</code>).
-              </p>
-              <p className={styles.provenanceText}>
-                <strong>Prop Meshes &amp; Materials:</strong> <code>PROVENANCE_PENDING</code> (folder <code>Content/resources/Construction_VOL1</code>).
-              </p>
-              <p className={styles.provenanceText}>
-                <strong>Engine Version:</strong> Unreal Engine 5.7.4 (Source: <code>G:\Unreal Projects\SheeshhPropHuntYT</code>).
-              </p>
+              <p className={styles.provenanceText}>{exhibit.provenanceNote}</p>
             </div>
           </section>
         </div>
 
         <div className={styles.footer}>
-          <button type="button" className={styles.dismissBtn} onClick={handleClose}>
+          <button type="button" className={styles.backBtn} onClick={handleClose}>
             Back to Exhibit Card
           </button>
         </div>
@@ -250,3 +231,5 @@ export const TransformationBreakdownDrawer: React.FC<TransformationBreakdownDraw
     </div>
   );
 };
+
+export default TransformationBreakdownDrawer;
