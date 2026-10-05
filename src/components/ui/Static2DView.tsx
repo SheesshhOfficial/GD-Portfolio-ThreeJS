@@ -22,6 +22,12 @@ const BlueprintFlowDiagram = lazy(() =>
   }))
 );
 
+const DecoySpawnFlowDiagram = lazy(() =>
+  import('../diagrams/SystemsDiagrams').then((m) => ({
+    default: m.DecoySpawnFlowDiagram,
+  }))
+);
+
 const CombatTraceFlowDiagram = lazy(() =>
   import('../diagrams/SystemsDiagrams').then((m) => ({
     default: m.CombatTraceFlowDiagram,
@@ -104,7 +110,7 @@ export const Static2DView: React.FC = () => {
           </p>
         </div>
 
-        {/* All 5 Prop Hunt System Exhibits Rendered Sequentially */}
+        {/* All 6 Prop Hunt System Exhibits Rendered Sequentially */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
           {ALL_EXHIBITS.map((exhibit, exIdx) => (
             <article
@@ -182,6 +188,7 @@ export const Static2DView: React.FC = () => {
                     }
                   >
                     {exhibit.shortId === 'EX-PH-TRANSFORM' && <BlueprintFlowDiagram />}
+                    {exhibit.shortId === 'EX-PH-DECOY' && <DecoySpawnFlowDiagram />}
                     {exhibit.shortId === 'EX-PH-COMBAT' && <CombatTraceFlowDiagram />}
                     {exhibit.shortId === 'EX-PH-AUDIO' && <AudioVoipDiagram />}
                     {(exhibit.shortId === 'EX-PH-LIFECYCLE' || exhibit.shortId === 'EX-PH-ROUND') && <RoundLifecycleDiagram />}

@@ -3,6 +3,7 @@ import { usePortfolio } from '../../context/PortfolioContext';
 import { EXHIBITS_MAP, EXHIBIT_TRANSFORM } from '../../data/exhibits';
 import { BlueprintFlowDiagram } from '../diagrams/BlueprintFlowDiagram';
 import {
+  DecoySpawnFlowDiagram,
   CombatTraceFlowDiagram,
   AudioVoipDiagram,
   RoundLifecycleDiagram,
@@ -153,6 +154,7 @@ export const TransformationBreakdownDrawer: React.FC<TransformationBreakdownDraw
               Vector schematic reflecting the verified Blueprint node connectivity and execution paths inspected in the project source:
             </p>
             {exhibit.shortId === 'EX-PH-TRANSFORM' && <BlueprintFlowDiagram />}
+            {exhibit.shortId === 'EX-PH-DECOY' && <DecoySpawnFlowDiagram />}
             {exhibit.shortId === 'EX-PH-COMBAT' && <CombatTraceFlowDiagram />}
             {exhibit.shortId === 'EX-PH-AUDIO' && <AudioVoipDiagram />}
             {(exhibit.shortId === 'EX-PH-LIFECYCLE' || exhibit.shortId === 'EX-PH-ROUND') && <RoundLifecycleDiagram />}

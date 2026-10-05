@@ -71,6 +71,68 @@ export const EXHIBIT_TRANSFORM: ExhibitData = {
   authorshipStatus: 'USER_CONFIRMED: pending',
 };
 
+export const EXHIBIT_DECOY: ExhibitData = {
+  id: 'EX-PH-DECOY',
+  shortId: 'EX-PH-DECOY',
+  title: 'Decoy Prop Placement & Spatial Deception',
+  shortTitle: 'Decoy Placement & Clutter',
+  subtitle: 'Inspected Blueprint graph analysis · Unreal Engine 5.7.4 (BP_propChar, BP_SPawnedProp)',
+  category: 'Gameplay Mechanics & Replication',
+  role: 'USER_CONFIRMED: pending (Gameplay Programming)',
+  engine: 'Unreal Engine 5.7.4',
+  tools: ['Blueprints', 'Enhanced Input', 'Actor Spawning', 'Physics Simulation'],
+  summary:
+    'A spatial deception mechanic where disguised prop players invoke a server RPC to spawn physical duplicate decoy actors matching their active static mesh disguise, bounded by a 5-decoy resource limit and configured with physics simulation.',
+  mediaPlaceholders: [
+    {
+      id: 'PH-DECOY',
+      label: 'Decoy Placement & Clutter Reel',
+      duration: '15–20s gameplay clip',
+      requirement: 'RUNTIME_VERIFIED',
+      description: 'Recording demonstrating decoy deployment, count limitation, physics settling onto geometry, and hunter weapon interaction.',
+      whatCaptureProves: 'Demonstrates decoy actor spawning, 5-prop spawn limit enforcement, physics settling, and hunter destruction interaction.',
+    },
+  ],
+  steps: [
+    {
+      title: 'Step 1: Input Trigger & Server RPC',
+      tag: 'Client Input',
+      desc: 'Prop player presses IA_SpawnProp, invoking reliable Server RPC Spawnproponserver to initiate decoy placement.',
+      codeSnippet: 'IA_SpawnProp -> Spawnproponserver(Reliable Server RPC)',
+    },
+    {
+      title: 'Step 2: Resource Accounting & Limit Validation',
+      tag: 'Server Validation',
+      desc: 'Server evaluates SpawnPropsLeft against MaxSpawnProps = 5. If capacity remains, the counter decrements and placement proceeds.',
+      codeSnippet: 'Spawnproponserver -> Check(SpawnPropsLeft > 0) -> Decrement(SpawnPropsLeft)',
+    },
+    {
+      title: 'Step 3: Decoy Actor Spawning',
+      tag: 'Server Spawn',
+      desc: 'Server reads player current location and forward transform to spawn an instance of BP_SPawnedProp into the world.',
+      codeSnippet: 'GetActorTransform -> SpawnActor(BP_SPawnedProp)',
+    },
+    {
+      title: 'Step 4: Disguise Mesh Synchronization',
+      tag: 'Multicast Mesh Setup',
+      desc: 'Server queries active prop disguise mesh and invokes MulticastSetMesh on the spawned actor to visually match the player prop.',
+      codeSnippet: 'GetActivePropMesh -> MulticastSetMesh(TargetMesh)',
+    },
+    {
+      title: 'Step 5: Physics Simulation & Collision Profile',
+      tag: 'Physics Settling',
+      desc: 'BP_SPawnedProp contains simulated-physics and collision-profile setup. The resulting drop and settling behavior remains runtime capture pending.',
+      codeSnippet: 'BP_SPawnedProp -> Physics Simulation Setup -> Collision Profile Setup',
+    },
+  ],
+  boundaryTitle: 'Architectural Audit: Decoy Placement, Limit Enforcement & Destruction Authority',
+  boundaryDescription:
+    'Inspection verifies the Spawnproponserver RPC, MaxSpawnProps = 5 bounding check, BP_SPawnedProp spawning, and MulticastSetMesh Blueprint structures. However, runtime decoy placement, physics settling behavior, hunter interaction, and authority over decoy destruction (Server_DestroyFakeProp configured as owning-client RPC in metadata vs direct Destroy Actor) remain capture pending and classified as UNVERIFIED at runtime.',
+  provenanceNote:
+    'Spawning & replication Blueprints: Project repository logic (USER_CONFIRMED: pending). Decoy mesh: Inherited from active prop disguise (PROVENANCE_PENDING).',
+  authorshipStatus: 'USER_CONFIRMED: pending',
+};
+
 export const EXHIBIT_COMBAT: ExhibitData = {
   id: 'EX-PH-COMBAT',
   shortId: 'EX-PH-COMBAT',
@@ -325,6 +387,7 @@ export const EXHIBIT_EMOTES = EXHIBIT_CUSTOMIZATION;
 
 export const ALL_EXHIBITS: ExhibitData[] = [
   EXHIBIT_TRANSFORM,
+  EXHIBIT_DECOY,
   EXHIBIT_COMBAT,
   EXHIBIT_AUDIO,
   EXHIBIT_LIFECYCLE,
@@ -334,6 +397,7 @@ export const ALL_EXHIBITS: ExhibitData[] = [
 export const EXHIBITS_MAP: Record<string, ExhibitData> = {
   'sheeshh-prop-hunt': EXHIBIT_TRANSFORM,
   'EX-PH-TRANSFORM': EXHIBIT_TRANSFORM,
+  'EX-PH-DECOY': EXHIBIT_DECOY,
   'EX-PH-COMBAT': EXHIBIT_COMBAT,
   'EX-PH-AUDIO': EXHIBIT_AUDIO,
   'EX-PH-LIFECYCLE': EXHIBIT_LIFECYCLE,

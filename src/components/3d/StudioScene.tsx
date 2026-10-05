@@ -315,6 +315,7 @@ export const StudioScene: React.FC = () => {
 
   const isBenchActive = state.activeExhibitId === 'sheeshh-prop-hunt' || state.activeExhibitId === 'EX-PH-TRANSFORM';
   const isSystemsActive =
+    state.activeExhibitId === 'EX-PH-DECOY' ||
     state.activeExhibitId === 'EX-PH-COMBAT' ||
     state.activeExhibitId === 'EX-PH-AUDIO' ||
     state.activeExhibitId === 'EX-PH-LIFECYCLE' ||

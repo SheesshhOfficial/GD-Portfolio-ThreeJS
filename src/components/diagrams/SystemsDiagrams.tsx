@@ -20,6 +20,91 @@ const STYLES = {
 };
 
 /**
+ * DecoySpawnFlowDiagram - Illustrates the decoy spawning loop:
+ * IA_SpawnProp input, server capacity check (MaxSpawnProps = 5),
+ * BP_SPawnedProp actor instantiation, MulticastSetMesh, and physics simulation.
+ */
+export const DecoySpawnFlowDiagram: React.FC = () => {
+  return (
+    <div style={STYLES.container}>
+      <svg
+        viewBox="0 0 880 280"
+        style={STYLES.svg}
+        role="img"
+        aria-label="Decoy Prop Placement and Replication Pipeline Diagram"
+      >
+        <defs>
+          <marker id="arrow-amber" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 8 5 L 0 9 z" fill="#f59e0b" />
+          </marker>
+        </defs>
+
+        {/* Step 1: Input */}
+        <g transform="translate(10, 20)">
+          <rect width="195" height="180" rx="6" fill="#0f172a" stroke="#334155" />
+          <rect width="195" height="26" rx="6 6 0 0" fill="#0284c7" />
+          <text x="10" y="17" fill="#f8fafc" fontSize="10" fontWeight="700" fontFamily="sans-serif">1. CLIENT INPUT</text>
+          <text x="12" y="46" fill="#38bdf8" fontSize="9.5" fontWeight="600" fontFamily="monospace">IA_SpawnProp</text>
+          <text x="12" y="66" fill="#94a3b8" fontSize="8.5" fontFamily="sans-serif">• Enhanced Input trigger</text>
+          <text x="12" y="84" fill="#94a3b8" fontSize="8.5" fontFamily="sans-serif">• Disguised prop pawn</text>
+          <text x="12" y="102" fill="#94a3b8" fontSize="8.5" fontFamily="sans-serif">• Calls Spawnproponserver</text>
+          <text x="12" y="120" fill="#38bdf8" fontSize="8.5" fontFamily="monospace">Server RPC (Reliable)</text>
+        </g>
+
+        <line x1="210" y1="110" x2="230" y2="110" stroke="#f59e0b" strokeWidth="2" markerEnd="url(#arrow-amber)" />
+
+        {/* Step 2: Server Accounting */}
+        <g transform="translate(235, 20)">
+          <rect width="195" height="180" rx="6" fill="#0f172a" stroke="#334155" />
+          <rect width="195" height="26" rx="6 6 0 0" fill="#d97706" />
+          <text x="10" y="17" fill="#f8fafc" fontSize="10" fontWeight="700" fontFamily="sans-serif">2. RESOURCE CHECK</text>
+          <text x="12" y="46" fill="#fbbf24" fontSize="9.5" fontWeight="600" fontFamily="monospace">SpawnPropsLeft</text>
+          <text x="12" y="66" fill="#94a3b8" fontSize="8.5" fontFamily="sans-serif">• MaxSpawnProps = 5</text>
+          <text x="12" y="84" fill="#94a3b8" fontSize="8.5" fontFamily="sans-serif">• Bounded counter check</text>
+          <text x="12" y="102" fill="#94a3b8" fontSize="8.5" fontFamily="sans-serif">• Decrements on spawn</text>
+          <text x="12" y="120" fill="#f59e0b" fontSize="8.5" fontFamily="monospace">SpawnActor(BP_SPawnedProp)</text>
+        </g>
+
+        <line x1="435" y1="110" x2="455" y2="110" stroke="#f59e0b" strokeWidth="2" markerEnd="url(#arrow-amber)" />
+
+        {/* Step 3: Mesh Setup */}
+        <g transform="translate(460, 20)">
+          <rect width="195" height="180" rx="6" fill="#0f172a" stroke="#334155" />
+          <rect width="195" height="26" rx="6 6 0 0" fill="#059669" />
+          <text x="10" y="17" fill="#f8fafc" fontSize="10" fontWeight="700" fontFamily="sans-serif">3. MESH SYNC</text>
+          <text x="12" y="46" fill="#34d399" fontSize="9.5" fontWeight="600" fontFamily="monospace">MulticastSetMesh</text>
+          <text x="12" y="66" fill="#94a3b8" fontSize="8.5" fontFamily="sans-serif">• Reads active disguise</text>
+          <text x="12" y="84" fill="#94a3b8" fontSize="8.5" fontFamily="sans-serif">• Assigns static mesh</text>
+          <text x="12" y="102" fill="#94a3b8" fontSize="8.5" fontFamily="sans-serif">• Matches material state</text>
+          <text x="12" y="120" fill="#94a3b8" fontSize="8.5" fontFamily="sans-serif">• Multicast broadcast</text>
+        </g>
+
+        <line x1="660" y1="110" x2="680" y2="110" stroke="#f59e0b" strokeWidth="2" markerEnd="url(#arrow-amber)" />
+
+        {/* Step 4: Physics Settling */}
+        <g transform="translate(685, 20)">
+          <rect width="185" height="180" rx="6" fill="#0f172a" stroke="#334155" />
+          <rect width="185" height="26" rx="6 6 0 0" fill="#7c3aed" />
+          <text x="10" y="17" fill="#f8fafc" fontSize="10" fontWeight="700" fontFamily="sans-serif">4. PHYSICS SETTLING</text>
+          <text x="12" y="46" fill="#c084fc" fontSize="9.5" fontWeight="600" fontFamily="monospace">Physics &amp; Collision</text>
+          <text x="12" y="66" fill="#94a3b8" fontSize="8.5" fontFamily="sans-serif">• SetSimulatePhysics(true)</text>
+          <text x="12" y="84" fill="#94a3b8" fontSize="8.5" fontFamily="sans-serif">• Collision profile active</text>
+          <text x="12" y="102" fill="#94a3b8" fontSize="8.5" fontFamily="sans-serif">• Settles onto floor</text>
+          <text x="12" y="120" fill="#94a3b8" fontSize="8.5" fontFamily="sans-serif">• Destruction pending</text>
+        </g>
+
+        {/* Boundary callout */}
+        <g transform="translate(10, 215)">
+          <rect width="860" height="50" rx="4" fill="rgba(245, 158, 11, 0.08)" stroke="rgba(245, 158, 11, 0.3)" />
+          <text x="16" y="20" fill="#fbbf24" fontSize="10" fontWeight="700" fontFamily="sans-serif">⚠️ Architectural Disclosure: Decoy Authority &amp; Destruction Discrepancy</text>
+          <text x="16" y="38" fill="#cbd5e1" fontSize="9" fontFamily="sans-serif">Spawn logic and MulticastSetMesh are verified in Blueprints. Runtime placement, physics settling, hunter interaction, and destruction authority (Server_DestroyFakeProp metadata discrepancy vs Destroy Actor) remain CAPTURE_PENDING.</text>
+        </g>
+      </svg>
+    </div>
+  );
+};
+
+/**
  * CombatTraceFlowDiagram - Illustrates the networked hit-scan firing loop,
  * client-informed camera query, server raycast, hit reaction, and spectator hand-off.
  */

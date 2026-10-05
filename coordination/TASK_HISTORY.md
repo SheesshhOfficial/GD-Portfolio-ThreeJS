@@ -12,4 +12,5 @@
 | P004-R1 | Correct performance measurements, evidence text, and reduced-motion state | COMPLETE | Approved by Codex |
 | P005 | Add the remaining Prop Hunt gameplay-system exhibits | COMPLETE | Changes requested |
 | P005-R1 | Remove invented implementation details and production diagnostics | COMPLETE | Approved by Codex |
-| P006 | Add the Decoy Placement exhibit and finish the Prop Hunt collection | READY | Pending |
+| P006 | Add the Decoy Placement exhibit and finish the Prop Hunt collection | COMPLETE | Approved by Codex |
+| P007 | Add Technical Art and 3D Asset Pipeline pillars | READY | Pending |
