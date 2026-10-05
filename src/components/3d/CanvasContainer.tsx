@@ -5,7 +5,7 @@ import styles from './CanvasContainer.module.css';
 
 export const CanvasContainer: React.FC = () => {
   return (
-    <div className={styles.canvasWrapper} aria-hidden="true">
+    <div className={styles.canvasWrapper} role="region" aria-label="3D Observatory Studio">
       <Canvas
         camera={{ position: [0, 2.2, 5.5], fov: 48, near: 0.1, far: 50 }}
         dpr={[1, 1.5]}

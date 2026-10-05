@@ -1,0 +1,119 @@
+.hotspotContainer {
+  pointer-events: auto;
+  user-select: none;
+  white-space: nowrap;
+  transition: opacity 250ms ease, transform 200ms ease;
+}
+
+.hotspotHidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.hotspotVisible {
+  opacity: 1;
+}
+
+.hotspotButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.5rem 0.85rem;
+  background: rgba(10, 15, 24, 0.88);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55), 0 0 16px rgba(56, 189, 248, 0.2);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #f8fafc;
+  cursor: pointer;
+  text-align: left;
+  transition: all var(--transition-fast);
+  min-height: 44px;
+}
+
+.hotspotButton:hover,
+.hotspotButton:focus-visible {
+  background: rgba(14, 23, 38, 0.95);
+  border-color: #38bdf8;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.7), 0 0 24px rgba(56, 189, 248, 0.45);
+  transform: translateY(-2px) scale(1.03);
+  outline: none;
+}
+
+.hotspotBench {
+  border-color: rgba(245, 158, 11, 0.4);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55), 0 0 16px rgba(245, 158, 11, 0.2);
+}
+
+.hotspotBench:hover,
+.hotspotBench:focus-visible {
+  border-color: #fbbf24;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.7), 0 0 24px rgba(245, 158, 11, 0.45);
+}
+
+.icon {
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+.textGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.title {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #f8fafc;
+  letter-spacing: -0.01em;
+}
+
+.subtitle {
+  font-size: 0.6875rem;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.actionBadge {
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.2rem 0.45rem;
+  background: rgba(56, 189, 248, 0.18);
+  color: #38bdf8;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.hotspotBench .actionBadge {
+  background: rgba(245, 158, 11, 0.18);
+  color: #fbbf24;
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+@media (max-width: 640px) {
+  .hotspotButton {
+    padding: 0.55rem 0.85rem;
+    gap: 0.45rem;
+    min-height: 48px;
+    min-width: 48px;
+  }
+
+  .title {
+    font-size: 0.8125rem;
+  }
+
+  .subtitle {
+    display: none;
+  }
+
+  .actionBadge {
+    display: none;
+  }
+}

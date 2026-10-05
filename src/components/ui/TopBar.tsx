@@ -8,7 +8,7 @@ export const TopBar: React.FC = () => {
   return (
     <header className={styles.topBar} role="banner">
       <div className={styles.brand}>
-        <span className={styles.name}>Ashish Ranjan</span>
+        <h1 className={styles.name}>Ashish Ranjan</h1>
         <span className={styles.divider} aria-hidden="true">|</span>
         <span className={styles.title}>Game Dev & Tech Art</span>
       </div>
@@ -18,13 +18,14 @@ export const TopBar: React.FC = () => {
         <button
           id="direct-portfolio-btn"
           type="button"
-          className={`${styles.button} ${state.isDirectMenuOpen ? styles.buttonActive : ''}`}
+          className={`${styles.button} ${styles.directButton} ${state.isDirectMenuOpen ? styles.buttonActive : ''}`}
           onClick={() => dispatch({ type: 'TOGGLE_DIRECT_MENU' })}
           aria-expanded={state.isDirectMenuOpen}
           aria-controls="direct-navigation-menu"
         >
           <span className={styles.icon} aria-hidden="true">📑</span>
-          <span>Direct Portfolio</span>
+          <span className={styles.btnLabel}>Direct Portfolio</span>
+          <span className={styles.btnLabelShort}>Portfolio</span>
         </button>
 
         {/* 3D / 2D View Mode Toggle */}
@@ -47,26 +48,34 @@ export const TopBar: React.FC = () => {
           <span className={styles.icon} aria-hidden="true">
             {state.webglSupported && state.viewMode === '3d' ? '🏛️' : '📄'}
           </span>
-          <span>
+          <span className={styles.btnLabel}>
             {!state.webglSupported
               ? 'View: 2D (3D Unavailable)'
               : state.viewMode === '3d'
               ? 'View: 3D Studio'
               : 'View: 2D Gallery'}
           </span>
+          <span className={styles.btnLabelShort}>
+            {!state.webglSupported
+              ? '2D Only'
+              : state.viewMode === '3d'
+              ? '3D'
+              : '2D'}
+          </span>
         </button>
 
         {/* Sound Control (Disabled: audio implementation pending) */}
         <button
+          id="sound-control-btn"
           type="button"
-          className={`${styles.button} ${styles.disabledButton}`}
+          className={`${styles.button} ${styles.disabledButton} ${styles.soundButton}`}
           disabled
           aria-disabled="true"
           title="Sound: Coming later (Audio implementation pending)"
           aria-label="Sound: Coming later (Audio implementation pending)"
         >
           <span className={styles.icon} aria-hidden="true">🔇</span>
-          <span>Sound: Coming later</span>
+          <span className={styles.btnLabel}>Sound: Coming later</span>
         </button>
       </nav>
     </header>

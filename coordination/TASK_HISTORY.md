@@ -15,4 +15,5 @@
 | P006 | Add the Decoy Placement exhibit and finish the Prop Hunt collection | COMPLETE | Approved by Codex |
 | P007 | Add Technical Art and 3D Asset Pipeline pillars | COMPLETE | Changes requested |
 | P007-R1 | Correct Technical Art internals and 3D evidence-request standards | COMPLETE | Approved by Codex |
-| P008 | Perform sitewide visual QA and recruiter-journey polish | READY | Pending |
+| P008 | Perform sitewide visual QA and recruiter-journey polish | COMPLETE | Changes requested |
+| P008-R1 | Correct accessibility, camera targeting, storage resilience, touch sizing, and bundle accounting | COMPLETE | Approved by Codex |

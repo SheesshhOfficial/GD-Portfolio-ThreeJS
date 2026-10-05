@@ -1,7 +1,9 @@
 import React, { useRef, useLayoutEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
+import { Html } from '@react-three/drei';
 import * as THREE from 'three';
 import { usePortfolio } from '../../context/PortfolioContext';
+import hotspotStyles from './StudioHotspot.module.css';
 
 // Instanced meshes for architectural perimeter (columns and sky horizons)
 const ObservatoryPerimeter: React.FC = () => {
@@ -208,7 +210,11 @@ const ConsoleScreens: React.FC = () => {
 
 export const StudioScene: React.FC = () => {
   const { state, dispatch } = usePortfolio();
-  const { camera } = useThree();
+  const { camera, size } = useThree();
+  const aspect = size.width / Math.max(size.height, 1);
+  const isPortrait = aspect < 1.0;
+  const idleZ = isPortrait ? Math.min(5.5 / Math.max(aspect, 0.35), 13.0) : 5.5;
+  const idleY = isPortrait ? 2.8 : 2.2;
 
   // Camera animation target references
   const currentLookAt = useRef(new THREE.Vector3(0, 1.2, 0));
@@ -228,13 +234,13 @@ export const StudioScene: React.FC = () => {
 
   // Update target coordinates based on focus mode
   if (state.cameraFocus === 'transformation-bench') {
-    targetPosition.current.set(2.4, 1.6, 2.2);
+    targetPosition.current.set(isPortrait ? 2.0 : 2.4, 1.6, isPortrait ? 2.8 : 2.2);
     targetLookAt.current.set(2.2, 0.9, 0);
   } else if (state.cameraFocus === 'systems-console') {
-    targetPosition.current.set(-2.4, 1.6, 2.2);
+    targetPosition.current.set(isPortrait ? -2.0 : -2.4, 1.6, isPortrait ? 2.8 : 2.2);
     targetLookAt.current.set(-2.2, 0.9, 0);
   } else {
-    targetPosition.current.set(0, 2.2, 5.5);
+    targetPosition.current.set(0, idleY, idleZ);
     targetLookAt.current.set(0, 1.2, 0);
   }
 
@@ -476,7 +482,7 @@ export const StudioScene: React.FC = () => {
           </mesh>
         </group>
 
-        {/* 6. Hotspot Floating Reticle */}
+        {/* 6. Hotspot Floating Reticle & Interactive Label */}
         <group position={[0, 1.6, 0]}>
           <mesh ref={benchReticleRef}>
             <torusGeometry args={[0.24, 0.02, 8, 24]} />
@@ -491,6 +497,35 @@ export const StudioScene: React.FC = () => {
             <sphereGeometry args={[0.04, 12, 12]} />
             <meshBasicMaterial color={isBenchActive ? '#38bdf8' : '#fbbf24'} />
           </mesh>
+
+          {!state.isEntranceActive && !isBenchActive && (
+            <Html
+              center
+              position={[isPortrait ? -0.75 : 0, 0.55, 0]}
+              distanceFactor={isPortrait ? 13 : 8}
+              zIndexRange={[20, 0]}
+              className={`${hotspotStyles.hotspotContainer} ${
+                state.activeExhibitId ? hotspotStyles.hotspotHidden : hotspotStyles.hotspotVisible
+              }`}
+            >
+              <button
+                id="hotspot-btn-bench"
+                type="button"
+                className={`${hotspotStyles.hotspotButton} ${hotspotStyles.hotspotBench}`}
+                onClick={handleBenchClick}
+                aria-label="Inspect Transformation Bench: Prop Disguise & Technical Art"
+              >
+                <span className={hotspotStyles.icon} aria-hidden="true">🛠️</span>
+                <span className={hotspotStyles.textGroup}>
+                  <strong className={hotspotStyles.title}>Transformation Bench</strong>
+                  <span className={hotspotStyles.subtitle}>Prop Disguise &amp; Tech Art</span>
+                </span>
+                <span className={hotspotStyles.actionBadge}>
+                  Inspect <span>→</span>
+                </span>
+              </button>
+            </Html>
+          )}
         </group>
       </group>
 
@@ -522,7 +557,7 @@ export const StudioScene: React.FC = () => {
         {/* Triple Telemetry Screens (Instanced: 1 draw call for 3 screens) */}
         <ConsoleScreens />
 
-        {/* Hotspot Floating Reticle */}
+        {/* Hotspot Floating Reticle & Interactive Label */}
         <group position={[0, 1.6, 0]}>
           <mesh ref={systemsReticleRef}>
             <torusGeometry args={[0.24, 0.02, 8, 24]} />
@@ -537,6 +572,35 @@ export const StudioScene: React.FC = () => {
             <sphereGeometry args={[0.04, 12, 12]} />
             <meshBasicMaterial color={isSystemsActive ? '#38bdf8' : '#0ea5e9'} />
           </mesh>
+
+          {!state.isEntranceActive && !isSystemsActive && (
+            <Html
+              center
+              position={[isPortrait ? 0.75 : 0, 0.55, 0]}
+              distanceFactor={isPortrait ? 13 : 8}
+              zIndexRange={[20, 0]}
+              className={`${hotspotStyles.hotspotContainer} ${
+                state.activeExhibitId ? hotspotStyles.hotspotHidden : hotspotStyles.hotspotVisible
+              }`}
+            >
+              <button
+                id="hotspot-btn-systems"
+                type="button"
+                className={hotspotStyles.hotspotButton}
+                onClick={handleSystemsConsoleClick}
+                aria-label="Inspect Systems Console: Multiplayer & Combat Systems"
+              >
+                <span className={hotspotStyles.icon} aria-hidden="true">🖥️</span>
+                <span className={hotspotStyles.textGroup}>
+                  <strong className={hotspotStyles.title}>Systems Console</strong>
+                  <span className={hotspotStyles.subtitle}>Multiplayer &amp; Combat</span>
+                </span>
+                <span className={hotspotStyles.actionBadge}>
+                  Inspect <span>→</span>
+                </span>
+              </button>
+            </Html>
+          )}
         </group>
       </group>
     </>

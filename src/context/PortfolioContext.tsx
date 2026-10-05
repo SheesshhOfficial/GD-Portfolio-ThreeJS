@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
-import { PortfolioState, PortfolioAction } from '../types/portfolio';
+import { PortfolioState, PortfolioAction, CameraFocus } from '../types/portfolio';
 
 function checkInitialReducedMotion(): boolean {
   if (typeof window !== 'undefined' && window.matchMedia) {
@@ -19,6 +19,22 @@ const initialState: PortfolioState = {
   isBreakdownOpen: false,
 };
 
+export function getStationForExhibit(exhibitId: string | null): CameraFocus {
+  if (!exhibitId) return 'center';
+  const systemsExhibits = new Set([
+    'EX-PH-COMBAT',
+    'EX-PH-AUDIO',
+    'EX-PH-LIFECYCLE',
+    'EX-PH-CUSTOMIZATION',
+    'EX-PH-ROUND',
+    'EX-PH-EMOTES',
+  ]);
+  if (systemsExhibits.has(exhibitId)) {
+    return 'systems-console';
+  }
+  return 'transformation-bench';
+}
+
 function portfolioReducer(state: PortfolioState, action: PortfolioAction): PortfolioState {
   switch (action.type) {
     case 'SET_VIEW_MODE':
@@ -35,7 +51,7 @@ function portfolioReducer(state: PortfolioState, action: PortfolioAction): Portf
       return {
         ...state,
         activeExhibitId: action.payload,
-        cameraFocus: action.payload ? 'transformation-bench' : 'center',
+        cameraFocus: getStationForExhibit(action.payload),
         isDirectMenuOpen: false,
         isBreakdownOpen: action.payload === null ? false : state.isBreakdownOpen,
       };

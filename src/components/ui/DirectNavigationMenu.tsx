@@ -125,6 +125,18 @@ export const DirectNavigationMenu: React.FC = () => {
         </div>
 
         <div className={styles.content}>
+          {/* Recruiter Overview & Fast Stats */}
+          <div className={styles.recruiterHeader}>
+            <div className={styles.recruiterStats}>
+              <span className={styles.statPill}><strong>10</strong> Total Exhibits</span>
+              <span className={styles.statPill}><strong>3</strong> Technical Pillars</span>
+              <span className={styles.statPillHighlight}>Unreal Engine 5.7.4 &amp; Blender</span>
+            </div>
+            <p className={styles.recruiterSummary}>
+              Direct technical index for reviewers: select any exhibit below to position the studio camera and inspect verified engineering breakdowns.
+            </p>
+          </div>
+
           {/* Pillar 1: Verified Gameplay Systems Exhibits */}
           <section className={styles.section}>
             <span className={styles.pillarTag}>Pillar 1: Verified Sheeshh Prop Hunt Gameplay Systems</span>

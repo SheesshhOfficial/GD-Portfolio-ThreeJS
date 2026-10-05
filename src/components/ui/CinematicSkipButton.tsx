@@ -55,6 +55,7 @@ export const CinematicSkipButton: React.FC = () => {
       }}
     >
       <button
+        id="cinematic-skip-btn"
         type="button"
         onClick={() => dispatch({ type: 'COMPLETE_ENTRANCE' })}
         style={{
@@ -71,6 +72,8 @@ export const CinematicSkipButton: React.FC = () => {
           display: 'flex',
           alignItems: 'center',
           gap: '0.5rem',
+          minHeight: '44px',
+          minWidth: '44px',
         }}
         aria-label="Skip Cinematic Entrance"
       >

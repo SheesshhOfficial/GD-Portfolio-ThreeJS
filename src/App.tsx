@@ -35,6 +35,13 @@ const ExhibitCard = lazy(() =>
   }))
 );
 
+// Lazy-load orientation and recruiter guide HUD
+const OrientationHud = lazy(() =>
+  import('./components/ui/OrientationHud').then((m) => ({
+    default: m.OrientationHud,
+  }))
+);
+
 const PortfolioApp: React.FC = () => {
   const { state, dispatch } = usePortfolio();
 
@@ -118,10 +125,22 @@ const PortfolioApp: React.FC = () => {
           <Suspense fallback={null}>
             <TransformationBreakdownDrawer />
           </Suspense>
+
+          {/* Orientation & Recruiter Guide HUD */}
+          <Suspense fallback={null}>
+            <OrientationHud />
+          </Suspense>
         </main>
       ) : (
         <>
-          <Suspense fallback={<div style={{ padding: '2rem', textAlign: 'center', color: '#94a3b8' }}>Loading gallery...</div>}>
+          <Suspense
+            fallback={
+              <div style={{ padding: '3rem 2rem', textAlign: 'center', color: '#94a3b8', background: '#0a0e14', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.75rem' }}>
+                <div style={{ width: '32px', height: '32px', border: '3px solid rgba(56, 189, 248, 0.2)', borderTopColor: '#38bdf8', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+                <span style={{ fontSize: '0.875rem', color: '#cbd5e1' }}>Loading 2D Portfolio Gallery...</span>
+              </div>
+            }
+          >
             <Static2DView />
           </Suspense>
           <Suspense fallback={null}>
