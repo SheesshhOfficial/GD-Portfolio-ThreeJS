@@ -63,6 +63,59 @@
   font-weight: 500;
 }
 
+.statusVerified {
+  font-size: 0.6875rem;
+  padding: 0.15rem 0.5rem;
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+}
+
+.statusSetup {
+  font-size: 0.6875rem;
+  padding: 0.15rem 0.5rem;
+  background: rgba(2, 132, 199, 0.15);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+}
+
+.statusRequired {
+  font-size: 0.6875rem;
+  padding: 0.15rem 0.5rem;
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+}
+
+.evidenceBanner {
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1rem;
+}
+
+.evidenceBannerTitle {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #fbbf24;
+  margin-bottom: 0.25rem;
+}
+
+.evidenceBannerText {
+  font-size: 0.75rem;
+  color: #cbd5e1;
+  line-height: 1.4;
+  margin: 0;
+}
+
 .title {
   font-size: 1.25rem;
   font-weight: 700;

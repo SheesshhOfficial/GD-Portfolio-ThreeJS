@@ -13,4 +13,6 @@
 | P005 | Add the remaining Prop Hunt gameplay-system exhibits | COMPLETE | Changes requested |
 | P005-R1 | Remove invented implementation details and production diagnostics | COMPLETE | Approved by Codex |
 | P006 | Add the Decoy Placement exhibit and finish the Prop Hunt collection | COMPLETE | Approved by Codex |
-| P007 | Add Technical Art and 3D Asset Pipeline pillars | READY | Pending |
+| P007 | Add Technical Art and 3D Asset Pipeline pillars | COMPLETE | Changes requested |
+| P007-R1 | Correct Technical Art internals and 3D evidence-request standards | COMPLETE | Approved by Codex |
+| P008 | Perform sitewide visual QA and recruiter-journey polish | READY | Pending |

@@ -74,6 +74,78 @@
   font-family: var(--font-family-mono);
 }
 
+.statusVerified {
+  font-size: 0.6875rem;
+  padding: 0.15rem 0.5rem;
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-family: var(--font-family-mono);
+}
+
+.statusSetup {
+  font-size: 0.6875rem;
+  padding: 0.15rem 0.5rem;
+  background: rgba(2, 132, 199, 0.15);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-family: var(--font-family-mono);
+}
+
+.statusRequired {
+  font-size: 0.6875rem;
+  padding: 0.15rem 0.5rem;
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-family: var(--font-family-mono);
+}
+
+.checklistCard {
+  background: rgba(10, 14, 20, 0.7);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.checklistHeading {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #fbbf24;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.checklistList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.checklistItem {
+  font-size: 0.8125rem;
+  color: #cbd5e1;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.checklistIcon {
+  color: #fbbf24;
+  font-size: 0.875rem;
+}
+
 .title {
   font-size: 1.25rem;
   font-weight: 700;

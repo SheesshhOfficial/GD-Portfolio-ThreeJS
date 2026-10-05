@@ -1,9 +1,15 @@
 import React, { lazy, Suspense, useEffect } from 'react';
 import { PortfolioProvider, usePortfolio } from './context/PortfolioContext';
 import { TopBar } from './components/ui/TopBar';
-import { DirectNavigationMenu } from './components/ui/DirectNavigationMenu';
 import { CinematicSkipButton } from './components/ui/CinematicSkipButton';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
+
+// Lazy-load direct navigation menu drawer
+const DirectNavigationMenu = lazy(() =>
+  import('./components/ui/DirectNavigationMenu').then((m) => ({
+    default: m.DirectNavigationMenu,
+  }))
+);
 
 // Lazy-load static 2D view for non-3D / fallback modes
 const Static2DView = lazy(() =>
@@ -63,7 +69,9 @@ const PortfolioApp: React.FC = () => {
       <TopBar />
 
       {/* Direct Navigation Drawer Overlay */}
-      <DirectNavigationMenu />
+      <Suspense fallback={null}>
+        <DirectNavigationMenu />
+      </Suspense>
 
       {/* Primary Content Presentation */}
       {state.viewMode === '3d' && state.webglSupported ? (

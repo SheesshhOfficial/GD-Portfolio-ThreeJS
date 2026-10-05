@@ -1,4 +1,4 @@
-# Task P007 - Technical Art and 3D Asset Pipeline Pillars
+# Task P008 - Sitewide Visual QA and Recruiter-Journey Polish
 
 Status: READY
 Owner: Antigravity
@@ -6,56 +6,44 @@ Reviewer: Codex
 
 ## Goal
 
-Add the approved Technical Art and 3D Asset Pipeline pillars while preserving the completed Prop Hunt collection. Technical Art cards may describe verified asset presence; 3D Art cards must remain evidence-request placeholders until Ashish selects and confirms original source assets.
+Polish the existing portfolio as a coherent recruiter-facing experience. Improve orientation, visual hierarchy, responsive layout, and interaction clarity across the completed 3D studio and 2D gallery without adding new claims, exhibits, assets, or dependencies.
 
-## Read first
+## Review first
 
-- `planning/PORTFOLIO_CONTENT_MAP.md` sections 5 and 6
-- `planning/CONTENT_EVIDENCE.md`
-- `planning/MEDIA_INVENTORY.md`
-- `planning/MEDIA_CAPTURE_PLAN.md`
+- Run the production preview and inspect the real rendered site before changing code.
+- Check at minimum: 1440x900 desktop, 1024x768 tablet, 390x844 mobile, keyboard-only, reduced motion, and 2D fallback.
+- Preserve all evidence labels and content boundaries established through P007-R1.
 
-## Exhibits
+## Work
 
-- `EX-TA-IKRETARGET` with media `TA-IKRETARGET`.
-- `EX-TA-RAGDOLL` with media `TA-RAGDOLL`.
-- `EX-3D-ASSET-01` with media `3D-TURNTABLE-01`.
-- `EX-3D-TEXTURING` with media `3D-UV-BREAKDOWN`.
+- Make the first 10 seconds understandable: the visitor should immediately see Ashish's name, discipline, how to explore, and how to open the fast Direct Portfolio route.
+- Add or refine a compact, dismissible orientation HUD after the cinematic entrance. It may explain the Transformation Bench, Systems Console, and Direct Portfolio button, but must not block navigation or return every visit during the same session.
+- Improve visible 3D hotspot labels and their focus/hover states so both stations are clearly discoverable.
+- Refine the Direct Portfolio hierarchy for fast recruiter scanning: featured game systems first, then Technical Art, then evidence-needed 3D work.
+- Polish typography, spacing, contrast, modal/drawer sizing, overflow behavior, and touch targets across desktop, tablet, and mobile.
+- Ensure loading and lazy-component fallbacks are visually consistent and communicate progress without implying an error.
+- Keep `Sound: Coming later` disabled; do not introduce audio.
+- Preserve focus trapping, Escape handling, focus restoration, reduced motion, and WebGL fallback.
 
-## Evidence rules
+## Evidence and content restrictions
 
-- IK Retargeting: asset presence is verified for `RTG_NewRetargeter`, `stormtrooperikrig`, and `oldmilitiryrig`. This does not prove original rigging, bone-chain quality, runtime animation quality, or zero-distortion output. Base armatures and animations remain `PROVENANCE_PENDING`; setup authorship is `USER_CONFIRMED: pending`.
-- PhAT: `StormTrooper_PhysicsAsset` exists. Do not claim custom bodies, tuned joint limits, stable simulation, or animation-to-ragdoll blending. Those require editor/runtime capture and authorship confirmation.
-- Hard-surface and UV/Texturing: no authored asset has been selected. Present these as polished evidence-request cards explaining exactly what Ashish must provide. Do not display implementation steps as verified or imply clean topology, non-manifold checks, export settings, texel density, or PBR authorship already exist.
-
-## Implementation
-
-- Extend the typed exhibit model to support distinct evidence states such as `VERIFIED_IMPLEMENTATION`, `USER_CONFIRMED: pending`, and `EVIDENCE_REQUIRED` without treating them as interchangeable.
-- Add separate Direct Portfolio sections for Technical Art and 3D Asset Pipelines.
-- Reuse accessible modal/drawer infrastructure, but adapt labels so pending 3D-art cards say `Evidence needed` rather than `Verified implementation`.
-- Provide static 2D parity, mobile layout, focus management, Escape dismissal, and reduced-motion behavior.
-- Create restrained original SVG/CSS editor-style placeholders where useful. Do not fabricate screenshots, source models, UV sheets, constraint values, or before/after results.
-- Reuse the existing Systems Console or direct-navigation path; do not add 3D geometry in this milestone.
+- Do not add or rewrite technical claims unless necessary for clarity; any edited claim must remain within approved evidence.
+- Do not expose contact details, credentials, authorship, or resume claims beyond their existing pending states.
+- Do not add real media, generated fake screenshots, external assets, external fonts, new exhibits, packages, backend features, analytics, deployment, or contact submission.
 
 ## Performance
 
-- Keep the immediate shell JS + CSS below 80 kB gzipped.
-- Keep the initial 3D journey download within the existing approved ceiling; lazy Technical Art/3D Art content must not be required for first render.
-- Report optional pillar chunks separately. Do not mislabel the sum of every optional chunk as the initial download.
-- Scene geometry is unchanged, so the historical 29 draw calls / 1,944 triangles may be cited without reinstalling diagnostics.
-
-## Scope limits
-
-- Do not add real media, select an asset on Ashish's behalf, download assets/fonts, generate a resume, add contact submission, backend services, analytics, deployment, dependencies, workflows, or new 3D station geometry.
-- Do not modify approved planning/evidence files, Unreal, Monolith, or raw inspection data.
+- Immediate JS + CSS stays below 80 kB gzipped.
+- Complete first 3D experience stays below 350 kB gzipped.
+- No new 3D geometry; retain the historical 29 draw calls / 1,944 triangles.
+- Lazy optional content stays outside first render.
 
 ## Validation
 
 - TypeScript and production build pass.
-- All ten exhibits are categorized and reachable through Direct Portfolio and 2D mode.
-- Technical Art and 3D Art evidence labels match their actual status.
-- Keyboard focus, Escape, restoration, and mobile layout work for all four new cards.
-- Public-copy audit finds no authorship, quality, or provenance overclaim.
-- Report immediate and optional bundle costs separately.
+- Browser-test the entrance, orientation HUD, both hotspots, Direct Portfolio, at least one exhibit from each pillar, 2D mode, reduced motion, keyboard-only flow, and focus restoration.
+- Confirm no horizontal overflow at the required desktop/tablet/mobile sizes.
+- Check visible focus, contrast, button labels, dialog headings, and touch targets.
+- Report before/after observations, files changed, exact tested viewports, bundle measurements, and any remaining visual limitations.
 
-Replace `coordination/IMPLEMENTATION_REPORT.md` with the P007 result, mark `COMPLETE` or `PARTIAL`, and stop for Codex review.
+Replace `coordination/IMPLEMENTATION_REPORT.md` with the P008 result, mark `COMPLETE` or `PARTIAL`, and stop for Codex review.

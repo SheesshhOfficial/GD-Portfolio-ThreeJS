@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { usePortfolio } from '../../context/PortfolioContext';
 import { EXHIBITS_MAP } from '../../data/exhibits';
 import { OverviewStoryboardSvg, TransformStoryboardSvg } from '../diagrams/MediaStoryboardDiagrams';
+import { EvidenceStatus } from '../../types/portfolio';
 import styles from './ExhibitCard.module.css';
 
 export const ExhibitCard: React.FC = () => {
@@ -34,6 +35,7 @@ export const ExhibitCard: React.FC = () => {
       if (state.isBreakdownOpen) return;
 
       if (e.key === 'Escape') {
+        e.stopImmediatePropagation?.();
         e.stopPropagation();
         handleClose();
         return;
@@ -84,6 +86,18 @@ export const ExhibitCard: React.FC = () => {
       ? 'inspect-transform-btn'
       : 'inspect-architecture-btn';
 
+  const getStatusBadgeClass = (status: EvidenceStatus, badgeLabel: string) => {
+    if (badgeLabel === 'Evidence needed' || status === 'EVIDENCE_REQUIRED') {
+      return styles.statusRequired;
+    }
+    if (badgeLabel === 'Asset presence verified' || status === 'ASSET_PRESENCE_VERIFIED') {
+      return styles.statusSetup;
+    }
+    return styles.statusVerified;
+  };
+
+  const isEvidenceRequired = exhibit.evidenceStatus === 'EVIDENCE_REQUIRED';
+
   return (
     <aside
       className={styles.cardContainer}
@@ -96,7 +110,9 @@ export const ExhibitCard: React.FC = () => {
           <div>
             <div className={styles.metaRow}>
               <span className={styles.engineBadge}>{exhibit.engine}</span>
-              <span className={styles.roleBadge}>{exhibit.role}</span>
+              <span className={getStatusBadgeClass(exhibit.evidenceStatus, exhibit.badgeLabel)}>
+                {exhibit.badgeLabel}
+              </span>
             </div>
             <h2 className={styles.title}>{exhibit.title}</h2>
             <p className={styles.subtitle}>{exhibit.subtitle}</p>
@@ -113,6 +129,17 @@ export const ExhibitCard: React.FC = () => {
         </div>
 
         <div className={styles.body}>
+          {/* Evidence Request Callout for Pillar 3 */}
+          {isEvidenceRequired && (
+            <div className={styles.evidenceBanner}>
+              <div className={styles.evidenceBannerTitle}>⚠️ Evidence Required · Candidate Submission Pending</div>
+              <p className={styles.evidenceBannerText}>
+                No original source asset has been selected for this exhibit yet. This card defines the exact technical
+                and media standards that Ashish Ranjan must provide before work can be marked as verified.
+              </p>
+            </div>
+          )}
+
           {/* Tool Badges */}
           <div className={styles.tagList} aria-label="Key Technologies">
             {exhibit.tools.map((tool) => (
@@ -133,7 +160,11 @@ export const ExhibitCard: React.FC = () => {
               className={styles.inspectButton}
               onClick={() => dispatch({ type: 'SET_BREAKDOWN_OPEN', payload: true })}
             >
-              <span>Inspect {exhibit.shortTitle} Architecture →</span>
+              <span>
+                {isEvidenceRequired
+                  ? `Inspect Submission Checklist & Standards →`
+                  : `Inspect ${exhibit.shortTitle} Architecture →`}
+              </span>
             </button>
           </div>
 
@@ -142,7 +173,9 @@ export const ExhibitCard: React.FC = () => {
             {exhibit.mediaPlaceholders.map((media) => (
               <div key={media.id} className={styles.placeholderCard}>
                 <div className={styles.placeholderHeader}>
-                  <span className={styles.badgePending}>Capture pending</span>
+                  <span className={styles.badgePending}>
+                    {isEvidenceRequired ? 'Submission needed' : 'Capture pending'}
+                  </span>
                   <span className={styles.mediaId}>{media.id}</span>
                 </div>
                 <h4 className={styles.placeholderTitle}>{media.label}</h4>

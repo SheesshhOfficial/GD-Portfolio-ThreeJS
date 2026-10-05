@@ -9,7 +9,14 @@ import {
   RoundLifecycleDiagram,
   EmotesLeaderPoseDiagram,
 } from '../diagrams/SystemsDiagrams';
+import {
+  IKRetargeterDiagram,
+  RagdollPhysicsDiagram,
+  HardSurfaceSubmissionDiagram,
+  UVTexturingSubmissionDiagram,
+} from '../diagrams/TechArtDiagrams';
 import { TransformStoryboardSvg } from '../diagrams/MediaStoryboardDiagrams';
+import { EvidenceStatus } from '../../types/portfolio';
 import styles from './TransformationBreakdownDrawer.module.css';
 
 interface TransformationBreakdownDrawerProps {
@@ -43,6 +50,7 @@ export const TransformationBreakdownDrawer: React.FC<TransformationBreakdownDraw
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
+        e.stopImmediatePropagation?.();
         e.stopPropagation();
         handleClose();
         return;
@@ -95,6 +103,28 @@ export const TransformationBreakdownDrawer: React.FC<TransformationBreakdownDraw
     }
   };
 
+  const getStatusBadgeClass = (status: EvidenceStatus, badgeLabel: string) => {
+    if (badgeLabel === 'Evidence needed' || status === 'EVIDENCE_REQUIRED') {
+      return styles.statusRequired;
+    }
+    if (badgeLabel === 'Asset presence verified' || status === 'ASSET_PRESENCE_VERIFIED') {
+      return styles.statusSetup;
+    }
+    return styles.statusVerified;
+  };
+
+  const getStatusBadgeText = (status: EvidenceStatus, badgeLabel: string) => {
+    if (status === 'EVIDENCE_REQUIRED' || badgeLabel === 'Evidence needed') {
+      return 'Evidence needed';
+    }
+    if (status === 'ASSET_PRESENCE_VERIFIED' || badgeLabel === 'Asset presence verified') {
+      return 'Asset presence verified';
+    }
+    return 'VERIFIED_IMPLEMENTATION';
+  };
+
+  const isEvidenceRequired = exhibit.evidenceStatus === 'EVIDENCE_REQUIRED';
+
   return (
     <div
       id="transformation-breakdown-drawer"
@@ -113,7 +143,9 @@ export const TransformationBreakdownDrawer: React.FC<TransformationBreakdownDraw
           <div className={styles.headerTitleGroup}>
             <div className={styles.idBadgeRow}>
               <span className={styles.idBadge}>{exhibit.shortId}</span>
-              <span className={styles.statusBadge}>VERIFIED_IMPLEMENTATION</span>
+              <span className={getStatusBadgeClass(exhibit.evidenceStatus, exhibit.badgeLabel)}>
+                {getStatusBadgeText(exhibit.evidenceStatus, exhibit.badgeLabel)}
+              </span>
             </div>
             <h2 className={styles.title}>{exhibit.title}</h2>
             <p className={styles.subtitle}>{exhibit.subtitle}</p>
@@ -130,15 +162,40 @@ export const TransformationBreakdownDrawer: React.FC<TransformationBreakdownDraw
         </div>
 
         <div className={styles.content}>
-          {/* Section 1: Inspected Implementation Steps */}
+          {/* Section 1: Inspected Implementation Steps or Submission Specifications */}
           <section className={styles.section}>
-            <h3 className={styles.sectionHeading}>1. Inspected Implementation Steps</h3>
+            <h3 className={styles.sectionHeading}>
+              {isEvidenceRequired ? '1. Technical Standards & Submission Criteria' : '1. Inspected Implementation Steps'}
+            </h3>
+            <p className={styles.stepDesc}>
+              {isEvidenceRequired
+                ? 'Required specifications for model authoring, topology, units, and media capture before this exhibit can be reviewed:'
+                : 'Verified Blueprint node connectivity, C++ source methods, and configuration parameters inspected in project assets:'}
+            </p>
+
+            {/* Candidate Submission Checklist for Evidence Required Exhibits */}
+            {isEvidenceRequired && exhibit.submissionRequirements && (
+              <div className={styles.checklistCard}>
+                <div className={styles.checklistHeading}>Candidate Submission Deliverables Checklist:</div>
+                <ul className={styles.checklistList}>
+                  {exhibit.submissionRequirements.map((req, rIdx) => (
+                    <li key={rIdx} className={styles.checklistItem}>
+                      <span className={styles.checklistIcon}>◻</span>
+                      <span>{req}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
             <div className={styles.stepGrid}>
               {exhibit.steps.map((step, idx) => (
                 <div key={idx} className={styles.stepCard}>
                   <div className={styles.stepHeader}>
                     <h4 className={styles.stepTitle}>{step.title}</h4>
-                    <span className={styles.stepTag}>{step.tag}</span>
+                    <span className={step.tag.includes('Evidence') ? styles.statusRequired : styles.stepTag}>
+                      {step.tag}
+                    </span>
                   </div>
                   <p className={styles.stepDesc}>{step.desc}</p>
                   <div className={styles.codeSnippet}>{step.codeSnippet}</div>
@@ -147,11 +204,19 @@ export const TransformationBreakdownDrawer: React.FC<TransformationBreakdownDraw
             </div>
           </section>
 
-          {/* Section 2: Interactive Blueprint Flow Diagram */}
+          {/* Section 2: Interactive Vector Graph / Pipeline Diagram */}
           <section className={styles.section}>
-            <h3 className={styles.sectionHeading}>2. System Graph Execution Flow</h3>
+            <h3 className={styles.sectionHeading}>
+              {isEvidenceRequired
+                ? '2. Pipeline Standards & Asset Specification Flow'
+                : exhibit.pillarId === 2
+                ? '2. Asset Setup & Rig Hierarchy Flow'
+                : '2. System Graph Execution Flow'}
+            </h3>
             <p className={styles.stepDesc}>
-              Vector schematic reflecting the verified Blueprint node connectivity and execution paths inspected in the project source:
+              {isEvidenceRequired
+                ? 'Vector schematic illustrating the authoring criteria, conversion steps, and deliverables required for this pipeline:'
+                : 'Vector schematic reflecting the verified asset hierarchy, node connectivity, and execution paths inspected in the project source:'}
             </p>
             {exhibit.shortId === 'EX-PH-TRANSFORM' && <BlueprintFlowDiagram />}
             {exhibit.shortId === 'EX-PH-DECOY' && <DecoySpawnFlowDiagram />}
@@ -159,11 +224,19 @@ export const TransformationBreakdownDrawer: React.FC<TransformationBreakdownDraw
             {exhibit.shortId === 'EX-PH-AUDIO' && <AudioVoipDiagram />}
             {(exhibit.shortId === 'EX-PH-LIFECYCLE' || exhibit.shortId === 'EX-PH-ROUND') && <RoundLifecycleDiagram />}
             {(exhibit.shortId === 'EX-PH-CUSTOMIZATION' || exhibit.shortId === 'EX-PH-EMOTES') && <EmotesLeaderPoseDiagram />}
+            {exhibit.shortId === 'EX-TA-IKRETARGET' && <IKRetargeterDiagram />}
+            {exhibit.shortId === 'EX-TA-RAGDOLL' && <RagdollPhysicsDiagram />}
+            {exhibit.shortId === 'EX-3D-ASSET-01' && <HardSurfaceSubmissionDiagram />}
+            {exhibit.shortId === 'EX-3D-TEXTURING' && <UVTexturingSubmissionDiagram />}
           </section>
 
           {/* Section 3: Technical Boundary & Unverified Claims Disclosure */}
           <section className={styles.section}>
-            <h3 className={styles.sectionHeading}>3. Technical Boundaries &amp; Unverified Claims Disclosure</h3>
+            <h3 className={styles.sectionHeading}>
+              {isEvidenceRequired
+                ? '3. Candidate Submission Boundary: Asset Selection Pending'
+                : '3. Technical Boundaries & Unverified Claims Disclosure'}
+            </h3>
             <div className={styles.boundaryCard}>
               <div className={styles.boundaryHeader}>
                 <span>⚠️ {exhibit.boundaryTitle}</span>
@@ -177,9 +250,17 @@ export const TransformationBreakdownDrawer: React.FC<TransformationBreakdownDraw
 
           {/* Section 4: Capture Viewport & Verification Requirements */}
           <section className={styles.section}>
-            <h3 className={styles.sectionHeading}>4. Capture Prerequisite &amp; Media Viewport</h3>
+            <h3 className={styles.sectionHeading}>
+              {isEvidenceRequired
+                ? '4. Verification Deliverables & Acceptance Checklist'
+                : '4. Capture Prerequisite & Media Viewport'}
+            </h3>
             <p className={styles.stepDesc}>
-              Verified capture criteria required to transition this system from VERIFIED_IMPLEMENTATION to RUNTIME_VERIFIED:
+              {isEvidenceRequired
+                ? 'Evidence deliverables required from Ashish Ranjan to verify and publish this 3D pipeline exhibit:'
+                : exhibit.pillarId === 2
+                ? 'Editor capture criteria required to record viewport demonstration and inspect asset configuration:'
+                : 'Verified capture criteria required to transition this system from VERIFIED_IMPLEMENTATION to RUNTIME_VERIFIED:'}
             </p>
             {exhibit.shortId === 'EX-PH-TRANSFORM' ? (
               <TransformStoryboardSvg />
@@ -190,16 +271,30 @@ export const TransformationBreakdownDrawer: React.FC<TransformationBreakdownDraw
                     key={media.id}
                     style={{
                       background: 'rgba(10, 14, 20, 0.75)',
-                      border: '1px dashed rgba(56, 189, 248, 0.4)',
+                      border: isEvidenceRequired
+                        ? '1px dashed rgba(245, 158, 11, 0.4)'
+                        : '1px dashed rgba(56, 189, 248, 0.4)',
                       borderRadius: '6px',
                       padding: '1rem',
                     }}
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.35rem' }}>
-                      <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#f59e0b' }}>
-                        PREREQUISITE: {media.id} ({media.duration})
+                      <span
+                        style={{
+                          fontSize: '0.75rem',
+                          fontWeight: 700,
+                          color: isEvidenceRequired ? '#fbbf24' : '#f59e0b',
+                        }}
+                      >
+                        {isEvidenceRequired ? 'REQUIRED SUBMISSION' : 'PREREQUISITE'}: {media.id} ({media.duration})
                       </span>
-                      <span style={{ fontSize: '0.75rem', fontFamily: 'monospace', color: '#38bdf8' }}>
+                      <span
+                        style={{
+                          fontSize: '0.75rem',
+                          fontFamily: 'monospace',
+                          color: isEvidenceRequired ? '#fbbf24' : '#38bdf8',
+                        }}
+                      >
                         {media.requirement}
                       </span>
                     </div>

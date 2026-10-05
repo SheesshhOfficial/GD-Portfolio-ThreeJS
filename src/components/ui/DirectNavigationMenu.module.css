@@ -142,6 +142,36 @@
   border-radius: var(--radius-sm);
 }
 
+.statusVerified {
+  font-size: 0.6875rem;
+  padding: 0.15rem 0.45rem;
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+}
+
+.statusSetup {
+  font-size: 0.6875rem;
+  padding: 0.15rem 0.45rem;
+  background: rgba(2, 132, 199, 0.15);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+}
+
+.statusRequired {
+  font-size: 0.6875rem;
+  padding: 0.15rem 0.45rem;
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+}
+
 .itemDesc {
   font-size: 0.8125rem;
   color: var(--color-text-secondary);

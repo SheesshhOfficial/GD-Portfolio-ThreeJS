@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { usePortfolio } from '../../context/PortfolioContext';
 import { EXHIBIT_INDEX } from '../../data/exhibits';
+import { EvidenceStatus } from '../../types/portfolio';
 import styles from './DirectNavigationMenu.module.css';
 
 export const DirectNavigationMenu: React.FC = () => {
@@ -82,6 +83,20 @@ export const DirectNavigationMenu: React.FC = () => {
     dispatch({ type: 'SET_DIRECT_MENU', payload: false });
   };
 
+  const getBadgeClass = (status: EvidenceStatus, badgeLabel: string) => {
+    if (badgeLabel === 'Evidence needed' || status === 'EVIDENCE_REQUIRED') {
+      return styles.statusRequired;
+    }
+    if (badgeLabel === 'Asset presence verified' || status === 'ASSET_PRESENCE_VERIFIED') {
+      return styles.statusSetup;
+    }
+    return styles.statusVerified;
+  };
+
+  const pillar1Exhibits = EXHIBIT_INDEX.filter((e) => e.pillarId === 1);
+  const pillar2Exhibits = EXHIBIT_INDEX.filter((e) => e.pillarId === 2);
+  const pillar3Exhibits = EXHIBIT_INDEX.filter((e) => e.pillarId === 3);
+
   return (
     <div
       className={styles.backdrop}
@@ -112,9 +127,9 @@ export const DirectNavigationMenu: React.FC = () => {
         <div className={styles.content}>
           {/* Pillar 1: Verified Gameplay Systems Exhibits */}
           <section className={styles.section}>
-            <span className={styles.pillarTag}>Pillar 1: Sheeshh Prop Hunt Gameplay Systems</span>
+            <span className={styles.pillarTag}>Pillar 1: Verified Sheeshh Prop Hunt Gameplay Systems</span>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', marginTop: '0.4rem' }}>
-              {EXHIBIT_INDEX.map((exhibit) => (
+              {pillar1Exhibits.map((exhibit) => (
                 <button
                   key={exhibit.id}
                   type="button"
@@ -125,7 +140,12 @@ export const DirectNavigationMenu: React.FC = () => {
                 >
                   <div className={styles.itemHeader}>
                     <h3 className={styles.itemTitle}>{exhibit.title}</h3>
-                    <span className={styles.engineBadge}>{exhibit.shortId}</span>
+                    <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
+                      <span className={styles.engineBadge}>{exhibit.shortId}</span>
+                      <span className={getBadgeClass(exhibit.evidenceStatus, exhibit.badgeLabel)}>
+                        {exhibit.badgeLabel}
+                      </span>
+                    </div>
                   </div>
                   <p className={styles.itemDesc}>{exhibit.summary.slice(0, 140)}...</p>
                   <div className={styles.actionRow}>
@@ -136,28 +156,71 @@ export const DirectNavigationMenu: React.FC = () => {
             </div>
           </section>
 
+          {/* Pillar 2: Technical Art Pipelines (Asset Presence Verified) */}
           <section className={styles.section}>
-            <span className={styles.pillarTag}>Pillar 2: Technical Art &amp; Rigging</span>
-            <div className={`${styles.itemCard} ${styles.itemDisabled}`}>
-              <div className={styles.itemHeader}>
-                <h3 className={styles.itemTitle}>UE5 IK Retargeter &amp; PhAT Physics</h3>
-                <span className={styles.statusBadge}>Milestone P006</span>
-              </div>
-              <p className={styles.itemDesc}>Presence of IK Rig/Retargeter and Physics Asset setup assets (constraints pending verification).</p>
+            <span className={styles.pillarTag}>Pillar 2: Technical Art Pipelines (Asset Presence Verified)</span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', marginTop: '0.4rem' }}>
+              {pillar2Exhibits.map((exhibit) => (
+                <button
+                  key={exhibit.id}
+                  type="button"
+                  id={`direct-exhibit-${exhibit.shortId.toLowerCase()}`}
+                  className={styles.itemCard}
+                  onClick={() => handleSelectExhibit(exhibit.id)}
+                  style={{ textAlign: 'left', width: '100%', cursor: 'pointer' }}
+                >
+                  <div className={styles.itemHeader}>
+                    <h3 className={styles.itemTitle}>{exhibit.title}</h3>
+                    <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
+                      <span className={styles.engineBadge}>{exhibit.shortId}</span>
+                      <span className={getBadgeClass(exhibit.evidenceStatus, exhibit.badgeLabel)}>
+                        {exhibit.badgeLabel}
+                      </span>
+                    </div>
+                  </div>
+                  <p className={styles.itemDesc}>{exhibit.summary.slice(0, 140)}...</p>
+                  <div className={styles.actionRow}>
+                    <span className={styles.actionHint}>Select to inspect rig &amp; physics asset checklists →</span>
+                  </div>
+                </button>
+              ))}
             </div>
           </section>
 
+          {/* Pillar 3: 3D Asset Pipelines (Evidence Required) */}
           <section className={styles.section}>
-            <span className={styles.pillarTag}>Pillar 3: 3D Asset Pipelines</span>
-            <div className={`${styles.itemCard} ${styles.itemDisabled}`}>
-              <div className={styles.itemHeader}>
-                <h3 className={styles.itemTitle}>Blender to Unreal PBR Pipeline</h3>
-                <span className={styles.statusBadge}>Milestone P007</span>
-              </div>
-              <p className={styles.itemDesc}>Hard-surface modeling and UV layouts (density benchmarks and optimization pending).</p>
+            <span className={styles.pillarTag}>Pillar 3: 3D Art &amp; Texturing Pipelines (Evidence Required)</span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', marginTop: '0.4rem' }}>
+              {pillar3Exhibits.map((exhibit) => (
+                <button
+                  key={exhibit.id}
+                  type="button"
+                  id={`direct-exhibit-${exhibit.shortId.toLowerCase()}`}
+                  className={styles.itemCard}
+                  onClick={() => handleSelectExhibit(exhibit.id)}
+                  style={{ textAlign: 'left', width: '100%', cursor: 'pointer' }}
+                >
+                  <div className={styles.itemHeader}>
+                    <h3 className={styles.itemTitle}>{exhibit.title}</h3>
+                    <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
+                      <span className={styles.engineBadge}>{exhibit.shortId}</span>
+                      <span className={getBadgeClass(exhibit.evidenceStatus, exhibit.badgeLabel)}>
+                        {exhibit.badgeLabel}
+                      </span>
+                    </div>
+                  </div>
+                  <p className={styles.itemDesc}>{exhibit.summary.slice(0, 140)}...</p>
+                  <div className={styles.actionRow}>
+                    <span className={styles.actionHint} style={{ color: '#fbbf24' }}>
+                      Select to view required submission criteria &amp; checklist →
+                    </span>
+                  </div>
+                </button>
+              ))}
             </div>
           </section>
 
+          {/* Pillar 4: Credentials & Academic Profile */}
           <section className={styles.section}>
             <span className={styles.pillarTag}>Pillar 4: Credentials &amp; Contact</span>
             <div className={styles.credentialsBox}>

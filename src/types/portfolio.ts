@@ -23,6 +23,9 @@ export type PortfolioAction =
   | { type: 'COMPLETE_ENTRANCE' }
   | { type: 'SET_BREAKDOWN_OPEN'; payload: boolean };
 
+export type EvidenceStatus = 'VERIFIED_IMPLEMENTATION' | 'ASSET_PRESENCE_VERIFIED' | 'EVIDENCE_REQUIRED';
+export type PillarId = 1 | 2 | 3;
+
 export interface ExhibitStep {
   title: string;
   tag: string;
@@ -34,7 +37,7 @@ export interface MediaPlaceholder {
   id: string;
   label: string;
   duration: string;
-  requirement: 'RUNTIME_VERIFIED' | 'VERIFIED_IMPLEMENTATION' | 'USER_CONFIRMED';
+  requirement: 'RUNTIME_VERIFIED' | 'VERIFIED_IMPLEMENTATION' | 'ASSET_INSPECTION_REQUIRED' | 'USER_CONFIRMED: pending' | 'EVIDENCE_REQUIRED';
   description: string;
   whatCaptureProves: string;
 }
@@ -46,15 +49,32 @@ export interface ExhibitData {
   shortTitle: string;
   subtitle: string;
   category: string;
+  pillarId: PillarId;
+  evidenceStatus: EvidenceStatus;
+  badgeLabel: string;
   role: string;
   engine: string;
   tools: string[];
   summary: string;
   mediaPlaceholders: MediaPlaceholder[];
   steps: ExhibitStep[];
+  submissionRequirements?: string[];
   boundaryTitle: string;
   boundaryFormula?: string;
   boundaryDescription: string;
   provenanceNote: string;
   authorshipStatus: string;
+}
+
+export interface ExhibitIndexItem {
+  id: string;
+  shortId: string;
+  title: string;
+  shortTitle?: string;
+  subtitle: string;
+  summary: string;
+  engine: string;
+  pillarId: PillarId;
+  evidenceStatus: EvidenceStatus;
+  badgeLabel: string;
 }
