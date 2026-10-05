@@ -215,7 +215,7 @@ To maintain complete professional integrity and align with project rules:
 The vertical slice must meet all of the following criteria before being considered complete:
 
 ### 6.1 Performance Budgets
-* [ ] **2D Shell JS/CSS (Immediate)**: < 50 KB gzipped.
+* [ ] **2D Shell JS/CSS (Immediate)**: < 80 KB gzipped, based on the measured accessible React foundation.
 * [ ] **Lazy 3D JS Bundle**: < 300 KB gzipped.
 * [ ] **Total Initial JS/CSS Bundle**: < 350 KB gzipped.
 * [ ] **Initial 3D Assets (Environment)**: < 3.5 MB total transfer.

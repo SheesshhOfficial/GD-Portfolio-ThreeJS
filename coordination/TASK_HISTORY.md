@@ -6,4 +6,6 @@
 | P001-R1 | Correct evidence, authorship, provenance, and runtime language | COMPLETE | Approved by Codex |
 | P002 | Recommend website architecture and define the first vertical slice | COMPLETE | Changes requested |
 | P002-R1 | Reconcile architecture targets and evidence language | COMPLETE | Approved by Codex |
-| P003 | Build the website foundation and accessible 3D shell | READY | Pending |
+| P003 | Build the website foundation and accessible 3D shell | COMPLETE | Changes requested |
+| P003-R1 | Correct claims, controls, focus behavior, and budget reporting | COMPLETE | Approved by Codex |
+| P004 | Complete the first immersive Prop Hunt vertical slice | READY | Pending |

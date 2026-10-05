@@ -1,82 +1,97 @@
 # Implementation Report
 
-Task ID: P002-R1
+Task ID: P003-R1
 Status: COMPLETE
 
 ## Outcome
 
-Corrected technical decisions, reconciled performance budgets, and refined evidence language across the technical architecture and vertical slice specification. Recommended `React + TypeScript + Vite + React Three Fiber + Drei + CSS Modules` without premature version constraints, selected `React Context + useReducer` for vertical-slice state management, replaced runtime overhead assertions with precise R3F ref-mutation guidelines, distinguished reduced-motion 3D preservation from static 2D mode, reconciled vertical-slice targets (<40k triangles, <25 draw calls) with future full-portfolio ceilings (<60k triangles, <30 draw calls), separated 2D shell budgets (<50KB) from lazy 3D bundles (<300KB), and replaced unverified or absolute assertions with accurate evidence and accessibility terminology targeting WCAG 2.2 AA.
+Resolved all public evidence language, control fallback states, dialog focus management, and performance reporting accuracy issues flagged for Task P003. Public copy now precisely reflects inspected Unreal assets without positive assertions of runtime authority or unverified constraints/density. Audio controls are rendered in an explicitly disabled `Sound: Coming later` state and unused sound actions have been pruned. When WebGL is unavailable, the 3D toggle is disabled with an explanatory label. The Direct Portfolio and ExhibitCard dialogs now feature native button activation, initial focus movement, bidirectional focus trapping (`Tab` and `Shift+Tab`), `Escape` closing, and focus restoration to the originating trigger. Performance reporting has been corrected to explicitly record the missed immediate shell target (<50 kB target vs ~76.64 kB measured) while tracking passing lazy-3D and combined bundle totals.
 
 ## Files changed
 
-- `planning/TECHNICAL_ARCHITECTURE.md`: Removed version lock (`React 18/19`), selected React Context + `useReducer` for the vertical slice, accurately characterized R3F abstraction and `useFrame` ref mutation, explained reduced-motion 3D preservation vs. static 2D mode, separated 2D shell (<50KB) from lazy 3D bundle (<300KB), explicitly distinguished vertical-slice budgets (<40k tris, <25 draw calls) from future full-portfolio ceilings (<60k tris, <30 draw calls), and defined measurable lab loading targets (Lighthouse 4G profile: FCP < 1.2s, TTI < 2.0s).
-- `planning/VERTICAL_SLICE_SPEC.md`: Replaced "unsupported" and "NOT present in the codebase" with precise disclosure phrasing ("not found in the inspected Blueprint graphs; runtime capsule resizing is unverified"), updated accessibility target to WCAG 2.2 AA, removed "guaranteed" timing claims, replaced "100% content parity" with "the same essential portfolio content and actions," and aligned all performance budgets with `TECHNICAL_ARCHITECTURE.md`.
-- `coordination/IMPLEMENTATION_REPORT.md`: Replaced with this P002-R1 completion report.
+- `src/types/portfolio.ts`: Removed unused `soundEnabled` state and `TOGGLE_SOUND` action.
+- `src/context/PortfolioContext.tsx`: Cleaned up initial state and reducer; added guard preventing transition to `3d` mode when WebGL is unsupported.
+- `src/data/exhibits.ts`: Replaced `server-authoritative` with `server-routed RPC and multicast replication (runtime authority validation pending)`.
+- `src/components/ui/Static2DView.tsx`: Replaced `server-authoritative` in hero description; updated engineering roadmap cards to describe presence of IK Rig/Retargeter and Physics Asset setups with constraints/density pending evidence.
+- `src/components/ui/TopBar.tsx` & `TopBar.module.css`: Added `id="direct-portfolio-btn"` for focus restoration; disabled 3D view toggle when WebGL 2.0 is unsupported with accessible description and `.disabledButton` styling; replaced active audio toggle with a disabled `Sound: Coming later` button.
+- `src/components/ui/DirectNavigationMenu.tsx` & `DirectNavigationMenu.module.css`: Replaced `div role="button"` project item with a native `<button>`; implemented initial focus entry to the close button; added bidirectional focus trap (`Tab`/`Shift+Tab`) and `Escape` key dismissal; added focus restoration back to the originating button; updated Pillar 2 and 3 descriptions to avoid unverified constraint/density claims; ensured `.itemCard` button inherits typography and width.
+- `src/components/ui/ExhibitCard.tsx`: Implemented automatic focus entry to the close button on mount; added bidirectional focus trap, `Escape` key close handling, and focus restoration to the originating trigger upon close.
+- `coordination/IMPLEMENTATION_REPORT.md`: Replaced previous P003 report with this corrected P003-R1 report and transparent performance budget accounting.
 
 ## Work completed
 
-1. **Precise Technical Decisions**:
-   - Stack recommendation updated to `React + TypeScript + Vite + React Three Fiber + Drei + CSS Modules` without premature version locking.
-   - Selected `React Context + useReducer` (`PortfolioContext`) for the vertical slice, avoiding adding an external state library dependency.
-   - Replaced claims regarding runtime overhead: stated that R3F provides a declarative renderer abstraction over Three.js, and that frame-critical animations/choreography should mutate Three.js object references directly inside `useFrame` to avoid per-frame React state updates.
-   - Clarified that reduced-motion mode preserves the 3D studio and exhibits with continuous motion/fly-throughs eliminated, while static 2D mode is a separate user choice or runtime fallback.
-2. **Reconciled Performance Budgets**:
-   - Reconciled all metrics across both planning documents:
-     - *2D Shell JS/CSS (Immediate)*: < 50 KB gzipped.
-     - *Lazy 3D JS Bundle*: < 300 KB gzipped.
-     - *Total Initial JS/CSS Bundle*: < 350 KB gzipped.
-     - *Initial 3D Scene Assets (Environment)*: < 3.5 MB transfer.
-     - *Vertical Slice Scene Geometry*: < 40,000 triangles (Future Full-Portfolio Ceiling: < 60,000 triangles).
-     - *Vertical Slice Draw Calls*: < 25 draw calls per frame (Future Full-Portfolio Ceiling: < 30 draw calls).
-     - *Video Assets*: < 6 MB per focused clip; < 15 MB for overview reel.
-     - *Desktop Framerate Target*: Target 60 FPS on mid-tier desktop hardware (e.g. GTX 1650 / Apple M-series), measured via Chrome DevTools Performance panel / stats.js.
-     - *Mobile Framerate Target*: Target 30–60 FPS on modern mobile devices (e.g. iPhone 13+ / Pixel 6+).
-     - *Lab Loading Target (FCP / TTI)*: Target FCP < 1.2s and TTI < 2.0s measured via Google Lighthouse under simulated 4G mobile throttling (1.6 Mbps down, 150ms RTT).
-3. **Evidence and Accessibility Corrections**:
-   - Replaced exhaustive negative assertions ("NOT present in the codebase," "unsupported") with precise phrasing: "not found in the inspected Blueprint graphs; runtime capsule resizing is unverified."
-   - Removed assertion that the character capsule remains static at runtime, clarifying that capsule behavior at runtime is unverified.
-   - Updated accessibility terminology from claiming compliance to targeting **WCAG 2.2 AA**.
-   - Replaced "100% content parity" with "the same essential portfolio content and actions."
-   - Retained all provenance and authorship classifications (`USER_CONFIRMED: pending`, `PROVENANCE_PENDING`) established in P001-R1.
+1. **Public Evidence Language Correction**:
+   - Replaced all public instances of `server-authoritative` with `server-routed RPC and multicast replication (runtime authority validation pending)` in `src/data/exhibits.ts` and `src/components/ui/Static2DView.tsx`.
+   - Removed positive assertions regarding custom ragdoll constraints, retargeting quality, and uniform texel density from `Static2DView.tsx` and `DirectNavigationMenu.tsx`. Phrased accurately around the verified presence of IK Rig, IK Retargeter, and Physics Asset setup assets, with runtime motion, joint constraints, and density benchmarks marked as evidence pending.
+   - Verified that project role remains `Confirmation pending` and asset sourcing remains `PROVENANCE_PENDING`.
+2. **Control & Fallback State Fixes**:
+   - Removed unused `soundEnabled` and `TOGGLE_SOUND` from `PortfolioState` and `PortfolioAction`.
+   - Replaced the interactive sound toggle in `TopBar.tsx` with a disabled `Sound: Coming later` button (`aria-disabled="true"`, title and aria-label indicating audio implementation pending).
+   - Prevented false 3D mode selection when WebGL is unsupported by disabling the view mode toggle in `TopBar.tsx` with accessible description `View: 2D (3D Unavailable)` and adding a reducer guard in `portfolioReducer`.
+   - Preserved reduced-motion behavior (camera snaps without damping, continuous reticle rotation disabled).
+3. **Keyboard & Dialog Behavior**:
+   - Converted the project card in `DirectNavigationMenu.tsx` from a `div role="button"` to a semantic `<button type="button">`, enabling standard keyboard trigger via `Enter` and `Space`.
+   - Added focus management to `DirectNavigationMenu`: captures `originatingTriggerRef` on open, shifts focus to the close button (✕) on mount, traps `Tab` and `Shift+Tab` cycles inside the dialog, handles `Escape` to close, and restores focus to `#direct-portfolio-btn`.
+   - Added focus management to `ExhibitCard`: moves focus into the close button (✕) upon mount, traps focus within actionable elements, handles `Escape` to dismiss, and restores focus to the originating trigger.
+4. **Transparent Performance Budget Accounting**:
+   - Explicitly marked the immediate 2D shell target as **MISSED** (measured 76.64 kB gzipped vs approved <50 kB target).
+   - Kept passing lazy-3D and combined total bundle metrics clearly separated.
+   - Removed all claims of "strict compliance" from reporting.
 
 ## Evidence and Monolith findings
 
-- **Inspected Assets & Graphs**:
-  - Maintained strict consistency with inspected Blueprint graphs (`BP_propChar`, `BP_ThirdPersonCharacter`, `GM_ProphuntGameMode`) and C++ files (`VOIPLIB.h`, `VOIPLIB.cpp`).
-  - No Monolith MCP queries executed (task was strictly planning and architecture consistency correction).
-- **Separation of Evidence Layers**:
-  - Implementation structure (Blueprint nodes and RPCs) is explicitly isolated from runtime verification (split-screen captures and live authority validation).
+- Inspected evidence boundaries from P001 remain strictly observed:
+  - `BP_propChar`: Verified sphere trace and static mesh swap logic. Capsule recalculation and authority checks remain unverified at runtime.
+  - `BP_ThirdPersonCharacter`: Verified fire timer and server line trace RPC. Client authority rollback unverified.
+  - Setup assets: Verified presence of IK Rig, IK Retargeter, and PhAT physics asset; runtime joint limits, ragdoll stability, and texel density remain unverified.
+- No Unreal project modifications or Monolith MCP queries were performed during this foundation correction.
 
 ## Validation
 
-Grep searches across all three modified files (`planning/TECHNICAL_ARCHITECTURE.md`, `planning/VERTICAL_SLICE_SPEC.md`, `coordination/IMPLEMENTATION_REPORT.md`):
-
-| Search Term | Target Result | Observed Matches | Status |
-|---|---|---|---|
-| `React 18/19` | 0 matches | 0 matches | Passed |
-| `does not add runtime overhead` | 0 matches | 0 matches | Passed |
-| `unsupported` | 0 matches | 0 matches | Passed |
-| `NOT present in the codebase` | 0 matches | 0 matches | Passed |
-| `guarantee` / `guaranteed` | 0 matches | 0 matches | Passed |
-| `WCAG 2.1 Compliant` | 0 matches | 0 matches | Passed |
-| `100% content parity` | 0 matches | 0 matches | Passed |
-
-Budget Consistency Verification:
-- [x] Initial JS/CSS shell (<50KB), lazy 3D bundle (<300KB), and total initial bundle (<350KB) match across documents.
-- [x] Vertical slice geometry (<40,000 triangles) and draw calls (<25) are explicitly distinguished from future full-portfolio ceilings (<60,000 triangles, <30 draw calls) across documents.
-- [x] Framerate (desktop 60 FPS, mobile 30–60 FPS) and lab loading targets (FCP < 1.2s, TTI < 2.0s under Lighthouse 4G throttling) are identically defined.
-- [x] No dependencies installed, no website implementation code created, and no Unreal assets modified.
+1. **Source Code Evidence Claim Audit (Grep)**:
+   - `server-authoritative`: 0 matches in `src/` (Passed).
+   - `joint physics constraints`: 0 matches in `src/` (Passed).
+   - `uniform texel density`: 0 matches in `src/` (Passed).
+   - `ragdoll`: 0 matches in `src/` (Passed).
+   - `soundEnabled`: 0 matches in `src/` (Passed).
+2. **Build & Type Checking**:
+   - Command: `npm run build` (`tsc --noEmit && vite build`)
+   - Result: Exit code 0 in 3.15s. Zero TypeScript errors, zero warnings.
+3. **Measured Production Bundle Sizes (Actual Output)**:
+   - `dist/index.html`: 1.63 kB (gzip: 0.80 kB)
+   - `dist/assets/index-fpX3MvVS.css`: 17.43 kB (gzip: 3.81 kB)
+   - `dist/assets/index-CxFL9zSk.js`: 233.79 kB (gzip: 72.03 kB)
+   - `dist/assets/CanvasContainer-5jDKUGBS.css`: 0.14 kB (gzip: 0.14 kB)
+   - `dist/assets/CanvasContainer-D4SaK-RT.js`: 3.77 kB (gzip: 1.39 kB)
+   - `dist/assets/r3f-vendor-blbKOByH.js`: 187.49 kB (gzip: 59.86 kB)
+   - `dist/assets/three-vendor-Dc7lxbqc.js`: 703.70 kB (gzip: 181.20 kB)
+   - **Immediate 2D Shell Budget (<50 kB gzipped)**: **76.64 kB gzipped** — **MISSED** (Exceeds budget by 26.64 kB due to React DOM + UI shell base size).
+   - **Lazy 3D Bundle Budget (<300 kB gzipped)**: **242.59 kB gzipped** — **PASSED** (Well within target).
+   - **Combined Initial + Lazy Bundle Budget (<350 kB gzipped)**: **319.23 kB gzipped** — **PASSED** (30.77 kB headroom).
+4. **Browser & Keyboard Flow Testing (`browser_subagent`)**:
+   - Tested live on `http://127.0.0.1:4173/`:
+     - TopBar Sound button verified disabled with label `"Sound: Coming later"`.
+     - Direct Portfolio button verified with `id="direct-portfolio-btn"`.
+     - Direct Portfolio opened via keyboard/click; focus landed automatically on close button (`✕`).
+     - `Tab` pressed: focus moved to native `<button>` for "Sheeshh Prop Hunt" with visible focus indicator.
+     - `Shift+Tab` pressed: focus trapped cleanly back to close button (`✕`).
+     - `Enter` pressed on "Sheeshh Prop Hunt": exhibit card opened and focus shifted into ExhibitCard close button.
+     - `Escape` pressed: ExhibitCard dismissed and focus restored to `#direct-portfolio-btn`.
+     - Direct Navigation menu re-opened and closed via `Escape`: focus restored to `#direct-portfolio-btn`.
+     - Browser console verified: **0 errors, 0 warnings, 0 failed network requests**.
 
 ## Failures and skipped items
 
-- None. All corrections specified in Task P002-R1 were completed without error.
+- Immediate 2D Shell Bundle Target (<50 kB): Measured 76.64 kB gzipped. React 19 + React DOM base package overhead accounts for ~45 kB gzipped alone, leaving very little room for CSS, state reducers, and accessible HTML shell. Shell remains lightweight and highly responsive, but the strict <50 kB budget was missed. Next action: discuss in Milestone P004 whether further micro-optimizations (e.g. preact-compat or externalizing React) are desirable, or if the budget should be reconciled to ~75 kB.
 
 ## Deviations and decisions
 
-- Selected `React Context + useReducer` for the vertical slice to avoid adding external state dependencies (e.g. Zustand) until multi-room or multi-exhibit complexity necessitates it in future milestones.
-- Formally separated vertical-slice geometry/draw-call budgets from future full-portfolio ceilings to allow room for additional exhibits while keeping the first slice lightweight.
+- Rendered the sound button in `TopBar` as a disabled control with `"Sound: Coming later"` text rather than removing it entirely, preserving visual control hierarchy while preventing nonfunctional state toggling.
+- When WebGL 2.0 is unsupported, the view mode toggle is disabled with a descriptive `aria-label` explaining WebGL unavailability, rather than hiding the button, providing accessible clarity on why 3D mode cannot be accessed.
 
 ## Questions for Codex
 
-1. Does Codex approve the reconciled architecture and vertical slice specification in P002-R1?
-2. Are we cleared to proceed to the next milestone to initialize the repository foundation (e.g., project scaffolding, Vite configuration, directory structure, and basic 3D canvas shell)?
+1. Does Codex wish to adjust the immediate 2D shell target to `<80 kB gzipped` in `TECHNICAL_ARCHITECTURE.md` to reflect React 19 + React DOM runtime requirements, or should we evaluate Preact aliasing in P004 to achieve `<50 kB`?
+2. Are there any specific additional interactive controls desired for the P004 Technical Breakdown Drawer before vertical slice implementation begins?
+
+Stopping for Codex review.

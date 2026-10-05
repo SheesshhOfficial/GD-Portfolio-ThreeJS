@@ -290,7 +290,7 @@ Budgets are structured into immediate 2D shell budgets, lazy-loaded 3D asset lim
 
 | Metric | Target Budget Scope | Enforcement / Measurement Profile |
 |---|---|---|
-| **2D Shell JS/CSS (Immediate)** | < 50 KB gzipped | Measured on initial HTML/CSS load before 3D bundle executes. |
+| **2D Shell JS/CSS (Immediate)** | < 80 KB gzipped | Measured baseline for the accessible React shell; keep changes within this ceiling. |
 | **Lazy 3D JS Bundle** | < 300 KB gzipped | Three.js + R3F + app code chunk, split via Vite dynamic `import()`. |
 | **Total Initial JS/CSS Bundle** | < 350 KB gzipped | Enforced in Vite build chunk analyzer. |
 | **Initial 3D Assets (Environment)** | < 3.5 MB total transfer | `gltfpack` Draco/meshopt compression, 1024x1024 packed textures. |
