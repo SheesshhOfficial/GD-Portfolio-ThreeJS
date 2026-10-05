@@ -15,6 +15,8 @@ const initialState: PortfolioState = {
   isReducedMotion: checkInitialReducedMotion(),
   webglSupported: true,
   cameraFocus: 'center',
+  isEntranceActive: !checkInitialReducedMotion(),
+  isBreakdownOpen: false,
 };
 
 function portfolioReducer(state: PortfolioState, action: PortfolioAction): PortfolioState {
@@ -35,6 +37,7 @@ function portfolioReducer(state: PortfolioState, action: PortfolioAction): Portf
         activeExhibitId: action.payload,
         cameraFocus: action.payload ? 'transformation-bench' : 'center',
         isDirectMenuOpen: false,
+        isBreakdownOpen: action.payload === null ? false : state.isBreakdownOpen,
       };
     case 'TOGGLE_DIRECT_MENU':
       return {
@@ -50,6 +53,7 @@ function portfolioReducer(state: PortfolioState, action: PortfolioAction): Portf
       return {
         ...state,
         isReducedMotion: action.payload,
+        isEntranceActive: action.payload ? false : state.isEntranceActive,
       };
     case 'SET_WEBGL_SUPPORTED':
       return {
@@ -61,6 +65,16 @@ function portfolioReducer(state: PortfolioState, action: PortfolioAction): Portf
       return {
         ...state,
         cameraFocus: action.payload,
+      };
+    case 'COMPLETE_ENTRANCE':
+      return {
+        ...state,
+        isEntranceActive: false,
+      };
+    case 'SET_BREAKDOWN_OPEN':
+      return {
+        ...state,
+        isBreakdownOpen: action.payload,
       };
     default:
       return state;

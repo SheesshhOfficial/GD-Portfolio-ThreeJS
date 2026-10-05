@@ -1,4 +1,4 @@
-# Task P004 - Complete the First Immersive Vertical Slice
+# Task P005 - Remaining Prop Hunt Gameplay-System Exhibits
 
 Status: READY
 Owner: Antigravity
@@ -6,60 +6,67 @@ Reviewer: Codex
 
 ## Goal
 
-Turn the approved foundation into one polished end-to-end portfolio experience for Sheeshh Prop Hunt. Complete the cinematic entrance, project presentation, verified transformation-system breakdown, responsive states, and styled evidence placeholders without adding unverified claims or external assets.
+Expand the approved Prop Hunt vertical slice into a coherent gameplay-systems collection. Add the remaining verified Prop Hunt exhibits through reusable, data-driven UI while preserving the existing entrance, Transformation Bench experience, evidence boundaries, accessibility, and performance.
 
 ## Read first
 
 - `AGENTS.md`
 - `PROJECT.md`
-- `planning/VERTICAL_SLICE_SPEC.md`
-- `planning/TECHNICAL_ARCHITECTURE.md`
 - `planning/PORTFOLIO_CONTENT_MAP.md`
 - `planning/CONTENT_EVIDENCE.md`
+- `planning/MEDIA_INVENTORY.md`
 - `planning/MEDIA_CAPTURE_PLAN.md`
+
+## Exhibits to add
+
+1. Hunter Ballistics and elimination flow (`EX-PH-COMBAT`).
+2. Positional VOIP and taunt pipeline (`EX-PH-AUDIO`).
+3. Round-state, HUD, and spectator flow (`EX-PH-ROUND`).
+4. Networked emotes and leader-pose switching (`EX-PH-EMOTES`).
+
+Keep the existing overview and transformation exhibits intact.
 
 ## Implementation
 
-1. Add a cinematic entrance lasting approximately 2.5 seconds:
-   - camera begins near the observatory threshold and settles at the studio overview;
-   - any pointer interaction, Enter, Space, Escape, the visible Skip control, or reduced-motion preference completes it immediately;
-   - never block the Direct Portfolio control.
-2. Refine the Transformation Bench into the visual focal point using procedural geometry, materials, lighting, labels, and restrained motion. Keep the total vertical-slice scene below 40,000 triangles and 25 draw calls.
-3. Complete the Prop Hunt exhibit presentation with:
-   - project overview and evidence-state labels;
-   - an `Inspect Transformation Architecture` action;
-   - a responsive technical breakdown dialog/drawer;
-   - verified flow steps for input/targeting, server RPC routing, multicast mesh swap, pivot-offset handling, and camera rotation lock;
-   - a clearly separated boundary section stating that dynamic capsule resizing and collision-sweep placement were not found in the inspected Blueprint graphs and runtime proof remains pending.
-4. Create original inline SVG or CSS diagrams for the Blueprint-style execution flow and the two pending media storyboards. Do not download or copy visual assets.
-5. Complete desktop, mobile, keyboard, reduced-motion, loading, WebGL fallback, and failure states. Dialogs must manage focus, close on Escape, and restore focus correctly.
-6. Keep audio disabled and clearly marked as coming later. Do not add background music.
-7. Keep every public claim within the approved evidence boundaries. Preserve `Confirmation pending`, `USER_CONFIRMED: pending`, `PROVENANCE_PENDING`, and `Capture pending` where applicable.
+- Refactor exhibit content into a typed data-driven structure where useful, avoiding duplicated modal and focus-management code.
+- Extend Direct Portfolio navigation so every Prop Hunt exhibit can be reached without 3D interaction.
+- Add a restrained procedural Systems Console hotspot or equivalent shared 3D station for the new exhibits. Keep it visually coherent with the observatory and avoid imported assets.
+- Provide each exhibit with a concise overview, inspected implementation flow, technical boundary section, provenance/authorship state, and correctly identified capture placeholder.
+- Create original inline SVG/CSS diagrams only when they explain the system better than text.
+- Keep all dialogs/drawers keyboard accessible, focus-contained, Escape-dismissable, mobile responsive, reduced-motion safe, and available in static 2D mode.
 
-## Performance decision
+## Evidence boundaries
 
-The measured accessible React shell baseline is accepted with a revised ceiling of `<80 kB gzipped`. Keep:
+- Combat: describe the inspected firing timer, server RPC/trace path, hit presentation, damage, and spectator transition. Disclose that camera vectors originate from the client and runtime authority/lag compensation remain unverified.
+- Audio: describe inspected `UVOIPLIB` packet clearing, VOIP component registration, attenuation asset, and taunt broadcast structure. Do not claim automated life-state routing, low-level monitoring, logarithmic falloff, or occlusion filtering without proof.
+- Round flow: describe inspected GameMode round tracking, HUD plumbing, and replicated player-state structure. Runtime completeness and multiplayer behavior remain capture pending.
+- Emotes: describe inspected networked emote and leader-pose switching structure. Authorship and runtime animation quality remain pending.
+- Never convert `VERIFIED_IMPLEMENTATION` into `RUNTIME_VERIFIED`. Preserve `USER_CONFIRMED: pending` and `PROVENANCE_PENDING`.
 
-- immediate 2D shell below 80 kB gzipped;
-- lazy 3D JavaScript below 300 kB gzipped;
-- combined initial and lazy JavaScript/CSS below 350 kB gzipped;
-- vertical-slice geometry below 40,000 triangles;
-- main studio view below 25 draw calls.
+## Media placeholders
 
-Report measured results individually. Do not claim frame-rate success without measuring on the named device profile.
+Use IDs already defined in the approved inventory/content map. Do not invent replacement IDs or claim that media exists. Each placeholder must state what capture would prove.
+
+## Performance
+
+- Keep immediate JS + CSS below 80 kB gzipped through lazy exhibit chunks.
+- Keep lazy 3D JavaScript below 300 kB gzipped.
+- Keep the combined application below the approved 350 kB gzipped ceiling, reporting precisely which chunks are included.
+- Keep the main studio below the full-portfolio ceilings of 60,000 triangles and 30 measured draw calls.
+- Remove diagnostic hooks after measurement.
 
 ## Scope limits
 
-- Do not add other project pillars, real videos, imported 3D assets, external fonts, a backend, analytics, deployment, or contact submission.
-- Do not modify Unreal, Monolith, raw inspection data, approved evidence documents, or `.agents/workflows`.
-- Do not rename or create alternate execution workflows.
+- Do not add real videos, external assets/fonts, technical-art or Blender exhibits, resume generation, backend services, analytics, deployment, or contact submission.
+- Do not modify planning/evidence documents, workflows, dependencies, Unreal, Monolith settings, or raw inspection data.
 
 ## Validation
 
 - TypeScript check and production build pass.
-- Test the complete entrance-to-breakdown-to-return flow with pointer and keyboard.
-- Test reduced motion, 2D mode, WebGL failure, mobile viewport, focus containment/restoration, and Escape behavior.
-- Audit public copy against the evidence files.
-- Record actual bundle, triangle, and draw-call measurements and identify any missed target.
+- Every exhibit opens from Direct Portfolio using keyboard and pointer input.
+- Dialog focus containment, Escape dismissal, and focus restoration work for every exhibit.
+- Static 2D and mobile views expose the same essential exhibit content and actions.
+- Public-copy audit confirms all evidence boundaries.
+- Record actual bundle sizes plus measured settled-studio triangles/draw calls; label anything unmeasured.
 
-Replace `coordination/IMPLEMENTATION_REPORT.md` with a compact P004 report. List files changed, tested flows, measurements, known limitations, and the next smallest milestone. Mark `COMPLETE` or `PARTIAL`, then stop for Codex review.
+Replace `coordination/IMPLEMENTATION_REPORT.md` with the P005 result. Mark `COMPLETE` or `PARTIAL`, list exact tested flows and measurements, and stop for Codex review.

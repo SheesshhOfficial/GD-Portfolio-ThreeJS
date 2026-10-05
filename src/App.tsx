@@ -2,12 +2,26 @@ import React, { lazy, Suspense, useEffect } from 'react';
 import { PortfolioProvider, usePortfolio } from './context/PortfolioContext';
 import { TopBar } from './components/ui/TopBar';
 import { DirectNavigationMenu } from './components/ui/DirectNavigationMenu';
-import { ExhibitCard } from './components/ui/ExhibitCard';
+import { CinematicSkipButton } from './components/ui/CinematicSkipButton';
 import { Static2DView } from './components/ui/Static2DView';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 
 // Lazy-load 3D canvas bundle to keep initial HTML/CSS/2D shell minimal
 const CanvasContainer = lazy(() => import('./components/3d/CanvasContainer'));
+
+// Lazy-load deep-dive breakdown drawer to keep initial shell under budget
+const TransformationBreakdownDrawer = lazy(() =>
+  import('./components/ui/TransformationBreakdownDrawer').then((m) => ({
+    default: m.TransformationBreakdownDrawer,
+  }))
+);
+
+// Lazy-load interactive exhibit modal card
+const ExhibitCard = lazy(() =>
+  import('./components/ui/ExhibitCard').then((m) => ({
+    default: m.ExhibitCard,
+  }))
+);
 
 const PortfolioApp: React.FC = () => {
   const { state, dispatch } = usePortfolio();
@@ -48,6 +62,9 @@ const PortfolioApp: React.FC = () => {
       {/* Primary Content Presentation */}
       {state.viewMode === '3d' && state.webglSupported ? (
         <main id="main-content" style={{ width: '100%', height: '100%', position: 'relative' }}>
+          {/* Skip Intro button during 2.5s cinematic entrance */}
+          <CinematicSkipButton />
+
           <ErrorBoundary
             fallback={<Static2DView />}
             onError={handleCanvasError}
@@ -75,10 +92,22 @@ const PortfolioApp: React.FC = () => {
           </ErrorBoundary>
 
           {/* Interactive Exhibit Card (Overlaid above Canvas) */}
-          <ExhibitCard />
+          <Suspense fallback={null}>
+            <ExhibitCard />
+          </Suspense>
+
+          {/* Deep-Dive Technical Breakdown Drawer */}
+          <Suspense fallback={null}>
+            <TransformationBreakdownDrawer />
+          </Suspense>
         </main>
       ) : (
-        <Static2DView />
+        <>
+          <Static2DView />
+          <Suspense fallback={null}>
+            <TransformationBreakdownDrawer />
+          </Suspense>
+        </>
       )}
     </>
   );

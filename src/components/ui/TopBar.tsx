@@ -29,6 +29,7 @@ export const TopBar: React.FC = () => {
 
         {/* 3D / 2D View Mode Toggle */}
         <button
+          id="view-mode-toggle-btn"
           type="button"
           className={`${styles.button} ${styles.modeButton} ${!state.webglSupported ? styles.disabledButton : ''}`}
           disabled={!state.webglSupported}

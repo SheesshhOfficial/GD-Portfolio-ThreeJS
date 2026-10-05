@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { usePortfolio } from '../../context/PortfolioContext';
 import { FEATURED_PROP_HUNT } from '../../data/exhibits';
+import { OverviewStoryboardSvg, TransformStoryboardSvg } from '../diagrams/MediaStoryboardDiagrams';
 import styles from './ExhibitCard.module.css';
 
 export const ExhibitCard: React.FC = () => {
@@ -27,6 +28,9 @@ export const ExhibitCard: React.FC = () => {
     if (state.activeExhibitId !== FEATURED_PROP_HUNT.id) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
+      // If breakdown drawer is open, let breakdown drawer handle Escape
+      if (state.isBreakdownOpen) return;
+
       if (e.key === 'Escape') {
         e.stopPropagation();
         handleClose();
@@ -59,7 +63,7 @@ export const ExhibitCard: React.FC = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [state.activeExhibitId]);
+  }, [state.activeExhibitId, state.isBreakdownOpen]);
 
   if (state.activeExhibitId !== FEATURED_PROP_HUNT.id) {
     return null;
@@ -111,7 +115,19 @@ export const ExhibitCard: React.FC = () => {
 
           <p className={styles.summary}>{FEATURED_PROP_HUNT.summary}</p>
 
-          {/* Structured Media Placeholders */}
+          {/* Primary Action Button: Open Transformation Architecture Drawer */}
+          <div className={styles.actionSection}>
+            <button
+              id="inspect-transform-btn"
+              type="button"
+              className={styles.inspectButton}
+              onClick={() => dispatch({ type: 'SET_BREAKDOWN_OPEN', payload: true })}
+            >
+              <span>Inspect Transformation Architecture →</span>
+            </button>
+          </div>
+
+          {/* Structured Media Placeholders with Inline Vector Storyboards */}
           <div className={styles.placeholderGrid}>
             <div className={styles.placeholderCard}>
               <div className={styles.placeholderHeader}>
@@ -119,6 +135,7 @@ export const ExhibitCard: React.FC = () => {
                 <span className={styles.mediaId}>{FEATURED_PROP_HUNT.mediaOverviewId}</span>
               </div>
               <h4 className={styles.placeholderTitle}>Gameplay Overview Reel</h4>
+              <OverviewStoryboardSvg />
               <p className={styles.placeholderDesc}>
                 45–60s video evidence showing asymmetric hide-and-seek loop from hunter and prop perspectives.
               </p>
@@ -133,6 +150,7 @@ export const ExhibitCard: React.FC = () => {
                 <span className={styles.mediaId}>{FEATURED_PROP_HUNT.mediaTransformId}</span>
               </div>
               <h4 className={styles.placeholderTitle}>Multi-View Transformation Clip</h4>
+              <TransformStoryboardSvg />
               <p className={styles.placeholderDesc}>
                 20–30s split-screen recording validating host targeting, replicated mesh swap, and pivot correction.
               </p>
@@ -146,11 +164,6 @@ export const ExhibitCard: React.FC = () => {
           <div className={styles.provenanceBox}>
             <span className={styles.provenanceTag}>Provenance & Sourcing</span>
             <p className={styles.provenanceText}>{FEATURED_PROP_HUNT.provenanceNote}</p>
-          </div>
-
-          <div className={styles.milestoneNotice}>
-            <span className={styles.noticeIcon}>ℹ️</span>
-            <span>The full interactive transformation breakdown drawer and node diagrams belong to the next milestone.</span>
           </div>
         </div>
 

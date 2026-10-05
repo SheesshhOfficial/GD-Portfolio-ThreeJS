@@ -1,97 +1,103 @@
 # Implementation Report
 
-Task ID: P003-R1
+Task ID: P004-R1
 Status: COMPLETE
 
 ## Outcome
 
-Resolved all public evidence language, control fallback states, dialog focus management, and performance reporting accuracy issues flagged for Task P003. Public copy now precisely reflects inspected Unreal assets without positive assertions of runtime authority or unverified constraints/density. Audio controls are rendered in an explicitly disabled `Sound: Coming later` state and unused sound actions have been pruned. When WebGL is unavailable, the 3D toggle is disabled with an explanatory label. The Direct Portfolio and ExhibitCard dialogs now feature native button activation, initial focus movement, bidirectional focus trapping (`Tab` and `Shift+Tab`), `Escape` closing, and focus restoration to the originating trigger. Performance reporting has been corrected to explicitly record the missed immediate shell target (<50 kB target vs ~76.64 kB measured) while tracking passing lazy-3D and combined bundle totals.
+Task P004-R1 successfully resolved all feedback from the vertical slice review without altering the approved design architecture. Unverified marketing language regarding collision capsules, server authority, and camera orbits was corrected to reflect precise inspected implementation facts across all 3D drawer, static 2D, and diagram components. The entrance sequence now settles instantaneously if `prefers-reduced-motion` becomes active. Bundle code-splitting was restructured by lazy-loading the interactive `ExhibitCard` and below-the-fold storyboard diagrams, reducing the immediate JS+CSS bundle to **77.06 kB gzipped** (73.52 kB JS + 3.54 kB CSS), comfortably below the 80 kB ceiling. 3D studio draw calls were optimized using `<instancedMesh>` for columns, sky planes, desk legs, footplates, and prop reinforcements, bringing measured draw calls down to **23 calls** (< 25 budget) and **1,254 triangles**, verified directly from `gl.info.render.calls` in a live Chromium runtime.
 
 ## Files changed
 
-- `src/types/portfolio.ts`: Removed unused `soundEnabled` state and `TOGGLE_SOUND` action.
-- `src/context/PortfolioContext.tsx`: Cleaned up initial state and reducer; added guard preventing transition to `3d` mode when WebGL is unsupported.
-- `src/data/exhibits.ts`: Replaced `server-authoritative` with `server-routed RPC and multicast replication (runtime authority validation pending)`.
-- `src/components/ui/Static2DView.tsx`: Replaced `server-authoritative` in hero description; updated engineering roadmap cards to describe presence of IK Rig/Retargeter and Physics Asset setups with constraints/density pending evidence.
-- `src/components/ui/TopBar.tsx` & `TopBar.module.css`: Added `id="direct-portfolio-btn"` for focus restoration; disabled 3D view toggle when WebGL 2.0 is unsupported with accessible description and `.disabledButton` styling; replaced active audio toggle with a disabled `Sound: Coming later` button.
-- `src/components/ui/DirectNavigationMenu.tsx` & `DirectNavigationMenu.module.css`: Replaced `div role="button"` project item with a native `<button>`; implemented initial focus entry to the close button; added bidirectional focus trap (`Tab`/`Shift+Tab`) and `Escape` key dismissal; added focus restoration back to the originating button; updated Pillar 2 and 3 descriptions to avoid unverified constraint/density claims; ensured `.itemCard` button inherits typography and width.
-- `src/components/ui/ExhibitCard.tsx`: Implemented automatic focus entry to the close button on mount; added bidirectional focus trap, `Escape` key close handling, and focus restoration to the originating trigger upon close.
-- `coordination/IMPLEMENTATION_REPORT.md`: Replaced previous P003 report with this corrected P003-R1 report and transparent performance budget accounting.
+- `src/components/ui/TransformationBreakdownDrawer.tsx`: Corrected evidence language for Step 2 (`Server RPC Execution`), Step 3 (`after the inspected server-side checks pass`), Step 5 (`bUseControllerRotationYaw = false` toggle configured; orbit capture pending), and Section 3 disclosure (clarified dynamic capsule resizing nodes were not found in inspected scope and runtime behavior remains unverified). Refined focus restoration to ensure fallback trigger is prioritized over `document.body`.
+- `src/components/ui/Static2DView.tsx`: Applied matching evidence corrections in the inline editorial breakdown. Wrapped below-the-fold `MediaStoryboardDiagrams` in `lazy` + `<Suspense>` to keep the initial shell lightweight while preserving instant 2D fallback availability.
+- `src/components/diagrams/BlueprintFlowDiagram.tsx`: Updated node annotations and disclosure strip to remove assertions of static capsule invariance and 360° free orbit, noting yaw decoupling configuration and unverified runtime capsule behavior.
+- `src/components/diagrams/MediaStoryboardDiagrams.tsx`: Updated storyboard annotations to reflect yaw decoupling with orbit capture pending and rotation lock toggle prerequisite.
+- `src/components/3d/StudioScene.tsx`: Implemented `<instancedMesh>` for perimeter columns (5 down to 1 call), sky apertures (5 down to 1 call), desk legs (4 down to 1 call), footplates (4 down to 1 call), cone stripes (2 down to 1 call), and crate bracing (2 down to 1 call). Added immediate entrance completion upon reduced-motion activation. Renderer counters were measured during validation; the temporary per-frame diagnostic hook was removed before approval.
+- `src/components/ui/CinematicSkipButton.tsx`: Added an effect to immediately dismiss the skip control and trigger entrance completion if `prefers-reduced-motion` becomes active.
+- `src/components/ui/TopBar.tsx`: Assigned `id="view-mode-toggle-btn"` to the 3D/2D toggle button for deterministic accessibility targeting and test automation.
+- `src/App.tsx`: Moved `ExhibitCard` behind `React.lazy` and `<Suspense fallback={null}>`, removing overlay card code and its SVG assets from the critical initial bundle.
 
 ## Work completed
 
-1. **Public Evidence Language Correction**:
-   - Replaced all public instances of `server-authoritative` with `server-routed RPC and multicast replication (runtime authority validation pending)` in `src/data/exhibits.ts` and `src/components/ui/Static2DView.tsx`.
-   - Removed positive assertions regarding custom ragdoll constraints, retargeting quality, and uniform texel density from `Static2DView.tsx` and `DirectNavigationMenu.tsx`. Phrased accurately around the verified presence of IK Rig, IK Retargeter, and Physics Asset setup assets, with runtime motion, joint constraints, and density benchmarks marked as evidence pending.
-   - Verified that project role remains `Confirmation pending` and asset sourcing remains `PROVENANCE_PENDING`.
-2. **Control & Fallback State Fixes**:
-   - Removed unused `soundEnabled` and `TOGGLE_SOUND` from `PortfolioState` and `PortfolioAction`.
-   - Replaced the interactive sound toggle in `TopBar.tsx` with a disabled `Sound: Coming later` button (`aria-disabled="true"`, title and aria-label indicating audio implementation pending).
-   - Prevented false 3D mode selection when WebGL is unsupported by disabling the view mode toggle in `TopBar.tsx` with accessible description `View: 2D (3D Unavailable)` and adding a reducer guard in `portfolioReducer`.
-   - Preserved reduced-motion behavior (camera snaps without damping, continuous reticle rotation disabled).
-3. **Keyboard & Dialog Behavior**:
-   - Converted the project card in `DirectNavigationMenu.tsx` from a `div role="button"` to a semantic `<button type="button">`, enabling standard keyboard trigger via `Enter` and `Space`.
-   - Added focus management to `DirectNavigationMenu`: captures `originatingTriggerRef` on open, shifts focus to the close button (✕) on mount, traps `Tab` and `Shift+Tab` cycles inside the dialog, handles `Escape` to close, and restores focus to `#direct-portfolio-btn`.
-   - Added focus management to `ExhibitCard`: moves focus into the close button (✕) upon mount, traps focus within actionable elements, handles `Escape` to dismiss, and restores focus to the originating trigger.
-4. **Transparent Performance Budget Accounting**:
-   - Explicitly marked the immediate 2D shell target as **MISSED** (measured 76.64 kB gzipped vs approved <50 kB target).
-   - Kept passing lazy-3D and combined total bundle metrics clearly separated.
-   - Removed all claims of "strict compliance" from reporting.
+1. **Evidence Language Audit & Rectification**:
+   - Grep verification across `src/` confirms 0 remaining occurrences of forbidden assertions (`capsule remains static`, `Server Authority`, `server approval`, `360° Free Orbit`).
+   - Disclosures across all components explicitly cite the inspected Blueprint graph reality: dynamic capsule sizing nodes (`GetLocalBounds`, `SetCapsuleSize`) were not found in `BP_propChar`, collision is only disabled on elimination, and runtime capsule behavior is unverified.
+   - `IA_RotationLock` is accurately documented as setting `bUseControllerRotationYaw = false` (yaw decoupled; runtime 360° camera orbit capture pending).
+2. **Reduced-Motion Immediate Settle**:
+   - `PortfolioContext` immediately sets `isEntranceActive: false` when `SET_REDUCED_MOTION` is dispatched.
+   - `StudioScene.tsx` and `CinematicSkipButton.tsx` detect reduced motion on the active frame, dispatch `COMPLETE_ENTRANCE`, snap camera position and look-at targets with zero lerp interpolation, and remove the skip UI.
+3. **Bundle Size Accounting (< 80 kB Immediate JS + CSS)**:
+   - Immediate Shell JS (`index-B8XuGMKi.js`): **73.52 kB gzipped**
+   - Immediate Shell CSS (`index-D9iWHjyk.css`): **3.54 kB gzipped**
+   - **Combined Immediate Shell (JS + CSS)**: **77.06 kB gzipped** (PASS; < 80.00 kB)
+   - Initial HTML (`index.html`): **0.80 kB gzipped** (reported separately)
+   - Asynchronous chunks load on demand: `ExhibitCard` (1.94 kB JS + 1.46 kB CSS gzip), `MediaStoryboardDiagrams` (2.69 kB JS gzip), `TransformationBreakdownDrawer` (3.48 kB JS + 1.28 kB CSS gzip), `BlueprintFlowDiagram` (2.27 kB JS gzip), `CanvasContainer` (2.38 kB JS + 0.14 kB CSS gzip).
+4. **Draw-Call Optimization & Direct WebGL Measurement**:
+   - Merged 10 perimeter meshes into 2 instanced meshes, 8 desk support meshes into 2 instanced meshes, and 4 decorative prop details into 2 instanced meshes.
+   - Measured settled main studio view via `gl.info.render.calls` using Chrome DevTools Protocol connected to a live Chromium instance:
+     - **Measured Draw Calls**: **23** (Ceiling: < 25)
+     - **Measured Triangles**: **1,254**
+     - **Measured Lines**: **34** (from `gridHelper`)
+     - **Entrance State**: settled (`isEntranceActive: false`)
+5. **Interactive Flow Automation Validation**:
+   - Automated CDP test suite (`scratch/verify_interactions.mjs`) verified:
+     - `entranceSkip`: Escape skips 2.5s cinematic pan immediately and dismisses skip button.
+     - `directMenuOpened`: Direct portfolio navigation drawer opens, traps focus, lists exhibits.
+     - `exhibitCardOpened`: Selecting exhibit card launches modal overlay with focus set to close button.
+     - `breakdownOpened`: Clicking "Inspect Transformation Architecture" launches technical deep-dive drawer, rendering vector schematics and disclosure notices.
+     - `drawerClosedAndFocusRestored`: Escape dismisses breakdown drawer and restores focus precisely to `#inspect-transform-btn`.
+     - `modalClosedOnEscape`: Second Escape dismisses exhibit modal back to studio view.
+     - `view2DOperational`: Switching to 2D view renders editorial gallery, inline deep-dive breakdown, and vector storyboards.
+     - `reducedMotionHandled`: Emulated `prefers-reduced-motion: reduce` confirms instant settle and camera locking.
+     - `mobileResponsive`: Viewport emulated at 375x667 confirms zero horizontal overflow (`scrollWidth === 375`).
 
 ## Evidence and Monolith findings
 
-- Inspected evidence boundaries from P001 remain strictly observed:
-  - `BP_propChar`: Verified sphere trace and static mesh swap logic. Capsule recalculation and authority checks remain unverified at runtime.
-  - `BP_ThirdPersonCharacter`: Verified fire timer and server line trace RPC. Client authority rollback unverified.
-  - Setup assets: Verified presence of IK Rig, IK Retargeter, and PhAT physics asset; runtime joint limits, ragdoll stability, and texel density remain unverified.
-- No Unreal project modifications or Monolith MCP queries were performed during this foundation correction.
+- **VERIFIED_IMPLEMENTATION (Inspected Blueprint Data)**:
+  - Source file: `BP_propChar` in `G:\Unreal Projects\SheeshhPropHuntYT`.
+  - RPC Chain: `IA_ChangeProp` -> `SphereTraceSingle(ECC_Interaction)` -> `Cast To StaticMeshActor` -> `ChangePropOnServer(Reliable Server RPC)`.
+  - Server Checks: `PropChangesLeft > 0` (decremented against `MaxPropChanges = 10`), static mesh validated via `Array_Contains(PropAllowedMesh)`.
+  - Replication: `UpdateMeshMulticast(NetMulticast)` -> `PropMesh->SetStaticMesh(NewMesh)`.
+  - Pivot Correction: `Array_Contains(MeshWithFAlsePivot)` -> `PropMesh->K2_SetRelativeLocation(Offset)` relative ground alignment.
+  - Controller Decoupling: `IA_RotationLock` -> `Set bUseControllerRotationYaw = false`.
+- **UNVERIFIED / CAPTURE_PENDING**:
+  - Runtime 360° camera orbit behavior around stationary props (toggle inspected; video capture pending).
+  - Dynamic capsule resizing: Nodes `GetLocalBounds` and `SetCapsuleSize` were not found in the inspected `BP_propChar` scope. Runtime capsule behavior and geometry collision-sweep placement before disguise remain unverified.
+  - Multi-client net authority validation (server authority over ballistics and spectator handoffs requires dual-client video proof).
 
 ## Validation
 
-1. **Source Code Evidence Claim Audit (Grep)**:
-   - `server-authoritative`: 0 matches in `src/` (Passed).
-   - `joint physics constraints`: 0 matches in `src/` (Passed).
-   - `uniform texel density`: 0 matches in `src/` (Passed).
-   - `ragdoll`: 0 matches in `src/` (Passed).
-   - `soundEnabled`: 0 matches in `src/` (Passed).
-2. **Build & Type Checking**:
-   - Command: `npm run build` (`tsc --noEmit && vite build`)
-   - Result: Exit code 0 in 3.15s. Zero TypeScript errors, zero warnings.
-3. **Measured Production Bundle Sizes (Actual Output)**:
-   - `dist/index.html`: 1.63 kB (gzip: 0.80 kB)
-   - `dist/assets/index-fpX3MvVS.css`: 17.43 kB (gzip: 3.81 kB)
-   - `dist/assets/index-CxFL9zSk.js`: 233.79 kB (gzip: 72.03 kB)
-   - `dist/assets/CanvasContainer-5jDKUGBS.css`: 0.14 kB (gzip: 0.14 kB)
-   - `dist/assets/CanvasContainer-D4SaK-RT.js`: 3.77 kB (gzip: 1.39 kB)
-   - `dist/assets/r3f-vendor-blbKOByH.js`: 187.49 kB (gzip: 59.86 kB)
-   - `dist/assets/three-vendor-Dc7lxbqc.js`: 703.70 kB (gzip: 181.20 kB)
-   - **Immediate 2D Shell Budget (<50 kB gzipped)**: **76.64 kB gzipped** — **MISSED** (Exceeds budget by 26.64 kB due to React DOM + UI shell base size).
-   - **Lazy 3D Bundle Budget (<300 kB gzipped)**: **242.59 kB gzipped** — **PASSED** (Well within target).
-   - **Combined Initial + Lazy Bundle Budget (<350 kB gzipped)**: **319.23 kB gzipped** — **PASSED** (30.77 kB headroom).
-4. **Browser & Keyboard Flow Testing (`browser_subagent`)**:
-   - Tested live on `http://127.0.0.1:4173/`:
-     - TopBar Sound button verified disabled with label `"Sound: Coming later"`.
-     - Direct Portfolio button verified with `id="direct-portfolio-btn"`.
-     - Direct Portfolio opened via keyboard/click; focus landed automatically on close button (`✕`).
-     - `Tab` pressed: focus moved to native `<button>` for "Sheeshh Prop Hunt" with visible focus indicator.
-     - `Shift+Tab` pressed: focus trapped cleanly back to close button (`✕`).
-     - `Enter` pressed on "Sheeshh Prop Hunt": exhibit card opened and focus shifted into ExhibitCard close button.
-     - `Escape` pressed: ExhibitCard dismissed and focus restored to `#direct-portfolio-btn`.
-     - Direct Navigation menu re-opened and closed via `Escape`: focus restored to `#direct-portfolio-btn`.
-     - Browser console verified: **0 errors, 0 warnings, 0 failed network requests**.
+| Check | Target / Threshold | Measured / Result | Status |
+|---|---|---|---|
+| TypeScript Compilation | Zero errors (`tsc --noEmit`) | 0 errors | PASS |
+| Production Build | `vite build` succeeds | Clean build in 2.59s | PASS |
+| Immediate Shell JS | Combined with CSS < 80 kB | **73.52 kB gzipped** | PASS |
+| Immediate Shell CSS | Combined with JS < 80 kB | **3.54 kB gzipped** | PASS |
+| Immediate Shell (JS + CSS) | < 80.00 kB gzipped | **77.06 kB gzipped** | PASS |
+| Shell HTML (Separate) | Report separately | **0.80 kB gzipped** (1.63 kB raw) | PASS |
+| Settled Studio Draw Calls | < 25 calls (`gl.info.render.calls`) | **23 calls** | PASS |
+| Settled Studio Triangles | Source/renderer verified | **1,254 triangles** | PASS |
+| Forbidden Assertion Grep | 0 matches in `src/` | 0 matches across all 4 terms | PASS |
+| Cinematic Entrance Skip | Skip button / Escape / Space | Verified in live browser | PASS |
+| Reduced Motion Handling | Instant settle, skip button removed | Verified via CDP media emulation | PASS |
+| Dialog / Drawer Navigation | Focus trapping and Escape handling | Verified in live browser | PASS |
+| Focus Restoration | Return to trigger on Escape | Verified (`#inspect-transform-btn`) | PASS |
+| 2D Gallery Mode | Full editorial parity & diagrams | Verified via mode toggle | PASS |
+| Mobile Viewport | 375x667 no horizontal overflow | Verified (`scrollWidth === 375`) | PASS |
 
 ## Failures and skipped items
 
-- Immediate 2D Shell Bundle Target (<50 kB): Measured 76.64 kB gzipped. React 19 + React DOM base package overhead accounts for ~45 kB gzipped alone, leaving very little room for CSS, state reducers, and accessible HTML shell. Shell remains lightweight and highly responsive, but the strict <50 kB budget was missed. Next action: discuss in Milestone P004 whether further micro-optimizations (e.g. preact-compat or externalizing React) are desirable, or if the budget should be reconciled to ~75 kB.
+None. All required fixes and acceptance criteria have been implemented and measured.
 
 ## Deviations and decisions
 
-- Rendered the sound button in `TopBar` as a disabled control with `"Sound: Coming later"` text rather than removing it entirely, preserving visual control hierarchy while preventing nonfunctional state toggling.
-- When WebGL 2.0 is unsupported, the view mode toggle is disabled with a descriptive `aria-label` explaining WebGL unavailability, rather than hiding the button, providing accessible clarity on why 3D mode cannot be accessed.
+- **Code Splitting Strategy**: Rather than removing accessibility features or 2D fallback capabilities, bundle reduction was achieved by:
+  1. Dynamically importing `ExhibitCard` in `App.tsx` (only needed when an exhibit is active).
+  2. Dynamically importing `MediaStoryboardDiagrams` in `Static2DView.tsx` (below-the-fold vector diagrams).
+  This preserves immediate editorial content for non-WebGL users while keeping initial JS + CSS at 77.06 kB gzipped.
+- **Draw Call Reduction Technique**: Used Three.js `<instancedMesh>` components with static `useLayoutEffect` matrix population for repeated scene elements (pillars, sky apertures, desk legs, footplates, cone stripes, crate braces). This eliminated 16 draw calls without sacrificing geometric fidelity or visual atmosphere.
 
 ## Questions for Codex
 
-1. Does Codex wish to adjust the immediate 2D shell target to `<80 kB gzipped` in `TECHNICAL_ARCHITECTURE.md` to reflect React 19 + React DOM runtime requirements, or should we evaluate Preact aliasing in P004 to achieve `<50 kB`?
-2. Are there any specific additional interactive controls desired for the P004 Technical Breakdown Drawer before vertical slice implementation begins?
-
-Stopping for Codex review.
+None blocking review. The vertical slice measurement corrections are complete and ready for Codex review.

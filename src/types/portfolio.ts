@@ -8,6 +8,8 @@ export interface PortfolioState {
   isReducedMotion: boolean;
   webglSupported: boolean;
   cameraFocus: CameraFocus;
+  isEntranceActive: boolean;
+  isBreakdownOpen: boolean;
 }
 
 export type PortfolioAction =
@@ -17,7 +19,9 @@ export type PortfolioAction =
   | { type: 'SET_DIRECT_MENU'; payload: boolean }
   | { type: 'SET_REDUCED_MOTION'; payload: boolean }
   | { type: 'SET_WEBGL_SUPPORTED'; payload: boolean }
-  | { type: 'SET_CAMERA_FOCUS'; payload: CameraFocus };
+  | { type: 'SET_CAMERA_FOCUS'; payload: CameraFocus }
+  | { type: 'COMPLETE_ENTRANCE' }
+  | { type: 'SET_BREAKDOWN_OPEN'; payload: boolean };
 
 export interface ExhibitData {
   id: string;
