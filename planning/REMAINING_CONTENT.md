@@ -2,6 +2,8 @@
 
 Use explicit pending labels until source material is supplied. Do not invent details to fill these gaps.
 
+User confirmed on 2026-10-11 that recordings and contribution details will be created later. Continue with these placeholders; do not repeatedly request the same material before it is ready. Interactive browser studies are separate from project evidence.
+
 1. Gameplay recordings and actual screenshots for the six Prop Hunt systems.
 2. Confirmed individual contributions: which systems were independently authored, adapted from tutorials, collaborative, or third-party.
 3. Original Blender assets with renders, wireframes, UV layouts, texture maps, and source-file references.

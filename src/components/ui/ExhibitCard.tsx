@@ -1,15 +1,18 @@
-import React, { useEffect, useRef } from 'react';
+import React, { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { usePortfolio } from '../../context/PortfolioContext';
 import { EXHIBITS_MAP } from '../../data/exhibits';
 import { OverviewStoryboardSvg, TransformStoryboardSvg } from '../diagrams/MediaStoryboardDiagrams';
 import { EvidenceStatus } from '../../types/portfolio';
 import styles from './ExhibitCard.module.css';
+const InteractiveStudy = lazy(() => import('../studies/InteractiveStudy'));
 
 export const ExhibitCard: React.FC = () => {
   const { state, dispatch } = usePortfolio();
   const cardRef = useRef<HTMLDivElement>(null);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
   const originatingElementRef = useRef<HTMLElement | null>(null);
+  const [demoOpen,setDemoOpen]=useState(false);
+  useEffect(()=>setDemoOpen(false),[state.activeExhibitId]);
 
   const exhibit = state.activeExhibitId ? EXHIBITS_MAP[state.activeExhibitId] : null;
 
@@ -107,6 +110,7 @@ export const ExhibitCard: React.FC = () => {
   };
 
   const isEvidenceRequired = exhibit.evidenceStatus === 'EVIDENCE_REQUIRED';
+  const demoKind = ['sheeshh-prop-hunt','EX-PH-TRANSFORM'].includes(exhibit.id) ? 'transform' : exhibit.id==='EX-PH-COMBAT' ? 'combat' : null;
 
   return (
     <aside
@@ -161,6 +165,11 @@ export const ExhibitCard: React.FC = () => {
 
           {/* System Summary */}
           <p className={styles.summary}>{exhibit.summary}</p>
+
+          {demoKind && <>
+            <button className={styles.demoButton} aria-expanded={demoOpen} onClick={()=>setDemoOpen(!demoOpen)}>{demoOpen?'Close interactive study':'Try the interactive study'} <span aria-hidden="true">{demoOpen?'−':'↗'}</span></button>
+            {demoOpen && <Suspense fallback={<p role="status">Opening browser study…</p>}><InteractiveStudy key={exhibit.id} kind={demoKind}/></Suspense>}
+          </>}
 
           {/* Deep-Dive Drawer Action Button */}
           <div className={styles.actionSection}>

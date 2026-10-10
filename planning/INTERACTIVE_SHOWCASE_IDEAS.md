@@ -1,7 +1,11 @@
 # Interactive Showcase Concepts
 
 Owner: Ashish Ranjan · Portfolio Try 2
-Status: Design specifications; concepts 1–3 are not implemented.
+Status: Concepts 1 and 2 have browser-study implementations (P011); concept 3 remains a specification pending actual project media. The original designs below remain the intended direction.
+
+## Current implementation
+
+Open the Prop Disguise or Combat study, then select “Try the interactive study.” Each demonstration begins with an illustrated preview and HTML controls. “View in 3D” loads local procedural meshes on demand. No demonstration changes a project's evidence status. Transformation shows three selected silhouettes and a ground reference; combat supports hit, miss, elimination, stage inspection, pause, resume and reset. The main studio sculpture continues to open the real project study rather than embedding these controls in the landing page.
 
 ## 1. Playable transformation study
 
