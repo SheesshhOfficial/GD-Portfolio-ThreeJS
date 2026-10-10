@@ -179,3 +179,5 @@
 @media(max-width:760px) { .topBar { height:64px; padding:0 7%; }.name { font-size:24px; }.title { display:none; }.controls { gap:4px; }.button { font-size:10px; }.brand { gap:0; } }
 .topBar { position:fixed; background:linear-gradient(#f1f1e8f5,#f1f1e8df); }
 .button:hover,.button:focus-visible { background:#dde5d1; color:#35482b; }
+@media(max-width:760px) { .topBar { padding:0 5%; }.controls { gap:0; }.button { padding:8px 10px; }.aboutButton { display:inline-flex; }.brand { flex-shrink:0; } }
+@media(max-width:370px) { .name { font-size:21px; }.button { padding:8px; font-size:9px; } }

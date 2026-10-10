@@ -1,5 +1,6 @@
 export type ViewMode = '3d' | '2d';
 export type CameraFocus = 'center' | 'transformation-bench' | 'systems-console';
+export type QualityMode = 'auto' | 'high' | 'low';
 
 export interface PortfolioState {
   viewMode: ViewMode;
@@ -10,9 +11,13 @@ export interface PortfolioState {
   cameraFocus: CameraFocus;
   isEntranceActive: boolean;
   isBreakdownOpen: boolean;
+  quality: QualityMode;
+  motionPaused: boolean;
 }
 
 export type PortfolioAction =
+  | { type: 'SET_QUALITY'; payload: QualityMode }
+  | { type: 'SET_MOTION_PAUSED'; payload: boolean }
   | { type: 'SET_VIEW_MODE'; payload: ViewMode }
   | { type: 'SET_ACTIVE_EXHIBIT'; payload: string | null }
   | { type: 'TOGGLE_DIRECT_MENU' }

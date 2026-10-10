@@ -184,7 +184,7 @@ export const ExhibitCard: React.FC = () => {
               <div key={media.id} className={styles.placeholderCard}>
                 <div className={styles.placeholderHeader}>
                   <span className={styles.badgePending}>
-                    {isEvidenceRequired ? 'Submission needed' : 'Capture pending'}
+                    {isEvidenceRequired ? 'Source asset needed' : 'Media coming soon'}
                   </span>
                   <span className={styles.mediaId}>{media.id}</span>
                 </div>
@@ -193,7 +193,7 @@ export const ExhibitCard: React.FC = () => {
                 {media.id === 'PH-TRANSFORM' && <TransformStoryboardSvg />}
                 <p className={styles.placeholderDesc}>{media.description}</p>
                 <div className={styles.placeholderFooter}>
-                  <span className={styles.evidenceReq}>Required: {media.requirement}</span>
+                  <span className={styles.evidenceReq}>{media.requirement === 'RUNTIME_VERIFIED' ? 'Gameplay recording needed' : media.requirement === 'ASSET_INSPECTION_REQUIRED' ? 'Editor inspection needed' : 'Supporting evidence needed'}</span>
                 </div>
               </div>
             ))}

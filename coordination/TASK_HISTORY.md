@@ -18,3 +18,4 @@
 | P008 | Perform sitewide visual QA and recruiter-journey polish | COMPLETE | Changes requested |
 | P008-R1 | Correct accessibility, camera targeting, storage resilience, touch sizing, and bundle accounting | COMPLETE | Approved by Codex |
 | P009 | Codex direct redesign: architectural studio, editorial landing, filterable gallery, and interaction polish | COMPLETE | Build and production browser checks passed; user visual review pending |
+| P010 | Document interactive concepts; refine scene; add About/profile and adaptive quality controls | COMPLETE | Build, production interaction checks, and PDF visual check passed; hardware tests remain |

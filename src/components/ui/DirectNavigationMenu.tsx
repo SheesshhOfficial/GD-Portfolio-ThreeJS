@@ -232,18 +232,6 @@ export const DirectNavigationMenu: React.FC = () => {
             </div>
           </section>
 
-          {/* Pillar 4: Credentials & Academic Profile */}
-          <section className={styles.section}>
-            <span className={styles.pillarTag}>Pillar 4: Credentials &amp; Contact</span>
-            <div className={styles.credentialsBox}>
-              <p className={styles.profileText}>
-                <strong>Ashish Ranjan</strong> — Manipal Institute of Technology (MIT), Bengaluru (B.Tech CSE '27)
-              </p>
-              <p className={styles.noteText}>
-                Supplied data pending publication approval. Public resume document pending authoring.
-              </p>
-            </div>
-          </section>
         </div>
       </div>
     </div>

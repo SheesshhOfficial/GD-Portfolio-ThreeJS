@@ -48,6 +48,7 @@ const PortfolioApp: React.FC = () => {
         console.warn('WebGL 2.0 context is unavailable. Falling back to 2D view.');
         dispatch({ type: 'SET_WEBGL_SUPPORTED', payload: false });
       }
+      gl?.getExtension('WEBGL_lose_context')?.loseContext();
     } catch (e) {
       console.warn('WebGL check threw error. Falling back to 2D view.', e);
       dispatch({ type: 'SET_WEBGL_SUPPORTED', payload: false });

@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { lazy, Suspense, useCallback, useState } from 'react';
 import { usePortfolio } from '../../context/PortfolioContext';
 import styles from './TopBar.module.css';
+const StudioPanel = lazy(()=>import('./StudioPanel'));
 
 export const TopBar: React.FC = () => {
   const { state, dispatch } = usePortfolio();
+  const [panel,setPanel] = useState<'about'|'settings'|null>(null);
+  const closePanel=useCallback(()=>setPanel(null),[]);
 
   return (
     <header className={styles.topBar} role="banner">
@@ -14,6 +17,8 @@ export const TopBar: React.FC = () => {
       </div>
 
       <nav className={styles.controls} aria-label="Portfolio View Controls">
+        <button className={`${styles.button} ${styles.aboutButton}`} onClick={()=>setPanel('about')} aria-haspopup="dialog">About</button>
+        <button className={styles.button} onClick={()=>setPanel('settings')} aria-label="Studio settings" aria-haspopup="dialog"><span aria-hidden="true">☷</span><span className={styles.btnLabel}>Settings</span></button>
         {/* Direct Navigation Button */}
         <button
           id="direct-portfolio-btn"
@@ -64,6 +69,7 @@ export const TopBar: React.FC = () => {
         </button>
 
       </nav>
+      <Suspense fallback={null}>{panel && <StudioPanel mode={panel} onClose={closePanel} />}</Suspense>
     </header>
   );
 };
