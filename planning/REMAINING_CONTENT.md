@@ -1,5 +1,7 @@
 # Remaining Portfolio Content
 
+The full user-action checklist, submission locations, recording instructions and physical-phone/launch steps are now in `../Humanwork.md`.
+
 Use explicit pending labels until source material is supplied. Do not invent details to fill these gaps.
 
 User confirmed on 2026-10-11 that recordings and contribution details will be created later. Continue with these placeholders; do not repeatedly request the same material before it is ready. Interactive browser studies are separate from project evidence.

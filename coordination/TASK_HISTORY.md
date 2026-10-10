@@ -20,3 +20,4 @@
 | P009 | Codex direct redesign: architectural studio, editorial landing, filterable gallery, and interaction polish | COMPLETE | Build and production browser checks passed; user visual review pending |
 | P010 | Document interactive concepts; refine scene; add About/profile and adaptive quality controls | COMPLETE | Build, production interaction checks, and PDF visual check passed; hardware tests remain |
 | P011 | Add transformation and combat browser studies with optional 3D previews | COMPLETE | State checks, production build, desktop/mobile and keyboard checks passed; real media deferred |
+| P012 | Add guided tour, richer scene grounding/materials, Services, direct project pages and launch metadata; consolidate human work | COMPLETE | Build, routes, both metadata modes and responsive/browser checks passed; actual-phone test and public launch pending |

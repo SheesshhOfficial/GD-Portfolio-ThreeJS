@@ -1,5 +1,5 @@
 export type ViewMode = '3d' | '2d';
-export type CameraFocus = 'center' | 'transformation-bench' | 'systems-console';
+export type CameraFocus = 'center' | 'transformation-bench' | 'systems-console' | 'technical-art';
 export type QualityMode = 'auto' | 'high' | 'low';
 
 export interface PortfolioState {
@@ -13,9 +13,14 @@ export interface PortfolioState {
   isBreakdownOpen: boolean;
   quality: QualityMode;
   motionPaused: boolean;
+  tourStep: number | null;
+  galleryFilter: number;
 }
 
 export type PortfolioAction =
+  | { type: 'SET_TOUR_STEP'; payload: number | null }
+  | { type: 'SET_GALLERY_FILTER'; payload: number }
+  | { type: 'SYNC_ROUTE'; payload: {exhibitId:string|null;viewMode:ViewMode} }
   | { type: 'SET_QUALITY'; payload: QualityMode }
   | { type: 'SET_MOTION_PAUSED'; payload: boolean }
   | { type: 'SET_VIEW_MODE'; payload: ViewMode }

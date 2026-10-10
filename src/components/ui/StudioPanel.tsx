@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { usePortfolio } from '../../context/PortfolioContext';
 import './StudioPanel.css';
 
-type Props = { mode: 'about' | 'settings'; onClose: () => void };
+type Props = { mode: 'about' | 'services' | 'settings'; onClose: () => void };
 export default function StudioPanel({mode,onClose}: Props) {
   const {state,dispatch} = usePortfolio();
   const panel = useRef<HTMLDivElement>(null);
@@ -35,8 +35,18 @@ export default function StudioPanel({mode,onClose}: Props) {
   },[mode]);
   return <div className="studio-panel-backdrop" onClick={e=>{if(e.target===e.currentTarget)onClose();}}>
     <section ref={panel} role="dialog" aria-modal="true" aria-labelledby="studio-panel-title" className="studio-panel">
-      <header><span className="eyebrow">{mode==='about'?'THE PERSON BEHIND THE WORK':'MAKE YOURSELF COMFORTABLE'}</span><button aria-label="Close panel" onClick={onClose}>×</button></header>
-      {mode==='about'?<>
+      <header><span className="eyebrow">{mode==='about'?'THE PERSON BEHIND THE WORK':mode==='services'?'LET’S TALK ABOUT YOUR PROJECT':'MAKE YOURSELF COMFORTABLE'}</span><button aria-label="Close panel" onClick={onClose}>×</button></header>
+      {mode==='services'?<>
+        <h2 id="studio-panel-title">From a brief<br />to <em>something playable.</em></h2>
+        <p className="panel-lead">Have a game idea, a mechanic to explore, or a pipeline problem? Let’s discuss a focused first step.</p>
+        <div className="service-list">
+          <article><span>01 / PROTOTYPING</span><h3>Unreal gameplay prototypes</h3><p>Discuss a small interaction, a mechanic, or a greybox gameplay loop.</p><dl><dt>Possible scope</dt><dd>Inputs, interaction rules, and a playable test scene.</dd><dt>Possible handover</dt><dd>A scoped prototype and notes explaining setup and limitations.</dd></dl></article>
+          <article><span>02 / GAMEPLAY LOGIC</span><h3>Blueprint system work</h3><p>Discuss readable logic for gameplay interactions, combat flow, or round state.</p><dl><dt>Possible scope</dt><dd>A defined system, its edge cases, and an agreed test checklist.</dd><dt>Possible handover</dt><dd>Blueprint overview, integration notes, and an explanation of tradeoffs.</dd></dl><button onClick={()=>{dispatch({type:'SET_ACTIVE_EXHIBIT',payload:'EX-PH-COMBAT'});onClose();}}>See the inspected combat study ↗</button></article>
+          <article><span>03 / VISUAL WORKFLOWS</span><h3>Technical art & asset integration</h3><p>Discuss a Blender-to-Unreal workflow, character asset setup, or material integration.</p><dl><dt>Possible scope</dt><dd>A small workflow review or asset integration task.</dd><dt>Possible handover</dt><dd>Setup notes and an agreed asset validation checklist.</dd></dl><button onClick={()=>{dispatch({type:'SET_GALLERY_FILTER',payload:2});dispatch({type:'SET_VIEW_MODE',payload:'2d'});onClose();}}>Browse technical art studies ↗</button></article>
+        </div>
+        <p className="service-boundary">These are enquiry areas and possible deliverables, not claims of completed client engagements. Final scope, availability, authorship examples and delivery terms will be agreed after reviewing your brief.</p>
+        <div className="profile-contact"><h3>Send a useful first brief.</h3><p>Include your game idea, engine version, the task you need, your deadline, and any existing assets. Budget and platform constraints help define a realistic scope.</p><a className="service-email" href={`mailto:ashish.mitblr2023@learner.manipal.edu?subject=${encodeURIComponent('Game development project enquiry')}&body=${encodeURIComponent('Hi Ashish,\n\nProject idea:\nEngine/version:\nWhat I need help with:\nTarget platform:\nExisting assets or project:\nDeadline:\nBudget range:\n\nThanks,')}`}>Email a project brief ↗</a></div>
+      </>:mode==='about'?<>
         <h2 id="studio-panel-title">Hi, I’m <em>Ashish.</em></h2>
         <p className="panel-lead">A game developer interested in the meeting point between playable systems and visual craft.</p>
         <p>I work with Unreal Engine and explore gameplay programming, multiplayer systems, technical art, and Blender workflows. This portfolio brings together my project studies and the problems behind them.</p>

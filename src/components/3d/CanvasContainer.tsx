@@ -13,9 +13,9 @@ export const CanvasContainer: React.FC = () => {
   const onSlow=useCallback(()=>setAutoLow(true),[]);
   useEffect(()=>{const change=()=>setVisible(!document.hidden);document.addEventListener('visibilitychange',change);return()=>document.removeEventListener('visibilitychange',change);},[]);
   return (
-    <div id="studio-renderer" className={styles.canvasWrapper} role="region" aria-label="Interactive 3D workshop">
+    <div id="studio-renderer" className={styles.canvasWrapper} role="region" aria-label="Interactive 3D workshop" inert={!!state.activeExhibitId||state.tourStep!==null}>
       <Canvas
-        shadows={!economy}
+        shadows={economy?false:'soft'}
         frameloop={!visible ? 'never' : state.motionPaused || state.isReducedMotion ? 'demand' : 'always'}
         camera={{ position: [9, 6, 13], fov: 42, near: 0.1, far: 100 }}
         dpr={economy ? 1 : [1, 1.5]}

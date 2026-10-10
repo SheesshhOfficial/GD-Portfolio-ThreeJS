@@ -181,3 +181,4 @@
 .button:hover,.button:focus-visible { background:#dde5d1; color:#35482b; }
 @media(max-width:760px) { .topBar { padding:0 5%; }.controls { gap:0; }.button { padding:8px 10px; }.aboutButton { display:inline-flex; }.brand { flex-shrink:0; } }
 @media(max-width:370px) { .name { font-size:21px; }.button { padding:8px; font-size:9px; } }
+.servicesButton{display:inline-flex;}@media(max-width:760px){.controls{gap:0;}.button{padding:8px;}.servicesButton{font-size:10px;}.brand{margin-right:6px;}}

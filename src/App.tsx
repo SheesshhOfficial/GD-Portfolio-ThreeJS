@@ -35,6 +35,7 @@ const ExhibitCard = lazy(() =>
     default: m.ExhibitCard,
   }))
 );
+const StudioTour=lazy(()=>import('./components/ui/StudioTour'));
 
 const PortfolioApp: React.FC = () => {
   const { state, dispatch } = usePortfolio();
@@ -69,6 +70,7 @@ const PortfolioApp: React.FC = () => {
 
       {/* Global Top Bar Navigation */}
       <TopBar />
+      <Suspense fallback={null}>{state.tourStep!==null&&<StudioTour/>}</Suspense>
 
       {/* Direct Navigation Drawer Overlay */}
       <Suspense fallback={null}>

@@ -1,15 +1,15 @@
-import { useState } from 'react';
 import { usePortfolio } from '../../context/PortfolioContext';
 import { ALL_EXHIBITS } from '../../data/exhibits';
 import './PortfolioGallery.css';
 
 export function Static2DView() {
-  const { dispatch } = usePortfolio();
-  const [filter,setFilter] = useState(0);
+  const { state,dispatch } = usePortfolio();
+  const filter=state.galleryFilter;
   const visible = ALL_EXHIBITS.filter(item=>filter===0 || item.pillarId===filter);
-  return <main id="main-content" className="portfolio-gallery">
+  return <main id="main-content" className="portfolio-gallery" inert={!!state.activeExhibitId}>
     <div className="gallery-intro"><p className="eyebrow">THE WORK / ASHISH RANJAN</p><h1>Ideas, built into<br /><em>playable systems.</em></h1><p>A closer look at gameplay mechanics, the engineering behind them, and technical art studies. Choose a study to explore its implementation.</p></div>
-    <nav className="gallery-filters" aria-label="Filter portfolio work">{['All work','Gameplay systems','Technical art','3D pipeline'].map((label,index)=><button key={label} aria-pressed={filter===index} onClick={()=>setFilter(index)}>{label}<span>{ALL_EXHIBITS.filter(item=>index===0 || item.pillarId===index).length}</span></button>)}</nav>
+    <button className="gallery-tour" onClick={()=>dispatch({type:'SET_TOUR_STEP',payload:0})}>Take the guided studio tour ↗</button>
+    <nav className="gallery-filters" aria-label="Filter portfolio work">{['All work','Gameplay systems','Technical art','3D pipeline'].map((label,index)=><button key={label} aria-pressed={filter===index} onClick={()=>dispatch({type:'SET_GALLERY_FILTER',payload:index})}>{label}<span>{ALL_EXHIBITS.filter(item=>index===0 || item.pillarId===index).length}</span></button>)}</nav>
     <div className="gallery-grid">{visible.map((item,index)=><button className={`gallery-project pillar-${item.pillarId}`} key={item.id} onClick={()=>dispatch({type:'SET_ACTIVE_EXHIBIT',payload:item.id})}>
       <div className="gallery-art" aria-hidden="true"><span className="art-orbit"/><span className="art-object">{item.pillarId===1 ? '◇' : item.pillarId===2 ? '≋' : '▱'}</span><span className="art-number">{String(index+1).padStart(2,'0')}</span><span className="art-caption">{item.pillarId===1 ? 'SYSTEM STUDY' : item.pillarId===2 ? 'ASSET STUDY' : 'EVIDENCE PENDING'}</span></div>
       <div className="gallery-project-info"><p>{item.category}</p><h2>{item.shortTitle}<span aria-hidden="true">↗</span></h2><span className="gallery-evidence">{item.badgeLabel}</span></div>

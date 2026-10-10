@@ -3,3 +3,6 @@ dist
 .DS_Store
 *.local
 tmp/
+source/portfolio-inbox/**
+!source/portfolio-inbox/README.md
+!source/portfolio-inbox/STUDY_TEMPLATE.md

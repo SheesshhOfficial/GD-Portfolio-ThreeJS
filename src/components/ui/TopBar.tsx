@@ -5,7 +5,7 @@ const StudioPanel = lazy(()=>import('./StudioPanel'));
 
 export const TopBar: React.FC = () => {
   const { state, dispatch } = usePortfolio();
-  const [panel,setPanel] = useState<'about'|'settings'|null>(null);
+  const [panel,setPanel] = useState<'about'|'services'|'settings'|null>(null);
   const closePanel=useCallback(()=>setPanel(null),[]);
 
   return (
@@ -16,8 +16,9 @@ export const TopBar: React.FC = () => {
         <span className={styles.title}>GAME DEVELOPER & TECHNICAL ARTIST</span>
       </div>
 
-      <nav className={styles.controls} aria-label="Portfolio View Controls">
+      <nav className={styles.controls} aria-label="Portfolio View Controls" inert={!!state.activeExhibitId}>
         <button className={`${styles.button} ${styles.aboutButton}`} onClick={()=>setPanel('about')} aria-haspopup="dialog">About</button>
+        <button className={`${styles.button} ${styles.servicesButton}`} onClick={()=>setPanel('services')} aria-haspopup="dialog">Services</button>
         <button className={styles.button} onClick={()=>setPanel('settings')} aria-label="Studio settings" aria-haspopup="dialog"><span aria-hidden="true">☷</span><span className={styles.btnLabel}>Settings</span></button>
         {/* Direct Navigation Button */}
         <button

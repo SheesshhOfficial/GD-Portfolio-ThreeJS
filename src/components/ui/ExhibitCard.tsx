@@ -4,6 +4,7 @@ import { EXHIBITS_MAP } from '../../data/exhibits';
 import { OverviewStoryboardSvg, TransformStoryboardSvg } from '../diagrams/MediaStoryboardDiagrams';
 import { EvidenceStatus } from '../../types/portfolio';
 import styles from './ExhibitCard.module.css';
+import {projectPath} from '../../data/projectRoutes';
 const InteractiveStudy = lazy(() => import('../studies/InteractiveStudy'));
 
 export const ExhibitCard: React.FC = () => {
@@ -12,7 +13,8 @@ export const ExhibitCard: React.FC = () => {
   const closeBtnRef = useRef<HTMLButtonElement>(null);
   const originatingElementRef = useRef<HTMLElement | null>(null);
   const [demoOpen,setDemoOpen]=useState(false);
-  useEffect(()=>setDemoOpen(false),[state.activeExhibitId]);
+  const [shareStatus,setShareStatus]=useState('');
+  useEffect(()=>{setDemoOpen(false);setShareStatus('');},[state.activeExhibitId]);
 
   const exhibit = state.activeExhibitId ? EXHIBITS_MAP[state.activeExhibitId] : null;
 
@@ -111,6 +113,11 @@ export const ExhibitCard: React.FC = () => {
 
   const isEvidenceRequired = exhibit.evidenceStatus === 'EVIDENCE_REQUIRED';
   const demoKind = ['sheeshh-prop-hunt','EX-PH-TRANSFORM'].includes(exhibit.id) ? 'transform' : exhibit.id==='EX-PH-COMBAT' ? 'combat' : null;
+  const shareUrl=new URL(projectPath(exhibit.id),window.location.origin).href;
+  const copyLink=async()=>{
+    try{await navigator.clipboard.writeText(shareUrl);setShareStatus('Project link copied.');}
+    catch{setShareStatus('Copy the project address below.');}
+  };
 
   return (
     <aside
@@ -165,6 +172,7 @@ export const ExhibitCard: React.FC = () => {
 
           {/* System Summary */}
           <p className={styles.summary}>{exhibit.summary}</p>
+          <div className={styles.shareSection}><button onClick={copyLink}>Copy project link ↗</button><p role="status">{shareStatus}</p>{shareStatus==='Copy the project address below.'&&<input aria-label="Project address" readOnly value={shareUrl} onFocus={e=>e.target.select()}/>}</div>
 
           {demoKind && <>
             <button className={styles.demoButton} aria-expanded={demoOpen} onClick={()=>setDemoOpen(!demoOpen)}>{demoOpen?'Close interactive study':'Try the interactive study'} <span aria-hidden="true">{demoOpen?'−':'↗'}</span></button>

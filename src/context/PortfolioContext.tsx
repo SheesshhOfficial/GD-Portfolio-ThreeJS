@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useReducer, useEffect, useCallback, ReactNode } from 'react';
 import { PortfolioState, PortfolioAction, CameraFocus, QualityMode } from '../types/portfolio';
+import {projectForPath,projectPath,projectForId} from '../data/projectRoutes';
 
 function savedPreferences(): {quality: QualityMode; motionPaused: boolean} {
   try {
@@ -17,20 +18,23 @@ function checkInitialReducedMotion(): boolean {
 }
 
 const initialState: PortfolioState = {
-  viewMode: new URLSearchParams(window.location.search).get('view') === 'gallery' ? '2d' : '3d',
-  activeExhibitId: null,
+  viewMode: new URLSearchParams(window.location.search).get('view') === 'gallery' || (projectForPath(window.location.pathname)&&new URLSearchParams(window.location.search).get('view')!=='studio') ? '2d' : '3d',
+  activeExhibitId: projectForPath(window.location.pathname)?.id || null,
   isDirectMenuOpen: false,
   isReducedMotion: checkInitialReducedMotion(),
   webglSupported: true,
-  cameraFocus: 'center',
+  cameraFocus: getStationForExhibit(projectForPath(window.location.pathname)?.id||null),
   isEntranceActive: !checkInitialReducedMotion(),
   isBreakdownOpen: false,
   quality: preferences.quality,
   motionPaused: preferences.motionPaused,
+  tourStep: null,
+  galleryFilter: 0,
 };
 
 export function getStationForExhibit(exhibitId: string | null): CameraFocus {
   if (!exhibitId) return 'center';
+  if(exhibitId.startsWith('EX-TA-'))return 'technical-art';
   const systemsExhibits = new Set([
     'EX-PH-COMBAT',
     'EX-PH-AUDIO',
@@ -47,6 +51,10 @@ export function getStationForExhibit(exhibitId: string | null): CameraFocus {
 
 function portfolioReducer(state: PortfolioState, action: PortfolioAction): PortfolioState {
   switch (action.type) {
+    case 'SET_TOUR_STEP':
+      return {...state,tourStep:action.payload===null?null:Math.max(0,Math.min(2,action.payload)),activeExhibitId:null,isBreakdownOpen:false,isDirectMenuOpen:false,isEntranceActive:false,viewMode:state.webglSupported?'3d':'2d',cameraFocus:action.payload===0?'systems-console':action.payload===1?'technical-art':'center'};
+    case 'SET_GALLERY_FILTER': return {...state,galleryFilter:action.payload};
+    case 'SYNC_ROUTE': return {...state,activeExhibitId:action.payload.exhibitId,viewMode:state.webglSupported?action.payload.viewMode:'2d',cameraFocus:getStationForExhibit(action.payload.exhibitId),tourStep:null,isBreakdownOpen:false,isDirectMenuOpen:false};
     case 'SET_QUALITY':
       return { ...state, quality: action.payload };
     case 'SET_MOTION_PAUSED':
@@ -60,11 +68,14 @@ function portfolioReducer(state: PortfolioState, action: PortfolioAction): Portf
         ...state,
         viewMode: action.payload,
         isDirectMenuOpen: false,
+        tourStep:null,
+        cameraFocus:state.activeExhibitId?state.cameraFocus:'center',
       };
     case 'SET_ACTIVE_EXHIBIT':
       return {
         ...state,
         activeExhibitId: action.payload,
+        tourStep:null,
         cameraFocus: getStationForExhibit(action.payload),
         isDirectMenuOpen: false,
         isBreakdownOpen: action.payload === null ? false : state.isBreakdownOpen,
@@ -119,15 +130,36 @@ interface PortfolioContextValue {
 const PortfolioContext = createContext<PortfolioContextValue | null>(null);
 
 export const PortfolioProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [state, dispatch] = useReducer(portfolioReducer, initialState);
+  const [state, send] = useReducer(portfolioReducer, initialState);
+  const dispatch=useCallback((action:PortfolioAction)=>{
+    if(action.type==='SET_ACTIVE_EXHIBIT'){
+      const url=new URL(window.location.href);
+      url.pathname=projectPath(action.payload);
+      url.searchParams.delete('view');
+      if(state.viewMode==='2d')url.searchParams.set('view','gallery');
+      else if(action.payload)url.searchParams.set('view','studio');
+      window.history.pushState(null,'',url);
+    }
+    send(action);
+  },[state.viewMode]);
   useEffect(()=>{
     try {window.localStorage.setItem('ashish-studio-preferences',JSON.stringify({quality:state.quality,motionPaused:state.motionPaused}));}catch { /* Preferences still work in memory. */ }
   },[state.quality,state.motionPaused]);
   useEffect(()=>{
     const url=new URL(window.location.href);
-    if(state.viewMode==='2d')url.searchParams.set('view','gallery');else url.searchParams.delete('view');
+    if(state.viewMode==='2d')url.searchParams.set('view','gallery');else if(state.activeExhibitId)url.searchParams.set('view','studio');else url.searchParams.delete('view');
     window.history.replaceState(null,'',url);
-  },[state.viewMode]);
+    const project=projectForId(state.activeExhibitId);
+    document.title=project?`${project.title} — Ashish Ranjan`:'Ashish Ranjan — Game Development & Technical Art Portfolio';
+  },[state.viewMode,state.activeExhibitId]);
+  useEffect(()=>{
+    const sync=()=>{
+      const url=new URL(window.location.href),project=projectForPath(url.pathname);
+      send({type:'SYNC_ROUTE',payload:{exhibitId:project?.id||null,viewMode:url.searchParams.get('view')==='gallery'||(project&&url.searchParams.get('view')!=='studio')?'2d':'3d'}});
+    };
+    window.addEventListener('popstate',sync);
+    return()=>window.removeEventListener('popstate',sync);
+  },[]);
 
   // Sync with OS reduced-motion changes
   useEffect(() => {

@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#f1f1e8"/>
+  <circle cx="994" cy="245" r="248" fill="#e8edde"/>
+  <g font-family="Arial, sans-serif">
+    <text x="76" y="86" font-size="32" font-weight="700" letter-spacing="-1.5" fill="#303a2b">ashish.</text>
+    <text x="76" y="175" font-size="12" letter-spacing="3" fill="#7a8e65">GAME DEVELOPMENT &amp; TECHNICAL ART</text>
+    <text x="72" y="260" font-size="62" letter-spacing="-2.7" fill="#303a2b">Worlds worth</text>
+    <text x="72" y="333" font-size="62" letter-spacing="-2.7" fill="#303a2b">getting <tspan font-family="Georgia, serif" font-style="italic" fill="#7b8c68">lost in.</tspan></text>
+    <text x="76" y="398" font-size="19" fill="#69745d">Ashish Ranjan · Interactive Portfolio</text>
+    <path d="M76 447H550" stroke="#c9d1bb"/>
+    <text x="76" y="478" font-size="11" letter-spacing="1.8" fill="#748361">UNREAL ENGINE · GAMEPLAY SYSTEMS · TECHNICAL ART</text>
+    <rect x="76" y="527" width="191" height="40" rx="3" fill="#3c4f30"/>
+    <text x="93" y="552" font-size="12" fill="#f1f1e8">EXPLORE THE WORKSHOP</text>
+  </g>
+  <ellipse cx="892" cy="500" rx="190" ry="36" fill="#dce3cf"/>
+  <path d="m711 454 172-63 184 64-173 65Z" fill="#d3ddc3"/><path d="m711 454 183 66v22l-183-66Zm183 66 173-65v22l-173 65Z" fill="#bdcba9"/>
+  <ellipse cx="890" cy="320" rx="165" ry="78" fill="none" stroke="#91a67b" stroke-width="3" transform="rotate(-32 890 320)"/>
+  <g stroke="#f1f1e8" stroke-width="7" stroke-linejoin="round">
+    <path d="m785 225 108-46 104 47-105 47Z" fill="#c7d4af"/>
+    <path d="m785 225 107 48v121l-107-48Z" fill="#a5ba83"/>
+    <path d="m892 273 105-47v121l-105 47Z" fill="#778f58"/>
+    <path d="m838 202 107 48m-160 35 107 48 105-47M892 179v94m-54-24v121m106-121v122" fill="none"/>
+  </g>
+  <path d="M751 386q151 43 279-75" fill="none" stroke="#91a67b" stroke-width="3"/>
+</svg>

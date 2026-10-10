@@ -12,9 +12,17 @@ for(let i=0;i<64*64;i++){const value=170+((i*73 ^ (i>>4)*29)%70);grainPixels.set
 const stoneGrain=new THREE.DataTexture(grainPixels,64,64);
 stoneGrain.wrapS=stoneGrain.wrapT=THREE.RepeatWrapping;
 stoneGrain.repeat.set(6,6);stoneGrain.needsUpdate=true;
+const woodPixels=new Uint8Array(128*32*4);
+for(let y=0;y<32;y++)for(let x=0;x<128;x++){const value=Math.round(165+34*Math.sin(y*.8+Math.sin(x*.06)*.7)+10*Math.sin(y*4+x*.02));woodPixels.set([value,value,value,255],(y*128+x)*4);}
+const woodGrain=new THREE.DataTexture(woodPixels,128,32);
+woodGrain.wrapS=woodGrain.wrapT=THREE.RepeatWrapping;woodGrain.repeat.set(2,3);woodGrain.needsUpdate=true;
+const shadowPixels=new Uint8Array(64*64*4);
+for(let y=0;y<64;y++)for(let x=0;x<64;x++){const distance=Math.hypot((x-31.5)/31.5,(y-31.5)/31.5);shadowPixels.set([53,64,42,Math.round(Math.max(0,1-distance)**2*170)],(y*64+x)*4);}
+const contactTexture=new THREE.DataTexture(shadowPixels,64,64);contactTexture.needsUpdate=true;
+function Contact({position,scale,opacity=.45}:{position:[number,number,number];scale:[number,number];opacity?:number}){return <mesh position={position} rotation={[-Math.PI/2,0,0]} renderOrder={1}><planeGeometry args={scale}/><meshBasicMaterial map={contactTexture} transparent opacity={opacity} depthWrite={false}/></mesh>;}
 
-function Block({ position, scale, color = '#d8dac9' }: {position: [number,number,number]; scale: [number,number,number]; color?: string}) {
-  return <mesh position={position} scale={scale} geometry={softBox} castShadow receiveShadow><meshStandardMaterial color={color} roughness={0.85} bumpMap={stoneGrain} bumpScale={.012} /></mesh>;
+function Block({ position, scale, color = '#d8dac9',wood=false }: {position: [number,number,number]; scale: [number,number,number]; color?: string;wood?:boolean}) {
+  return <mesh position={position} scale={scale} geometry={softBox} castShadow receiveShadow><meshStandardMaterial color={color} roughness={wood?.7:.85} bumpMap={wood?woodGrain:stoneGrain} bumpScale={wood?.018:.016} /></mesh>;
 }
 
 function Plant({ position }: {position: [number,number,number]}) {
@@ -49,6 +57,7 @@ export function StudioScene({economy=false}: {economy?: boolean}) {
     }
     if (state.cameraFocus === 'transformation-bench') { target.current.set(4.7,3.1,6); aim.current.set(.5,1.6,0); }
     else if (state.cameraFocus === 'systems-console') { target.current.set(1.2,2.3,5.5); aim.current.set(-1.35,.9,1.3); }
+    else if (state.cameraFocus === 'technical-art') { target.current.set(5.7,3.5,5); aim.current.set(.1,1.9,-1.3); }
     else if (mobile) { target.current.set(7,6.5,12); aim.current.set(0,3.1,0); }
     else { target.current.set(7,5.2,10); aim.current.set(-2,1.25,0); }
     if (!paused && !mobile && state.cameraFocus === 'center') {
@@ -70,10 +79,11 @@ export function StudioScene({economy=false}: {economy?: boolean}) {
   return <>
     <color attach="background" args={['#f1f1e8']} />
     <fog attach="fog" args={['#f1f1e8',19,38]} />
-    <hemisphereLight args={['#fff9e9','#a7b49c',2.2]} />
-    <directionalLight position={[-3,9,5]} intensity={3.5} color="#fff7e6" castShadow shadow-mapSize={[1024,1024]} shadow-camera-left={-10} shadow-camera-right={10} shadow-camera-top={10} shadow-camera-bottom={-10} shadow-bias={-.001} />
-    <directionalLight position={[7,4,-3]} intensity={1.2} color="#dce7de" />
+    <hemisphereLight args={['#fff9e9','#8d9c7d',1.35]} />
+    <directionalLight position={[-3,9,5]} intensity={2.3} color="#fff7e6" castShadow={!economy} shadow-mapSize={[2048,2048]} shadow-camera-left={-5} shadow-camera-right={5} shadow-camera-top={5} shadow-camera-bottom={-5} shadow-camera-near={.5} shadow-camera-far={22} shadow-bias={-.0002} shadow-normalBias={.018} />
+    <directionalLight position={[7,4,-3]} intensity={.65} color="#dce7de" />
     <mesh rotation={[-Math.PI/2,0,0]} position={[0,-.09,0]} receiveShadow><planeGeometry args={[100,100]} /><meshStandardMaterial color="#eeeee3" roughness={1} /></mesh>
+    <Contact position={[.65,-.085,0]} scale={[9,9]} opacity={.3}/>
     <group position={[.65,0,0]}>
       <mesh position={[0,.04,0]} receiveShadow><cylinderGeometry args={[3.7,3.8,.15,80]} /><meshStandardMaterial color="#d7dccb" roughness={.94} /></mesh>
       <mesh position={[0,.14,0]} receiveShadow><cylinderGeometry args={[3.25,3.3,.12,80]} /><meshStandardMaterial color="#e5e7da" roughness={.9} /></mesh>
@@ -86,11 +96,13 @@ export function StudioScene({economy=false}: {economy?: boolean}) {
       <mesh position={[2.45,2.35,-1.05]} scale={[.035,1.7,2.45]} geometry={softBox}>
         {economy ? <meshStandardMaterial color="#e1e6d6" transparent opacity={.2} /> : <meshPhysicalMaterial color="#dbe4d1" transparent opacity={.25} roughness={.15} metalness={.08} clearcoat={1} depthWrite={false} side={THREE.DoubleSide} />}
       </mesh>
-      {Array.from({length:10},(_,i)=><Block key={i} position={[-2.25+i*.47,3.43,-1.2]} scale={[.085,.16,2.6]} color="#a9ad91" />)}
+      {Array.from({length:10},(_,i)=><Block key={i} position={[-2.25+i*.47,3.43,-1.2]} scale={[.085,.16,2.6]} color="#ad9873" wood />)}
       <mesh position={[.3,1.9,-2.18]}><ringGeometry args={[.91,1.02,64]} /><meshStandardMaterial color="#8d9b74" roughness={.5} metalness={.2} /></mesh>
       <mesh position={[.3,1.9,-2.2]}><circleGeometry args={[.9,64]} /><meshStandardMaterial color="#d9e1c9" /></mesh>
       <Block position={[.45,.61,0]} scale={[1.65,.85,1.65]} color="#bac7a6" />
       <Block position={[.45,1.065,0]} scale={[1.75,.08,1.75]} color="#e5e9d9" />
+      <Contact position={[.45,.206,0]} scale={[2.7,2.7]} opacity={.5}/>
+      <Contact position={[.45,1.108,0]} scale={[1.7,1.7]} opacity={.22}/>
       <group ref={sculpture} position={[.45,2.15,0]} rotation={[.25,.4,.15]} onClick={e=>{e.stopPropagation();document.body.style.cursor='auto';open('sheeshh-prop-hunt');}} onPointerOver={()=>{document.body.style.cursor='pointer';}} onPointerOut={()=>{document.body.style.cursor='auto';}}>
         {[-1,1].flatMap(x=>[-1,1].flatMap(y=>[-1,1].map(z=><mesh key={`${x}${y}${z}`} position={[x*.34,y*.34,z*.34]} scale={.61} castShadow receiveShadow>
           <primitive object={softBox} attach="geometry" /><meshPhysicalMaterial color={x===y ? '#859963' : '#c4cfaa'} roughness={.28} metalness={.16} clearcoat={.4} clearcoatRoughness={.3} />
@@ -99,15 +111,17 @@ export function StudioScene({economy=false}: {economy?: boolean}) {
       </group>
       {/* A smaller workstation represents the systems collection. */}
       <Block position={[-1.55,.64,1.5]} scale={[1.1,.9,.8]} color="#d2cbb8" />
-      <Block position={[-1.55,1.11,1.5]} scale={[1.2,.07,.9]} color="#e9e4d8" />
+      <Block position={[-1.55,1.11,1.5]} scale={[1.2,.07,.9]} color="#c7b590" wood />
+      <Contact position={[-1.55,.206,1.5]} scale={[1.9,1.6]} opacity={.5}/>
       <Block position={[-1.55,1.43,1.43]} scale={[.06,.55,.06]} color="#59684e" />
       <Block position={[-1.55,1.72,1.4]} scale={[.9,.51,.055]} color="#4c5d43" />
       <Block position={[-1.55,1.72,1.44]} scale={[.81,.42,.015]} color="#a7bb8e" />
       {Array.from({length:4},(_,i)=><Block key={i} position={[-1.83+i*.15,1.69,1.455]} scale={[.07,.12+i*.05,.01]} color="#657b54" />)}
       <Plant position={[1.85,.2,-1.25]} /><Plant position={[-2.5,.2,-1.25]} />
+      <Contact position={[1.85,.206,-1.25]} scale={[.8,.8]}/><Contact position={[-2.5,.206,-1.25]} scale={[.8,.8]}/>
       <mesh position={[2.3,.32,1.2]} castShadow><sphereGeometry args={[.18,24,16]} /><meshStandardMaterial color="#aa8a5b" roughness={.35} metalness={.4} /></mesh>
       <Block position={[2.3,.23,1.2]} scale={[.6,.12,.6]} color="#d8cbb2" />
-      {hotspotsReady && !state.activeExhibitId && !state.isDirectMenuOpen && !state.isEntranceActive && <>
+      {hotspotsReady && state.tourStep===null && !state.activeExhibitId && !state.isDirectMenuOpen && !state.isEntranceActive && <>
         <Html position={[1.5,1.85,.5]} center zIndexRange={[5,0]}><button className="scene-hotspot" id="hotspot-btn-bench" onClick={()=>open('sheeshh-prop-hunt')} aria-label="Explore prop transformation"><span>+</span><small>PROP TRANSFORMATION</small></button></Html>
         <Html position={[-1.75,1.1,2]} center zIndexRange={[5,0]}><button className="scene-hotspot" id="hotspot-btn-systems" onClick={()=>open('EX-PH-COMBAT')} aria-label="Explore gameplay systems"><span>+</span><small>GAMEPLAY SYSTEMS</small></button></Html>
       </>}
