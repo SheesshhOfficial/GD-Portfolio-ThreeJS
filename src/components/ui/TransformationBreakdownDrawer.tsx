@@ -165,11 +165,13 @@ export const TransformationBreakdownDrawer: React.FC<TransformationBreakdownDraw
           {/* Section 1: Inspected Implementation Steps or Submission Specifications */}
           <section className={styles.section}>
             <h3 className={styles.sectionHeading}>
-              {isEvidenceRequired ? '1. Technical Standards & Submission Criteria' : '1. Inspected Implementation Steps'}
+              {isEvidenceRequired ? '1. Technical Standards & Submission Criteria' : exhibit.pillarId === 2 ? '1. Asset Inspection Checklist' : '1. Inspected Implementation Steps'}
             </h3>
             <p className={styles.stepDesc}>
               {isEvidenceRequired
                 ? 'Required specifications for model authoring, topology, units, and media capture before this exhibit can be reviewed:'
+                : exhibit.pillarId === 2
+                ? 'Asset files are present. The following editor checks are still needed to verify their setup and motion quality:'
                 : 'Verified Blueprint node connectivity, C++ source methods, and configuration parameters inspected in project assets:'}
             </p>
 
@@ -216,6 +218,8 @@ export const TransformationBreakdownDrawer: React.FC<TransformationBreakdownDraw
             <p className={styles.stepDesc}>
               {isEvidenceRequired
                 ? 'Vector schematic illustrating the authoring criteria, conversion steps, and deliverables required for this pipeline:'
+                : exhibit.pillarId === 2
+                ? 'An inspection checklist for the available assets. Internal rig configuration and animation results remain unverified:'
                 : 'Vector schematic reflecting the verified asset hierarchy, node connectivity, and execution paths inspected in the project source:'}
             </p>
             {exhibit.shortId === 'EX-PH-TRANSFORM' && <BlueprintFlowDiagram />}

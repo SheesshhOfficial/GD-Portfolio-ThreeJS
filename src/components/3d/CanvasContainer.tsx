@@ -7,7 +7,8 @@ export const CanvasContainer: React.FC = () => {
   return (
     <div className={styles.canvasWrapper} role="region" aria-label="3D Observatory Studio">
       <Canvas
-        camera={{ position: [0, 2.2, 5.5], fov: 48, near: 0.1, far: 50 }}
+        shadows
+        camera={{ position: [9, 6, 13], fov: 42, near: 0.1, far: 100 }}
         dpr={[1, 1.5]}
         gl={{
           antialias: true,

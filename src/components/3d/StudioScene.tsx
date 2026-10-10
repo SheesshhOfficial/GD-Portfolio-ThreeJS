@@ -1,610 +1,99 @@
-import React, { useRef, useLayoutEffect } from 'react';
+import { useRef, useState } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
 import * as THREE from 'three';
 import { usePortfolio } from '../../context/PortfolioContext';
-import hotspotStyles from './StudioHotspot.module.css';
+import './StudioScene.css';
 
-// Instanced meshes for architectural perimeter (columns and sky horizons)
-const ObservatoryPerimeter: React.FC = () => {
-  const columnsRef = useRef<THREE.InstancedMesh>(null);
-  const skyPlanesRef = useRef<THREE.InstancedMesh>(null);
+function Block({ position, scale, color = '#d8dac9' }: {position: [number,number,number]; scale: [number,number,number]; color?: string}) {
+  return <mesh position={position} scale={scale} castShadow receiveShadow><boxGeometry /><meshStandardMaterial color={color} roughness={0.85} /></mesh>;
+}
 
-  useLayoutEffect(() => {
-    const dummy = new THREE.Object3D();
-    const angles = [-1.2, -0.6, 0, 0.6, 1.2];
-    const radius = 9;
+function Plant({ position }: {position: [number,number,number]}) {
+  return <group position={position}>
+    <mesh position={[0,.18,0]} castShadow><cylinderGeometry args={[.2,.14,.36,24]} /><meshStandardMaterial color="#b8ac92" roughness={.95} /></mesh>
+    {Array.from({length:7}, (_,i) => <group key={i} rotation={[0,i*2.4,0]}>
+      <mesh position={[0,.58,0]} rotation={[0,0,-.35]} castShadow><cylinderGeometry args={[.014,.02,.7,6]} /><meshStandardMaterial color="#596b44" /></mesh>
+      <mesh position={[.14,.77,0]} rotation={[0,0,-.6-i*.08]} scale={[.13,.33,.045]} castShadow><sphereGeometry args={[1,12,8]} /><meshStandardMaterial color={i%2 ? '#798b59' : '#4e6645'} roughness={.9} /></mesh>
+    </group>)}
+  </group>;
+}
 
-    angles.forEach((angle, idx) => {
-      const x = Math.sin(angle) * radius;
-      const z = -Math.cos(angle) * radius;
-
-      // Architectural Column
-      dummy.position.set(x, 3, z);
-      dummy.rotation.set(0, 0, 0);
-      dummy.scale.set(1, 1, 1);
-      dummy.updateMatrix();
-      if (columnsRef.current) {
-        columnsRef.current.setMatrixAt(idx, dummy.matrix);
-      }
-
-      // Exterior coastal sky horizon aperture
-      dummy.position.set(x, 3, z - 0.2);
-      dummy.updateMatrix();
-      if (skyPlanesRef.current) {
-        skyPlanesRef.current.setMatrixAt(idx, dummy.matrix);
-      }
-    });
-
-    if (columnsRef.current) columnsRef.current.instanceMatrix.needsUpdate = true;
-    if (skyPlanesRef.current) skyPlanesRef.current.instanceMatrix.needsUpdate = true;
-  }, []);
-
-  return (
-    <>
-      <instancedMesh ref={columnsRef} args={[undefined, undefined, 5]}>
-        <cylinderGeometry args={[0.25, 0.35, 6, 8]} />
-        <meshStandardMaterial color="#1e293b" roughness={0.8} />
-      </instancedMesh>
-      <instancedMesh ref={skyPlanesRef} args={[undefined, undefined, 5]}>
-        <planeGeometry args={[2.8, 5]} />
-        <meshBasicMaterial color="#1a273b" />
-      </instancedMesh>
-    </>
-  );
-};
-
-// Instanced desk legs and footplates for the transformation workstation
-const TableLegsAndFeet: React.FC = () => {
-  const legsRef = useRef<THREE.InstancedMesh>(null);
-  const feetRef = useRef<THREE.InstancedMesh>(null);
-
-  useLayoutEffect(() => {
-    const dummy = new THREE.Object3D();
-    const positions = [
-      [-0.9, 0.36, -0.4],
-      [0.9, 0.36, -0.4],
-      [-0.9, 0.36, 0.4],
-      [0.9, 0.36, 0.4],
-    ];
-
-    positions.forEach(([lx, ly, lz], idx) => {
-      // Leg column
-      dummy.position.set(lx, ly, lz);
-      dummy.rotation.set(0, 0, 0);
-      dummy.scale.set(1, 1, 1);
-      dummy.updateMatrix();
-      if (legsRef.current) {
-        legsRef.current.setMatrixAt(idx, dummy.matrix);
-      }
-
-      // Foot plate
-      dummy.position.set(lx, ly - 0.35, lz);
-      dummy.updateMatrix();
-      if (feetRef.current) {
-        feetRef.current.setMatrixAt(idx, dummy.matrix);
-      }
-    });
-
-    if (legsRef.current) legsRef.current.instanceMatrix.needsUpdate = true;
-    if (feetRef.current) feetRef.current.instanceMatrix.needsUpdate = true;
-  }, []);
-
-  return (
-    <>
-      <instancedMesh ref={legsRef} args={[undefined, undefined, 4]}>
-        <boxGeometry args={[0.07, 0.72, 0.07]} />
-        <meshStandardMaterial color="#0f172a" roughness={0.8} metalness={0.6} />
-      </instancedMesh>
-      <instancedMesh ref={feetRef} args={[undefined, undefined, 4]}>
-        <boxGeometry args={[0.12, 0.02, 0.12]} />
-        <meshStandardMaterial color="#334155" roughness={0.5} metalness={0.7} />
-      </instancedMesh>
-    </>
-  );
-};
-
-// Instanced reflective white striping for the disguise traffic cone
-const ConeStripes: React.FC = () => {
-  const stripesRef = useRef<THREE.InstancedMesh>(null);
-
-  useLayoutEffect(() => {
-    if (!stripesRef.current) return;
-    const dummy = new THREE.Object3D();
-
-    // Lower stripe
-    dummy.position.set(0, 0.22, 0);
-    dummy.rotation.set(0, 0, 0);
-    dummy.scale.set(1.0, 1.0, 1.0);
-    dummy.updateMatrix();
-    stripesRef.current.setMatrixAt(0, dummy.matrix);
-
-    // Upper stripe
-    dummy.position.set(0, 0.33, 0);
-    dummy.scale.set(0.65, 0.85, 0.65);
-    dummy.updateMatrix();
-    stripesRef.current.setMatrixAt(1, dummy.matrix);
-
-    stripesRef.current.instanceMatrix.needsUpdate = true;
-  }, []);
-
-  return (
-    <instancedMesh ref={stripesRef} args={[undefined, undefined, 2]}>
-      <cylinderGeometry args={[0.105, 0.12, 0.07, 16]} />
-      <meshStandardMaterial color="#f8fafc" roughness={0.2} />
-    </instancedMesh>
-  );
-};
-
-// Instanced corner bracing for prototype wooden crate
-const CrateBracing: React.FC = () => {
-  const braceRef = useRef<THREE.InstancedMesh>(null);
-
-  useLayoutEffect(() => {
-    if (!braceRef.current) return;
-    const dummy = new THREE.Object3D();
-
-    // Horizontal reinforcement brace
-    dummy.position.set(0, 0.16, 0.181);
-    dummy.rotation.set(0, 0, 0);
-    dummy.scale.set(0.32, 0.03, 0.01);
-    dummy.updateMatrix();
-    braceRef.current.setMatrixAt(0, dummy.matrix);
-
-    // Vertical reinforcement brace
-    dummy.position.set(0, 0.16, 0.181);
-    dummy.scale.set(0.03, 0.28, 0.01);
-    dummy.updateMatrix();
-    braceRef.current.setMatrixAt(1, dummy.matrix);
-
-    braceRef.current.instanceMatrix.needsUpdate = true;
-  }, []);
-
-  return (
-    <instancedMesh ref={braceRef} args={[undefined, undefined, 2]}>
-      <boxGeometry args={[1, 1, 1]} />
-      <meshStandardMaterial color="#451a03" roughness={0.9} />
-    </instancedMesh>
-  );
-};
-
-// Instanced triple telemetry screen array for Systems Console station
-const ConsoleScreens: React.FC = () => {
-  const screensRef = useRef<THREE.InstancedMesh>(null);
-
-  useLayoutEffect(() => {
-    if (!screensRef.current) return;
-    const dummy = new THREE.Object3D();
-
-    // Screen 1: Center Primary Telemetry Screen
-    dummy.position.set(0, 1.18, -0.05);
-    dummy.rotation.set(-0.2, 0, 0);
-    dummy.scale.set(0.75, 0.46, 1);
-    dummy.updateMatrix();
-    screensRef.current.setMatrixAt(0, dummy.matrix);
-
-    // Screen 2: Left Diagnostic Screen (angled inward)
-    dummy.position.set(-0.58, 1.16, 0.02);
-    dummy.rotation.set(-0.2, 0.35, 0);
-    dummy.scale.set(0.42, 0.40, 1);
-    dummy.updateMatrix();
-    screensRef.current.setMatrixAt(1, dummy.matrix);
-
-    // Screen 3: Right Combat/Audio Telemetry Screen (angled inward)
-    dummy.position.set(0.58, 1.16, 0.02);
-    dummy.rotation.set(-0.2, -0.35, 0);
-    dummy.scale.set(0.42, 0.40, 1);
-    dummy.updateMatrix();
-    screensRef.current.setMatrixAt(2, dummy.matrix);
-
-    screensRef.current.instanceMatrix.needsUpdate = true;
-  }, []);
-
-  return (
-    <instancedMesh ref={screensRef} args={[undefined, undefined, 3]}>
-      <planeGeometry args={[1, 1]} />
-      <meshBasicMaterial color="#0284c7" />
-    </instancedMesh>
-  );
-};
-
-export const StudioScene: React.FC = () => {
-  const { state, dispatch } = usePortfolio();
-  const { camera, size } = useThree();
-  const aspect = size.width / Math.max(size.height, 1);
-  const isPortrait = aspect < 1.0;
-  const idleZ = isPortrait ? Math.min(5.5 / Math.max(aspect, 0.35), 13.0) : 5.5;
-  const idleY = isPortrait ? 2.8 : 2.2;
-
-  // Camera animation target references
-  const currentLookAt = useRef(new THREE.Vector3(0, 1.2, 0));
-  const targetPosition = useRef(new THREE.Vector3(0, 2.2, 5.5));
-  const targetLookAt = useRef(new THREE.Vector3(0, 1.2, 0));
-
-  // Cinematic Entrance parameters
-  const entranceStartPos = useRef(new THREE.Vector3(-6, 3, 8));
-  const entranceStartLook = useRef(new THREE.Vector3(0, 1.5, 0));
-  const entranceTime = useRef(0);
-
-  // Mesh references for micro-animations
-  const benchReticleRef = useRef<THREE.Mesh>(null);
-  const systemsReticleRef = useRef<THREE.Mesh>(null);
-  const benchGlowRef = useRef<THREE.PointLight>(null);
-  const systemsGlowRef = useRef<THREE.PointLight>(null);
-
-  // Update target coordinates based on focus mode
-  if (state.cameraFocus === 'transformation-bench') {
-    targetPosition.current.set(isPortrait ? 2.0 : 2.4, 1.6, isPortrait ? 2.8 : 2.2);
-    targetLookAt.current.set(2.2, 0.9, 0);
-  } else if (state.cameraFocus === 'systems-console') {
-    targetPosition.current.set(isPortrait ? -2.0 : -2.4, 1.6, isPortrait ? 2.8 : 2.2);
-    targetLookAt.current.set(-2.2, 0.9, 0);
-  } else {
-    targetPosition.current.set(0, idleY, idleZ);
-    targetLookAt.current.set(0, 1.2, 0);
-  }
-
-  useFrame((_, delta) => {
-    // 1. Reduced motion overrides all transitions instantly
-    if (state.isReducedMotion) {
-      if (state.isEntranceActive) {
-        dispatch({ type: 'COMPLETE_ENTRANCE' });
-      }
-      camera.position.copy(targetPosition.current);
-      currentLookAt.current.copy(targetLookAt.current);
-      camera.lookAt(currentLookAt.current);
-      return;
+export function StudioScene() {
+  const {state,dispatch} = usePortfolio();
+  const {camera,size,pointer} = useThree();
+  const sculpture = useRef<THREE.Group>(null);
+  const time = useRef(0);
+  const look = useRef(new THREE.Vector3());
+  const target = useRef(new THREE.Vector3());
+  const aim = useRef(new THREE.Vector3());
+  const [hotspotsReady, setHotspotsReady] = useState(false);
+  const readyRef = useRef(false);
+  const mobile = size.width < 760;
+  const open = (id: string) => { dispatch({type:'COMPLETE_ENTRANCE'}); dispatch({type:'SET_ACTIVE_EXHIBIT',payload:id}); };
+  useFrame((_,delta) => {
+    time.current += delta;
+    if (sculpture.current && !state.isReducedMotion) {
+      sculpture.current.rotation.y += delta*.12;
+      sculpture.current.position.y = 2.15 + Math.sin(time.current*.7)*.055;
     }
-
-    // 2. Cinematic Entrance Pan (approx. 2.5s)
-    if (state.isEntranceActive) {
-      entranceTime.current += delta;
-      const duration = 2.5;
-      const progress = Math.min(entranceTime.current / duration, 1.0);
-
-      // Smooth easeInOutCubic curve
-      const eased =
-        progress < 0.5
-          ? 4 * progress * progress * progress
-          : 1 - Math.pow(-2 * progress + 2, 3) / 2;
-
-      camera.position.lerpVectors(entranceStartPos.current, targetPosition.current, eased);
-      currentLookAt.current.lerpVectors(entranceStartLook.current, targetLookAt.current, eased);
-      camera.lookAt(currentLookAt.current);
-
-      if (progress >= 1.0) {
-        dispatch({ type: 'COMPLETE_ENTRANCE' });
-      }
-      return;
+    if (state.cameraFocus === 'transformation-bench') { target.current.set(4.7,3.1,6); aim.current.set(.5,1.6,0); }
+    else if (state.cameraFocus === 'systems-console') { target.current.set(1.2,2.3,5.5); aim.current.set(-1.35,.9,1.3); }
+    else if (mobile) { target.current.set(7,6.5,12); aim.current.set(0,3.1,0); }
+    else { target.current.set(7,5.2,10); aim.current.set(-2,1.25,0); }
+    if (!state.isReducedMotion && !mobile && state.cameraFocus === 'center') {
+      target.current.x += pointer.x * .24;
+      target.current.y += pointer.y * .12;
     }
-
-    // 3. Standard Camera Damping
-    const dampFactor = Math.min(delta * 3.5, 0.25);
-    camera.position.lerp(targetPosition.current, dampFactor);
-    currentLookAt.current.lerp(targetLookAt.current, dampFactor);
-    camera.lookAt(currentLookAt.current);
-
-    // Subtle idle hover on hotspot reticles
-    if (benchReticleRef.current) {
-      benchReticleRef.current.rotation.z += delta * 0.4;
-    }
-    if (systemsReticleRef.current) {
-      systemsReticleRef.current.rotation.z -= delta * 0.4;
+    if(state.isEntranceActive && time.current>1.7) dispatch({type:'COMPLETE_ENTRANCE'});
+    const speed = state.isReducedMotion ? 1 : 1-Math.exp(-delta*2.3);
+    camera.position.lerp(target.current,speed);
+    look.current.lerp(aim.current,speed);
+    camera.lookAt(look.current);
+    const ready = !state.activeExhibitId && !state.isEntranceActive && camera.position.distanceTo(target.current)<.35;
+    if (ready !== readyRef.current) {
+      readyRef.current = ready;
+      setHotspotsReady(ready);
     }
   });
-
-  const handleBenchClick = (e: { stopPropagation: () => void }) => {
-    e.stopPropagation();
-    if (state.isEntranceActive) {
-      dispatch({ type: 'COMPLETE_ENTRANCE' });
-    }
-    dispatch({ type: 'SET_CAMERA_FOCUS', payload: 'transformation-bench' });
-    dispatch({ type: 'SET_ACTIVE_EXHIBIT', payload: 'sheeshh-prop-hunt' });
-  };
-
-  const handleSystemsConsoleClick = (e: { stopPropagation: () => void }) => {
-    e.stopPropagation();
-    if (state.isEntranceActive) {
-      dispatch({ type: 'COMPLETE_ENTRANCE' });
-    }
-    dispatch({ type: 'SET_CAMERA_FOCUS', payload: 'systems-console' });
-    dispatch({ type: 'SET_ACTIVE_EXHIBIT', payload: 'EX-PH-COMBAT' });
-  };
-
-  const handlePointerOver = () => {
-    document.body.style.cursor = 'pointer';
-  };
-
-  const handlePointerOut = () => {
-    document.body.style.cursor = 'auto';
-  };
-
-  const isBenchActive = state.activeExhibitId === 'sheeshh-prop-hunt' || state.activeExhibitId === 'EX-PH-TRANSFORM';
-  const isSystemsActive =
-    state.activeExhibitId === 'EX-PH-DECOY' ||
-    state.activeExhibitId === 'EX-PH-COMBAT' ||
-    state.activeExhibitId === 'EX-PH-AUDIO' ||
-    state.activeExhibitId === 'EX-PH-LIFECYCLE' ||
-    state.activeExhibitId === 'EX-PH-CUSTOMIZATION' ||
-    state.activeExhibitId === 'EX-PH-ROUND' ||
-    state.activeExhibitId === 'EX-PH-EMOTES';
-
-  return (
-    <>
-      {/* Coastal Atmospheric Lighting */}
-      <color attach="background" args={['#0a0f18']} />
-      <fog attach="fog" args={['#0a0f18', 8, 22]} />
-
-      <ambientLight intensity={0.65} color="#1e293b" />
-      {/* Cool exterior coastal daylight streaming through observatory windows */}
-      <directionalLight
-        position={[-6, 6, 4]}
-        intensity={1.3}
-        color="#93c5fd"
-        castShadow={false}
-      />
-      {/* Warm focused studio lighting over Transformation Bench */}
-      <spotLight
-        position={[2.2, 4.5, 0.5]}
-        target-position={[2.2, 0.8, 0]}
-        intensity={3.4}
-        color="#fbbf24"
-        angle={0.65}
-        penumbra={0.7}
-      />
-      {/* Cool cyan focused studio lighting over Systems Console */}
-      <spotLight
-        position={[-2.2, 4.5, 0.5]}
-        target-position={[-2.2, 0.8, 0]}
-        intensity={3.4}
-        color="#38bdf8"
-        angle={0.65}
-        penumbra={0.7}
-      />
-
-      {/* Subtle local diagnostic glows */}
-      <pointLight
-        ref={benchGlowRef}
-        position={[2.2, 1.2, 0.2]}
-        intensity={0.6}
-        color="#38bdf8"
-        distance={3.5}
-      />
-      <pointLight
-        ref={systemsGlowRef}
-        position={[-2.2, 1.3, 0.2]}
-        intensity={0.5}
-        color="#0ea5e9"
-        distance={3.5}
-      />
-
-      {/* Procedural Coastal Observatory Architecture */}
-      {/* Floor */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} receiveShadow>
-        <circleGeometry args={[12, 32]} />
-        <meshStandardMaterial color="#0f172a" roughness={0.7} metalness={0.2} />
-      </mesh>
-
-      {/* Floor Grid Accents */}
-      <gridHelper args={[16, 16, '#1e293b', '#0f172a']} position={[0, 0.01, 0]} />
-
-      {/* Curved Observatory Wall Pillars & Window Apertures (Instanced: 2 draw calls for 10 meshes) */}
-      <ObservatoryPerimeter />
-
-      {/* ================= STATION 1: TRANSFORMATION BENCH ================= */}
-      <group
-        position={[2.2, 0, 0]}
-        onClick={handleBenchClick}
-        onPointerOver={handlePointerOver}
-        onPointerOut={handlePointerOut}
-      >
-        {/* Main Workstation Desk Tabletop */}
-        <mesh position={[0, 0.75, 0]}>
-          <boxGeometry args={[2.1, 0.08, 1.05]} />
-          <meshStandardMaterial color="#1f2937" roughness={0.4} metalness={0.3} />
-        </mesh>
-
-        {/* Metal Edge Trim on Tabletop */}
-        <mesh position={[0, 0.75, 0.52]}>
-          <boxGeometry args={[2.12, 0.082, 0.02]} />
-          <meshStandardMaterial color="#38bdf8" roughness={0.3} metalness={0.8} />
-        </mesh>
-
-        {/* Lower Equipment Shelf */}
-        <mesh position={[0, 0.22, 0]}>
-          <boxGeometry args={[1.9, 0.04, 0.85]} />
-          <meshStandardMaterial color="#111827" roughness={0.7} metalness={0.4} />
-        </mesh>
-
-        {/* Steel Desk Legs with Foot Plates (Instanced: 2 draw calls for 8 meshes) */}
-        <TableLegsAndFeet />
-
-        {/* Structural Cross-Brace Beams */}
-        <mesh position={[0, 0.36, -0.4]}>
-          <boxGeometry args={[1.75, 0.03, 0.03]} />
-          <meshStandardMaterial color="#1e293b" roughness={0.8} />
-        </mesh>
-
-        {/* Props on Bench */}
-        {/* 1. Prototype Disguise Cone (with instanced reflective stripes) */}
-        <group position={[-0.55, 0.8, 0.15]}>
-          <mesh position={[0, 0.015, 0]}>
-            <boxGeometry args={[0.38, 0.03, 0.38]} />
-            <meshStandardMaterial color="#c2410c" roughness={0.6} />
-          </mesh>
-          <mesh position={[0, 0.26, 0]}>
-            <coneGeometry args={[0.16, 0.5, 16]} />
-            <meshStandardMaterial color="#ea580c" roughness={0.35} />
-          </mesh>
-          <ConeStripes />
-        </group>
-
-        {/* 2. Prototype Wooden Storage Crate with Bracing */}
-        <group position={[0.45, 0.8, -0.15]}>
-          <mesh position={[0, 0.16, 0]}>
-            <boxGeometry args={[0.36, 0.32, 0.36]} />
-            <meshStandardMaterial color="#78350f" roughness={0.85} />
-          </mesh>
-          <CrateBracing />
-        </group>
-
-        {/* 3. Engineering Caliper Diagnostic Tool */}
-        <group position={[-0.05, 0.805, 0.28]} rotation={[0, -0.2, 0]}>
-          <mesh>
-            <boxGeometry args={[0.32, 0.008, 0.035]} />
-            <meshStandardMaterial color="#94a3b8" roughness={0.2} metalness={0.9} />
-          </mesh>
-          <mesh position={[-0.14, 0.005, -0.03]}>
-            <boxGeometry args={[0.03, 0.012, 0.06]} />
-            <meshStandardMaterial color="#cbd5e1" roughness={0.2} metalness={0.9} />
-          </mesh>
-        </group>
-
-        {/* 4. Blueprint Drafting Schematic */}
-        <mesh position={[0.05, 0.795, -0.08]} rotation={[-Math.PI / 2, 0, 0.12]}>
-          <planeGeometry args={[0.48, 0.34]} />
-          <meshStandardMaterial color="#0369a1" roughness={0.8} />
-        </mesh>
-
-        {/* 5. Diagnostic Screen Stand */}
-        <group position={[0.75, 0.8, 0.15]} rotation={[0, -0.4, 0]}>
-          <mesh position={[0, 0.01, 0]}>
-            <boxGeometry args={[0.15, 0.02, 0.12]} />
-            <meshStandardMaterial color="#0f172a" roughness={0.5} metalness={0.7} />
-          </mesh>
-          <mesh position={[0, 0.14, 0]} rotation={[-0.2, 0, 0]}>
-            <boxGeometry args={[0.26, 0.18, 0.015]} />
-            <meshStandardMaterial color="#0f172a" roughness={0.3} metalness={0.8} />
-          </mesh>
-          <mesh position={[0, 0.14, 0.009]} rotation={[-0.2, 0, 0]}>
-            <planeGeometry args={[0.23, 0.15]} />
-            <meshBasicMaterial color="#0284c7" />
-          </mesh>
-        </group>
-
-        {/* 6. Hotspot Floating Reticle & Interactive Label */}
-        <group position={[0, 1.6, 0]}>
-          <mesh ref={benchReticleRef}>
-            <torusGeometry args={[0.24, 0.02, 8, 24]} />
-            <meshStandardMaterial
-              color={isBenchActive ? '#38bdf8' : '#f59e0b'}
-              emissive={isBenchActive ? '#0ea5e9' : '#d97706'}
-              emissiveIntensity={0.8}
-              roughness={0.2}
-            />
-          </mesh>
-          <mesh>
-            <sphereGeometry args={[0.04, 12, 12]} />
-            <meshBasicMaterial color={isBenchActive ? '#38bdf8' : '#fbbf24'} />
-          </mesh>
-
-          {!state.isEntranceActive && !isBenchActive && (
-            <Html
-              center
-              position={[isPortrait ? -0.75 : 0, 0.55, 0]}
-              distanceFactor={isPortrait ? 13 : 8}
-              zIndexRange={[20, 0]}
-              className={`${hotspotStyles.hotspotContainer} ${
-                state.activeExhibitId ? hotspotStyles.hotspotHidden : hotspotStyles.hotspotVisible
-              }`}
-            >
-              <button
-                id="hotspot-btn-bench"
-                type="button"
-                className={`${hotspotStyles.hotspotButton} ${hotspotStyles.hotspotBench}`}
-                onClick={handleBenchClick}
-                aria-label="Inspect Transformation Bench: Prop Disguise & Technical Art"
-              >
-                <span className={hotspotStyles.icon} aria-hidden="true">🛠️</span>
-                <span className={hotspotStyles.textGroup}>
-                  <strong className={hotspotStyles.title}>Transformation Bench</strong>
-                  <span className={hotspotStyles.subtitle}>Prop Disguise &amp; Tech Art</span>
-                </span>
-                <span className={hotspotStyles.actionBadge}>
-                  Inspect <span>→</span>
-                </span>
-              </button>
-            </Html>
-          )}
-        </group>
+  return <>
+    <color attach="background" args={['#f1f1e8']} />
+    <fog attach="fog" args={['#f1f1e8',19,38]} />
+    <hemisphereLight args={['#fff9e9','#a7b49c',2.2]} />
+    <directionalLight position={[-3,9,5]} intensity={3.5} color="#fff7e6" castShadow shadow-mapSize={[1024,1024]} shadow-camera-left={-10} shadow-camera-right={10} shadow-camera-top={10} shadow-camera-bottom={-10} shadow-bias={-.001} />
+    <directionalLight position={[7,4,-3]} intensity={1.2} color="#dce7de" />
+    <mesh rotation={[-Math.PI/2,0,0]} position={[0,-.09,0]} receiveShadow><planeGeometry args={[100,100]} /><meshStandardMaterial color="#eeeee3" roughness={1} /></mesh>
+    <group position={[.65,0,0]}>
+      <mesh position={[0,.04,0]} receiveShadow><cylinderGeometry args={[3.7,3.8,.15,80]} /><meshStandardMaterial color="#d7dccb" roughness={.94} /></mesh>
+      <mesh position={[0,.14,0]} receiveShadow><cylinderGeometry args={[3.25,3.3,.12,80]} /><meshStandardMaterial color="#e5e7da" roughness={.9} /></mesh>
+      {/* Architectural backdrop: softened concrete and open timber fins. */}
+      <Block position={[0,1.75,-2.3]} scale={[4.7,3.2,.18]} color="#c5cfb9" />
+      <Block position={[2.45,1.75,-1.05]} scale={[.18,3.2,2.6]} color="#d4dcc8" />
+      {Array.from({length:10},(_,i)=><Block key={i} position={[-2.25+i*.47,3.43,-1.2]} scale={[.085,.16,2.6]} color="#a9ad91" />)}
+      <mesh position={[.3,1.9,-2.18]}><ringGeometry args={[.91,1.02,64]} /><meshStandardMaterial color="#8d9b74" roughness={.5} metalness={.2} /></mesh>
+      <mesh position={[.3,1.9,-2.2]}><circleGeometry args={[.9,64]} /><meshStandardMaterial color="#d9e1c9" /></mesh>
+      <Block position={[.45,.61,0]} scale={[1.65,.85,1.65]} color="#bac7a6" />
+      <Block position={[.45,1.065,0]} scale={[1.75,.08,1.75]} color="#e5e9d9" />
+      <group ref={sculpture} position={[.45,2.15,0]} rotation={[.25,.4,.15]}>
+        {[-1,1].flatMap(x=>[-1,1].flatMap(y=>[-1,1].map(z=><mesh key={`${x}${y}${z}`} position={[x*.34,y*.34,z*.34]} castShadow receiveShadow>
+          <boxGeometry args={[.61,.61,.61]} /><meshStandardMaterial color={x===y ? '#859963' : '#c4cfaa'} roughness={.32} metalness={.12} />
+        </mesh>)))}
+        <mesh rotation={[Math.PI/2,0,0]}><torusGeometry args={[1.08,.012,8,100]} /><meshStandardMaterial color="#82906d" metalness={.6} roughness={.3} /></mesh>
       </group>
-
-      {/* ================= STATION 2: SYSTEMS CONSOLE ================= */}
-      <group
-        position={[-2.2, 0, 0]}
-        onClick={handleSystemsConsoleClick}
-        onPointerOver={handlePointerOver}
-        onPointerOut={handlePointerOut}
-      >
-        {/* Base Pedestal */}
-        <mesh position={[0, 0.45, 0]}>
-          <boxGeometry args={[1.5, 0.9, 0.9]} />
-          <meshStandardMaterial color="#0f172a" roughness={0.7} metalness={0.5} />
-        </mesh>
-
-        {/* Angled Control Deck */}
-        <mesh position={[0, 0.92, 0.05]} rotation={[-0.25, 0, 0]}>
-          <boxGeometry args={[1.52, 0.05, 0.95]} />
-          <meshStandardMaterial color="#1e293b" roughness={0.4} metalness={0.6} />
-        </mesh>
-
-        {/* Emissive Edge Accent */}
-        <mesh position={[0, 0.93, 0.52]} rotation={[-0.25, 0, 0]}>
-          <boxGeometry args={[1.54, 0.04, 0.02]} />
-          <meshStandardMaterial color="#38bdf8" roughness={0.2} metalness={0.9} />
-        </mesh>
-
-        {/* Triple Telemetry Screens (Instanced: 1 draw call for 3 screens) */}
-        <ConsoleScreens />
-
-        {/* Hotspot Floating Reticle & Interactive Label */}
-        <group position={[0, 1.6, 0]}>
-          <mesh ref={systemsReticleRef}>
-            <torusGeometry args={[0.24, 0.02, 8, 24]} />
-            <meshStandardMaterial
-              color={isSystemsActive ? '#38bdf8' : '#0ea5e9'}
-              emissive={isSystemsActive ? '#38bdf8' : '#0284c7'}
-              emissiveIntensity={0.8}
-              roughness={0.2}
-            />
-          </mesh>
-          <mesh>
-            <sphereGeometry args={[0.04, 12, 12]} />
-            <meshBasicMaterial color={isSystemsActive ? '#38bdf8' : '#0ea5e9'} />
-          </mesh>
-
-          {!state.isEntranceActive && !isSystemsActive && (
-            <Html
-              center
-              position={[isPortrait ? 0.75 : 0, 0.55, 0]}
-              distanceFactor={isPortrait ? 13 : 8}
-              zIndexRange={[20, 0]}
-              className={`${hotspotStyles.hotspotContainer} ${
-                state.activeExhibitId ? hotspotStyles.hotspotHidden : hotspotStyles.hotspotVisible
-              }`}
-            >
-              <button
-                id="hotspot-btn-systems"
-                type="button"
-                className={hotspotStyles.hotspotButton}
-                onClick={handleSystemsConsoleClick}
-                aria-label="Inspect Systems Console: Multiplayer & Combat Systems"
-              >
-                <span className={hotspotStyles.icon} aria-hidden="true">🖥️</span>
-                <span className={hotspotStyles.textGroup}>
-                  <strong className={hotspotStyles.title}>Systems Console</strong>
-                  <span className={hotspotStyles.subtitle}>Multiplayer &amp; Combat</span>
-                </span>
-                <span className={hotspotStyles.actionBadge}>
-                  Inspect <span>→</span>
-                </span>
-              </button>
-            </Html>
-          )}
-        </group>
-      </group>
-    </>
-  );
-};
-
-export default StudioScene;
+      {/* A smaller workstation represents the systems collection. */}
+      <Block position={[-1.55,.64,1.5]} scale={[1.1,.9,.8]} color="#d2cbb8" />
+      <Block position={[-1.55,1.11,1.5]} scale={[1.2,.07,.9]} color="#e9e4d8" />
+      <Block position={[-1.55,1.43,1.43]} scale={[.06,.55,.06]} color="#59684e" />
+      <Block position={[-1.55,1.72,1.4]} scale={[.9,.51,.055]} color="#4c5d43" />
+      <Block position={[-1.55,1.72,1.44]} scale={[.81,.42,.015]} color="#a7bb8e" />
+      {Array.from({length:4},(_,i)=><Block key={i} position={[-1.83+i*.15,1.69,1.455]} scale={[.07,.12+i*.05,.01]} color="#657b54" />)}
+      <Plant position={[1.85,.2,-1.25]} /><Plant position={[-2.5,.2,-1.25]} />
+      <mesh position={[2.3,.32,1.2]} castShadow><sphereGeometry args={[.18,24,16]} /><meshStandardMaterial color="#aa8a5b" roughness={.35} metalness={.4} /></mesh>
+      <Block position={[2.3,.23,1.2]} scale={[.6,.12,.6]} color="#d8cbb2" />
+      {hotspotsReady && !state.activeExhibitId && !state.isDirectMenuOpen && !state.isEntranceActive && <>
+        <Html position={[1.5,1.85,.5]} center zIndexRange={[5,0]}><button className="scene-hotspot" id="hotspot-btn-bench" onClick={()=>open('sheeshh-prop-hunt')} aria-label="Explore prop transformation"><span>+</span><small>PROP TRANSFORMATION</small></button></Html>
+        <Html position={[-1.75,1.1,2]} center zIndexRange={[5,0]}><button className="scene-hotspot" id="hotspot-btn-systems" onClick={()=>open('EX-PH-COMBAT')} aria-label="Explore gameplay systems"><span>+</span><small>GAMEPLAY SYSTEMS</small></button></Html>
+      </>}
+    </group>
+  </>;
+}

@@ -8,9 +8,9 @@ export const TopBar: React.FC = () => {
   return (
     <header className={styles.topBar} role="banner">
       <div className={styles.brand}>
-        <h1 className={styles.name}>Ashish Ranjan</h1>
+        <span className={styles.name}>ashish<span style={{color:'#81916b'}}>.</span></span>
         <span className={styles.divider} aria-hidden="true">|</span>
-        <span className={styles.title}>Game Dev & Tech Art</span>
+        <span className={styles.title}>GAME DEVELOPER & TECHNICAL ARTIST</span>
       </div>
 
       <nav className={styles.controls} aria-label="Portfolio View Controls">
@@ -23,9 +23,8 @@ export const TopBar: React.FC = () => {
           aria-expanded={state.isDirectMenuOpen}
           aria-controls="direct-navigation-menu"
         >
-          <span className={styles.icon} aria-hidden="true">📑</span>
-          <span className={styles.btnLabel}>Direct Portfolio</span>
-          <span className={styles.btnLabelShort}>Portfolio</span>
+          <span className={styles.btnLabel}>All work ↗</span>
+          <span className={styles.btnLabelShort}>Work ↗</span>
         </button>
 
         {/* 3D / 2D View Mode Toggle */}
@@ -46,14 +45,14 @@ export const TopBar: React.FC = () => {
           aria-label={!state.webglSupported ? '3D Studio unavailable: WebGL 2.0 is not supported in this browser' : `Switch to ${state.viewMode === '3d' ? '2D Gallery' : '3D Studio'} view`}
         >
           <span className={styles.icon} aria-hidden="true">
-            {state.webglSupported && state.viewMode === '3d' ? '🏛️' : '📄'}
+            {state.webglSupported && state.viewMode === '3d' ? '◈' : '☷'}
           </span>
           <span className={styles.btnLabel}>
             {!state.webglSupported
               ? 'View: 2D (3D Unavailable)'
               : state.viewMode === '3d'
-              ? 'View: 3D Studio'
-              : 'View: 2D Gallery'}
+              ? 'Gallery view'
+              : 'Studio view'}
           </span>
           <span className={styles.btnLabelShort}>
             {!state.webglSupported
@@ -64,19 +63,6 @@ export const TopBar: React.FC = () => {
           </span>
         </button>
 
-        {/* Sound Control (Disabled: audio implementation pending) */}
-        <button
-          id="sound-control-btn"
-          type="button"
-          className={`${styles.button} ${styles.disabledButton} ${styles.soundButton}`}
-          disabled
-          aria-disabled="true"
-          title="Sound: Coming later (Audio implementation pending)"
-          aria-label="Sound: Coming later (Audio implementation pending)"
-        >
-          <span className={styles.icon} aria-hidden="true">🔇</span>
-          <span className={styles.btnLabel}>Sound: Coming later</span>
-        </button>
       </nav>
     </header>
   );

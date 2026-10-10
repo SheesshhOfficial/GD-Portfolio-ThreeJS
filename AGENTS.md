@@ -2,7 +2,7 @@
 
 ## Roles
 
-Codex owns portfolio strategy, architecture, task specifications, and final review. Antigravity owns assigned investigation, implementation, routine debugging, testing, and reporting. The human starts each handoff; files in `coordination/` carry the work.
+Codex currently owns strategy, implementation, debugging, validation, and review, as requested by the user on 2026-10-11. Antigravity handoffs are inactive until the user requests them again. Files in `coordination/` retain project progress and review history.
 
 ## Antigravity procedure
 

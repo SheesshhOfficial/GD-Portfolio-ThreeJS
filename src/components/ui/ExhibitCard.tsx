@@ -13,6 +13,13 @@ export const ExhibitCard: React.FC = () => {
 
   const exhibit = state.activeExhibitId ? EXHIBITS_MAP[state.activeExhibitId] : null;
 
+  useEffect(() => {
+    if (!exhibit) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = previous; };
+  }, [exhibit]);
+
   // Capture originating focus and move focus into card
   useEffect(() => {
     if (exhibit) {
@@ -77,7 +84,10 @@ export const ExhibitCard: React.FC = () => {
     dispatch({ type: 'SET_ACTIVE_EXHIBIT', payload: null });
     const target = originatingElementRef.current || document.getElementById('direct-portfolio-btn');
     if (target && typeof target.focus === 'function') {
-      setTimeout(() => target.focus(), 0);
+      setTimeout(() => {
+        const restored = target.isConnected ? target : document.getElementById(target.id);
+        (restored || document.getElementById('direct-portfolio-btn'))?.focus();
+      }, 0);
     }
   };
 
@@ -198,7 +208,7 @@ export const ExhibitCard: React.FC = () => {
 
         <div className={styles.footer}>
           <button type="button" className={styles.dismissButton} onClick={handleClose}>
-            Back to Studio View
+            Back to portfolio
           </button>
         </div>
       </div>

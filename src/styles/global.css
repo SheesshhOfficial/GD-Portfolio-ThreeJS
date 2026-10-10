@@ -122,3 +122,5 @@ html, body {
     scroll-behavior: auto !important;
   }
 }
+button { -webkit-tap-highlight-color:transparent; }
+.studio-editorial button:focus-visible,.portfolio-gallery button:focus-visible,.scene-hotspot:focus-visible { outline:2px solid #647d4f; outline-offset:4px; }

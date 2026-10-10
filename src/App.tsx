@@ -3,6 +3,7 @@ import { PortfolioProvider, usePortfolio } from './context/PortfolioContext';
 import { TopBar } from './components/ui/TopBar';
 import { CinematicSkipButton } from './components/ui/CinematicSkipButton';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
+import { StudioLanding } from './components/ui/StudioLanding';
 
 // Lazy-load direct navigation menu drawer
 const DirectNavigationMenu = lazy(() =>
@@ -32,13 +33,6 @@ const TransformationBreakdownDrawer = lazy(() =>
 const ExhibitCard = lazy(() =>
   import('./components/ui/ExhibitCard').then((m) => ({
     default: m.ExhibitCard,
-  }))
-);
-
-// Lazy-load orientation and recruiter guide HUD
-const OrientationHud = lazy(() =>
-  import('./components/ui/OrientationHud').then((m) => ({
-    default: m.OrientationHud,
   }))
 );
 
@@ -77,7 +71,7 @@ const PortfolioApp: React.FC = () => {
 
       {/* Direct Navigation Drawer Overlay */}
       <Suspense fallback={null}>
-        <DirectNavigationMenu />
+        {state.isDirectMenuOpen && <DirectNavigationMenu />}
       </Suspense>
 
       {/* Primary Content Presentation */}
@@ -103,8 +97,8 @@ const PortfolioApp: React.FC = () => {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    background: '#0a0e14',
-                    color: '#94a3b8',
+                    background: '#f1f1e8',
+                    color: '#697b57',
                     fontFamily: 'sans-serif',
                   }}
                 >
@@ -118,18 +112,15 @@ const PortfolioApp: React.FC = () => {
 
           {/* Interactive Exhibit Card (Overlaid above Canvas) */}
           <Suspense fallback={null}>
-            <ExhibitCard />
+            {state.activeExhibitId && <ExhibitCard />}
           </Suspense>
 
           {/* Deep-Dive Technical Breakdown Drawer */}
           <Suspense fallback={null}>
-            <TransformationBreakdownDrawer />
+            {state.isBreakdownOpen && <TransformationBreakdownDrawer />}
           </Suspense>
 
-          {/* Orientation & Recruiter Guide HUD */}
-          <Suspense fallback={null}>
-            <OrientationHud />
-          </Suspense>
+          <StudioLanding />
         </main>
       ) : (
         <>
@@ -144,7 +135,10 @@ const PortfolioApp: React.FC = () => {
             <Static2DView />
           </Suspense>
           <Suspense fallback={null}>
-            <TransformationBreakdownDrawer />
+            {state.activeExhibitId && <ExhibitCard />}
+          </Suspense>
+          <Suspense fallback={null}>
+            {state.isBreakdownOpen && <TransformationBreakdownDrawer />}
           </Suspense>
         </>
       )}

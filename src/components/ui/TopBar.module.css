@@ -165,3 +165,17 @@
     display: none;
   }
 }
+/* Architectural studio navigation */
+.topBar { height:86px; padding:0 6%; background:transparent; backdrop-filter:none; border-bottom:0; }
+.name { font-size:28px; letter-spacing:-1.5px; color:#30372a; font-weight:600; }
+.divider { display:none; }
+.brand { gap:22px; }
+.title { font-size:8px; letter-spacing:1.6px; color:#777e6b; }
+.button { background:transparent; border:0; color:#59604d; border-radius:2px; padding:10px 14px; font-size:11px; }
+.directButton { background:#e6eadd; color:#46563a; }
+.directButton:hover,.directButton:focus-visible { background:#d6dfc9; color:#35482b; box-shadow:none; }
+.button:focus-visible { outline:2px solid #758665; outline-offset:3px; }
+.buttonActive { background:#d5dfc8; box-shadow:none; }
+@media(max-width:760px) { .topBar { height:64px; padding:0 7%; }.name { font-size:24px; }.title { display:none; }.controls { gap:4px; }.button { font-size:10px; }.brand { gap:0; } }
+.topBar { position:fixed; background:linear-gradient(#f1f1e8f5,#f1f1e8df); }
+.button:hover,.button:focus-visible { background:#dde5d1; color:#35482b; }

@@ -1,0 +1,5 @@
+.scene-hotspot { border:0; background:transparent; display:flex; align-items:center; gap:9px; cursor:pointer; color:#46543b; min-height:44px; white-space:nowrap; font-family:inherit; }
+.scene-hotspot>span { display:grid; place-items:center; width:44px; height:44px; background:#f8faf0e8; border:1px solid #b4c0a2; border-radius:50%; font-size:24px; box-shadow:0 3px 16px #4a583c20; transition:background .2s,transform .2s; }
+.scene-hotspot small { font-size:8px; letter-spacing:1.3px; background:#f1f3e9e8; padding:7px 9px; border-radius:2px; }
+.scene-hotspot:hover>span { background:#dce8cb; transform:scale(1.08); }
+@media(max-width:760px) { .scene-hotspot small { display:none; } }

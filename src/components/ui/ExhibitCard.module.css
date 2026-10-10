@@ -363,3 +363,11 @@
     grid-template-columns: 1fr;
   }
 }
+.cardContainer { position:fixed; bottom:24px; left:6%; z-index:150; }
+.card { max-height:calc(100dvh - 110px); border-color:#9dad8666; box-shadow:0 20px 65px #26332038; }
+.header,.footer { flex-shrink:0; }
+.body { min-height:0; max-height:none; flex:1; }
+.inspectButton { background:#526544; border-color:#a7bc8e66; box-shadow:none; }
+.inspectButton:hover,.inspectButton:focus-visible { background:#667d54; box-shadow:none; }
+.closeBtn,.dismissButton { min-width:44px; min-height:44px; }
+@media(max-width:640px) { .cardContainer { left:4%; width:92%; bottom:16px; }.card { max-height:calc(100dvh - 86px); }.header { padding:16px; }.title { font-size:19px; }.footer { padding:10px 16px; } }

@@ -30,7 +30,7 @@ A high-quality 3D environment presents real work through video-led exhibits. Eac
 
 ## Current state
 
-No website stack is selected and no site implementation exists here. Planning tasks must not select a stack or build the site unless explicitly authorized.
+A Vite, React, TypeScript, and React Three Fiber site exists. Codex is implementing the portfolio directly. The current direction is a warm architectural workshop, an interactive transformation sculpture, and a filterable gallery backed by the existing evidence records. Real gameplay recordings and asset media remain pending.
 
 ## Quality constraints
 
@@ -43,5 +43,5 @@ No website stack is selected and no site implementation exists here. Planning ta
 
 ## Handoff
 
-Codex writes `coordination/CURRENT_TASK.md`. Antigravity executes it and writes `coordination/IMPLEMENTATION_REPORT.md`. Codex reviews the report and Git diff.
+Codex implements and validates work directly, records results in `coordination/`, and saves reviewable milestones in Git. Antigravity is paused at the user's request.
 

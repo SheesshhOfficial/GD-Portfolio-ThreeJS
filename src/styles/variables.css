@@ -34,3 +34,20 @@
   --transition-fast: 150ms ease;
   --transition-normal: 250ms ease;
 }
+/* Warm architectural shell, deep olive reading surfaces. */
+:root {
+  --color-bg-base:#f1f1e8;
+  --color-bg-surface:rgba(34,43,31,.98);
+  --color-bg-card:rgba(34,43,31,.98);
+  --color-bg-elevated:#35422e;
+  --color-bg-overlay:rgba(31,39,27,.65);
+  --color-border-subtle:rgba(193,208,175,.18);
+  --color-border-focus:#c3d3aa;
+  --color-border-cyan:#a7bc8e;
+  --color-text-primary:#f2f4e9;
+  --color-text-secondary:#b7c0ac;
+  --color-text-muted:#a1ae92;
+  --shadow-glow-cyan:0 0 0 transparent;
+  --shadow-glow-amber:0 0 0 transparent;
+  --radius-lg:6px;
+}
