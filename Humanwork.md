@@ -258,6 +258,25 @@ Current direct project addresses use your local preview origin; replace that ori
 
 ## 11. What is intentionally still pending
 
+### Current-project captures added on 11 October 2026
+
+The current inventory includes five project workspaces and the Procedural_Gen plugin backup folder. Learnings and Test_Add_toProject are excluded. You can provide these items later; implementation does not depend on supplying them now.
+
+Put captures and notes in `source/portfolio-inbox/<project-name>/`. Use the existing STUDY_TEMPLATE.md for contribution notes. Keep credentials, Steam account data and unrelated personal documents out of recordings.
+
+| Workspace | Where it appears | What to record | What to explain |
+|---|---|---|---|
+| Procedural_Gen | `/projects/procedural-dungeons/` | Editor room-class bindings, several generated layouts, a rejected overlapping room, exhausted retries and final doorway closure. Keep the unedited recording privately. | Which generator/room/theme code you wrote or adapted; asset-pack credits; whether generation works on server and clients. The inspected close-wall fallback skips collision checking, so show corner cases. Do not promise seeded determinism without testing it. |
+| Procedural_Gen | `/projects/multiplayer-lobbies/` | Host on one client, find/join on another, leave and rejoin, then a failed join/backend unavailable case. Show menu code separately. | Your subsystem/widget contributions, plugin origins and test setup. Verify lobby-code length in the running build because source comments disagree. Successful Steam connectivity is not claimed yet. |
+| VR_CLass_5_8 | `/projects/vr-workspace/` | Headset/controller footage of one implemented interaction plus its Blueprint. Include device/runtime details. | What you created and which template/plugins were used. Its descriptor currently declares **5.7**. Enabled eye/hand tracking plugins do not establish working interactions. |
+| Zombie_Tomb_Z | `/projects/zombie-tomb/` | A playable sequence, the responsible Blueprint and a representative map. Show enemy AI/combat only if implemented. | Your mechanics, map work and asset origins. Existing weapon folders are not automatically your original models. |
+| unrealclassmahe | `/projects/level-experiments/` | Choose one map, record a walkthrough and one working interaction, then show its editor logic. | Your level layout, lighting, interaction or models. Credit course/tutorial foundations if applicable; none are inferred from its name. |
+| Procedural_Gen_Plugin_Backups | Supporting records only | No standalone game trailer needed. | Identify plugin versions/origins if relevant. No root .uproject was found, so it is not a sixth playable game. |
+
+For each chosen study: supply a 20–60 second result clip, a separate editor/source explanation, one landscape still, a contribution list (original / adapted / third-party), credits and permission to publish. Avoid invented completion dates, team sizes or performance numbers. Codex will replace the labelled concept illustrations and recording slots after reviewing this evidence.
+
+### Remaining launch and media work
+
 Real footage, confirmed contributions, an original asset selection, credits, final service preferences/availability, the public origin, actual-phone results and publication approval remain pending. All prior requests for these details are consolidated above; they do not need to be answered repeatedly in chat.
 
 The guided tour, scene polish, enquiry section, browser demos, local project links and launch metadata can be reviewed now. They are portfolio presentation, not substitutes for the evidence you will supply later.

@@ -1,4 +1,4 @@
-# Immersive Game Developer Portfolio - Try 2
+# Immersive Game Developer Portfolio — Game-Dev-Portfolio
 
 ## Purpose
 
@@ -27,6 +27,7 @@ A high-quality 3D environment presents real work through video-led exhibits. Eac
 - Monolith MCP: 0.23.0
 - Dossier: `U:\resume\ResumeOrganizer\builds\Ashish_Ranjan_GameDev_Complete_Dossier.pdf`
 - Existing evidence: `prop-hunt-inspection.json`, `prop-hunt-graphs.json`, `prop-hunt-showcase-plan.txt`
+- Current multi-project inventory: `src/All_Unreal_Project_info/README.md` and `current-inventory.json`; five root projects plus a plugin archive, excluding Learnings and Test_Add_toProject. Descriptor engines are 5.7 and 5.8. Contributions and runtime media remain separate evidence.
 
 ## Current state
 

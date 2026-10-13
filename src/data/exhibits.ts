@@ -1,4 +1,5 @@
 import { ExhibitData, ExhibitIndexItem } from '../types/portfolio';
+import { ADDITIONAL_EXHIBITS } from './additionalExhibits';
 
 /* =========================================================================
  * PILLAR 1: SHEESHH PROP HUNT GAMEPLAY SYSTEMS (VERIFIED IMPLEMENTATION)
@@ -690,6 +691,7 @@ export const EXHIBIT_ROUND = EXHIBIT_LIFECYCLE;
 export const EXHIBIT_EMOTES = EXHIBIT_CUSTOMIZATION;
 
 export const ALL_EXHIBITS: ExhibitData[] = [
+  ...ADDITIONAL_EXHIBITS,
   EXHIBIT_TRANSFORM,
   EXHIBIT_DECOY,
   EXHIBIT_COMBAT,
@@ -703,6 +705,7 @@ export const ALL_EXHIBITS: ExhibitData[] = [
 ];
 
 export const EXHIBITS_MAP: Record<string, ExhibitData> = {
+  ...Object.fromEntries(ADDITIONAL_EXHIBITS.map(exhibit=>[exhibit.id,exhibit])),
   'sheeshh-prop-hunt': EXHIBIT_TRANSFORM,
   'EX-PH-TRANSFORM': EXHIBIT_TRANSFORM,
   'EX-PH-DECOY': EXHIBIT_DECOY,

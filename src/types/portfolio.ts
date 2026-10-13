@@ -33,7 +33,7 @@ export type PortfolioAction =
   | { type: 'COMPLETE_ENTRANCE' }
   | { type: 'SET_BREAKDOWN_OPEN'; payload: boolean };
 
-export type EvidenceStatus = 'VERIFIED_IMPLEMENTATION' | 'ASSET_PRESENCE_VERIFIED' | 'EVIDENCE_REQUIRED';
+export type EvidenceStatus = 'VERIFIED_IMPLEMENTATION' | 'ASSET_PRESENCE_VERIFIED' | 'EVIDENCE_REQUIRED' | 'USER_CONFIRMED';
 export type PillarId = 1 | 2 | 3;
 
 export interface ExhibitStep {

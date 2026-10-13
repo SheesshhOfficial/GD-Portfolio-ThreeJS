@@ -22,7 +22,7 @@ assert.equal(image.readUInt32BE(16),1200);assert.equal(image.readUInt32BE(20),63
 assert.ok(existsSync(`${output}/robots.txt`));
 if(status.searchIndexing){
   const map=readFileSync(`${output}/sitemap.xml`,'utf8');
-  assert.equal((map.match(/<loc>/g)||[]).length,11);
+  assert.equal((map.match(/<loc>/g)||[]).length,projectRoutes.length+1);
   for(const project of projectRoutes)assert.ok(map.includes(`/projects/${project.slug}/</loc>`));
 }
-console.log(`Launch checks passed: 10 project documents, social image, metadata, root asset paths and robots. Public origin: ${status.publicOriginConfigured?'configured':'pending'}; search indexing: ${status.searchIndexing?'enabled':'disabled'}.`);
+console.log(`Launch checks passed: ${projectRoutes.length} project documents, social image, metadata, root asset paths and robots. Public origin: ${status.publicOriginConfigured?'configured':'pending'}; search indexing: ${status.searchIndexing?'enabled':'disabled'}.`);

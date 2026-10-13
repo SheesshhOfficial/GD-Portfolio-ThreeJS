@@ -15,7 +15,7 @@ export default function StudioPanel({mode,onClose}: Props) {
     const handle=(e: KeyboardEvent)=>{
       if(e.key==='Escape'){e.preventDefault();onClose();}
       if(e.key==='Tab'){
-        const controls=panel.current?.querySelectorAll<HTMLElement>('button:not([disabled]),a[href],select,input');
+        const controls=Array.from(panel.current?.querySelectorAll<HTMLElement>('button:not([disabled]),a[href],select,input,summary')||[]).filter(el=>el.getClientRects().length>0);
         if(!controls?.length)return;
         const first=controls[0],last=controls[controls.length-1];
         if(e.shiftKey && (document.activeElement===first || !panel.current?.contains(document.activeElement))){e.preventDefault();last.focus();}

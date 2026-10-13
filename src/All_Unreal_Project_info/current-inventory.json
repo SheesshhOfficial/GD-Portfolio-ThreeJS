@@ -1,0 +1,275 @@
+{
+  "surveyed": "2026-10-11",
+  "excluded": [
+    "Learnings",
+    "Test_Add_toProject"
+  ],
+  "scope": "Top-level folders. Saved snapshots and plugin backups are not counted as separate games.",
+  "projects": [
+    {
+      "folder": "Procedural_Gen",
+      "path": "G:\\Unreal Projects\\Procedural_Gen",
+      "projectFile": "Procedural_Gen.uproject",
+      "engine": "5.8",
+      "classification": "USER_CONFIRMED project; descriptor inspected",
+      "modules": [
+        "Procedural_Gen"
+      ],
+      "enabledPlugins": [
+        "ModelingToolsEditorMode",
+        "VisualStudioTools",
+        "OnlineSubsystem",
+        "OnlineSubsystemSteam"
+      ],
+      "sourceFiles": [
+        "Source\\Procedural_Gen.Target.cs",
+        "Source\\Procedural_GenEditor.Target.cs",
+        "Source\\Procedural_Gen\\DungeonGenerator.cpp",
+        "Source\\Procedural_Gen\\DungeonGenerator.h",
+        "Source\\Procedural_Gen\\MainMenuWidget.cpp",
+        "Source\\Procedural_Gen\\MainMenuWidget.h",
+        "Source\\Procedural_Gen\\MenuGameMode.cpp",
+        "Source\\Procedural_Gen\\MenuGameMode.h",
+        "Source\\Procedural_Gen\\MenuPlayerController.cpp",
+        "Source\\Procedural_Gen\\MenuPlayerController.h",
+        "Source\\Procedural_Gen\\MultiplayerSessionsSubsystem.cpp",
+        "Source\\Procedural_Gen\\MultiplayerSessionsSubsystem.h",
+        "Source\\Procedural_Gen\\Procedural_Gen.Build.cs",
+        "Source\\Procedural_Gen\\Procedural_Gen.cpp",
+        "Source\\Procedural_Gen\\Procedural_Gen.h",
+        "Source\\Procedural_Gen\\Procedural_GenCharacter.cpp",
+        "Source\\Procedural_Gen\\Procedural_GenCharacter.h",
+        "Source\\Procedural_Gen\\Procedural_GenGameMode.cpp",
+        "Source\\Procedural_Gen\\Procedural_GenGameMode.h",
+        "Source\\Procedural_Gen\\Procedural_GenPlayerController.cpp",
+        "Source\\Procedural_Gen\\Procedural_GenPlayerController.h",
+        "Source\\Procedural_Gen\\RB_Dungeon001.cpp",
+        "Source\\Procedural_Gen\\RB_Dungeon001.h",
+        "Source\\Procedural_Gen\\RB_Dungeon002.cpp",
+        "Source\\Procedural_Gen\\RB_Dungeon002.h",
+        "Source\\Procedural_Gen\\RB_Dungeon003.cpp",
+        "Source\\Procedural_Gen\\RB_Dungeon003.h",
+        "Source\\Procedural_Gen\\RB_Dungeon004.cpp",
+        "Source\\Procedural_Gen\\RB_Dungeon004.h",
+        "Source\\Procedural_Gen\\RB_Dungeon005.cpp",
+        "Source\\Procedural_Gen\\RB_Dungeon005.h",
+        "Source\\Procedural_Gen\\RB_Dungeon006.cpp",
+        "Source\\Procedural_Gen\\RB_Dungeon006.h",
+        "Source\\Procedural_Gen\\RoomBase.cpp",
+        "Source\\Procedural_Gen\\RoomBase.h",
+        "Source\\Procedural_Gen\\ServerBrowserWidget.cpp",
+        "Source\\Procedural_Gen\\ServerBrowserWidget.h",
+        "Source\\Procedural_Gen\\ServerRowWidget.cpp",
+        "Source\\Procedural_Gen\\ServerRowWidget.h"
+      ],
+      "contentRoots": [
+        "__ExternalActors__",
+        "__ExternalObjects__",
+        "Characters",
+        "Collections",
+        "Dataset",
+        "Developers",
+        "Imported",
+        "Input",
+        "LevelPrototyping",
+        "Maps",
+        "PDG_files",
+        "ThirdPerson",
+        "UI"
+      ],
+      "maps": [
+        "Content\\Maps\\Lvl_MainMenu.umap",
+        "Content\\ThirdPerson\\Lvl_ThirdPerson.umap"
+      ],
+      "assetFileCount": 1140,
+      "archiveChildren": []
+    },
+    {
+      "folder": "Procedural_Gen_Plugin_Backups",
+      "path": "G:\\Unreal Projects\\Procedural_Gen_Plugin_Backups",
+      "projectFile": null,
+      "engine": null,
+      "classification": "USER_CONFIRMED folder; plugin archive, no root project descriptor",
+      "modules": [],
+      "enabledPlugins": [],
+      "sourceFiles": [],
+      "contentRoots": [],
+      "maps": [],
+      "assetFileCount": 0,
+      "archiveChildren": [
+        "AdvancedSessions",
+        "AdvancedSteamSessions",
+        "ExampleBlueprints"
+      ]
+    },
+    {
+      "folder": "SheeshhPropHuntYT",
+      "path": "G:\\Unreal Projects\\SheeshhPropHuntYT",
+      "projectFile": "SheeshhPropHuntYT.uproject",
+      "engine": "5.7",
+      "classification": "USER_CONFIRMED project; descriptor inspected",
+      "modules": [
+        "SheeshhPropHuntYT"
+      ],
+      "enabledPlugins": [
+        "Monolith",
+        "ModelingToolsEditorMode",
+        "GameplayStateTree",
+        "AIAssistant"
+      ],
+      "sourceFiles": [
+        "Source\\SheeshhPropHuntYT.Target.cs",
+        "Source\\SheeshhPropHuntYTEditor.Target.cs",
+        "Source\\SheeshhPropHuntYT\\MyClass.cpp",
+        "Source\\SheeshhPropHuntYT\\MyClass.h",
+        "Source\\SheeshhPropHuntYT\\SheeshhPropHuntYT.Build.cs",
+        "Source\\SheeshhPropHuntYT\\SheeshhPropHuntYT.cpp",
+        "Source\\SheeshhPropHuntYT\\SheeshhPropHuntYT.h",
+        "Source\\SheeshhPropHuntYT\\Private\\DebugMenuLib.cpp",
+        "Source\\SheeshhPropHuntYT\\Private\\VOIPLIB.cpp",
+        "Source\\SheeshhPropHuntYT\\Public\\DebugMenuLib.h",
+        "Source\\SheeshhPropHuntYT\\Public\\VOIPLIB.h"
+      ],
+      "contentRoots": [
+        "__ExternalActors__",
+        "__ExternalObjects__",
+        "Characters",
+        "Collections",
+        "Core",
+        "Developers",
+        "Emberlight",
+        "Input",
+        "resources",
+        "Sample",
+        "StarterContent",
+        "ThirdPerson"
+      ],
+      "maps": [
+        "Content\\Core\\Map\\Boot_Lvl.umap",
+        "Content\\Emberlight\\Maps\\MapHarvest_Demo.umap",
+        "Content\\Emberlight\\Maps\\MapHarvest_Overview.umap",
+        "Content\\resources\\Stylized_Egypt\\Maps\\Map1.umap",
+        "Content\\resources\\Stylized_Egypt\\Maps\\Stylized_Egypt_Demo.umap"
+      ],
+      "assetFileCount": 2880,
+      "archiveChildren": []
+    },
+    {
+      "folder": "unrealclassmahe",
+      "path": "G:\\Unreal Projects\\unrealclassmahe",
+      "projectFile": "unrealclassmahe.uproject",
+      "engine": "5.7",
+      "classification": "USER_CONFIRMED project; descriptor inspected",
+      "modules": [],
+      "enabledPlugins": [
+        "ModelingToolsEditorMode"
+      ],
+      "sourceFiles": [],
+      "contentRoots": [
+        "__ExternalActors__",
+        "__ExternalObjects__",
+        "_GENERATED",
+        "AssetsvilleTown",
+        "Characters",
+        "coca-cola_can_4k_texture",
+        "Collections",
+        "day4",
+        "Developers",
+        "Fab",
+        "Input",
+        "LevelPrototyping",
+        "main",
+        "MPMECH",
+        "ThirdPerson"
+      ],
+      "maps": [
+        "Content\\map3.umap",
+        "Content\\NewMap.umap",
+        "Content\\neww.umap",
+        "Content\\AssetsvilleTown\\Maps\\Demonstration.umap",
+        "Content\\AssetsvilleTown\\Maps\\Overview.umap",
+        "Content\\day4\\map3.umap",
+        "Content\\day4\\NewMap.umap",
+        "Content\\day4\\neww.umap",
+        "Content\\main\\day7\\blankStartScreen.umap",
+        "Content\\main\\level\\powerups.umap",
+        "Content\\MPMECH\\Maps\\TEST-MAP.umap",
+        "Content\\ThirdPerson\\Lvl_ThirdPerson.umap"
+      ],
+      "assetFileCount": 1542,
+      "archiveChildren": []
+    },
+    {
+      "folder": "VR_CLass_5_8",
+      "path": "G:\\Unreal Projects\\VR_CLass_5_8",
+      "projectFile": "VR_CLass_5_8.uproject",
+      "engine": "5.7",
+      "classification": "USER_CONFIRMED project; descriptor inspected",
+      "modules": [],
+      "enabledPlugins": [
+        "OpenXR",
+        "OpenXREyeTracker",
+        "OpenXRHandTracking",
+        "OculusXR"
+      ],
+      "sourceFiles": [],
+      "contentRoots": [
+        "Collections",
+        "Developers",
+        "Emberlight",
+        "LevelPrototyping",
+        "Oculus",
+        "VRSpectator",
+        "VRTemplate",
+        "Weapons",
+        "XRFramework",
+        "XRMannequins"
+      ],
+      "maps": [
+        "Content\\Emberlight\\Maps\\MapHarvest_Demo.umap",
+        "Content\\Emberlight\\Maps\\MapHarvest_Overview.umap",
+        "Content\\VRTemplate\\VRTemplateMap.umap"
+      ],
+      "assetFileCount": 460,
+      "archiveChildren": []
+    },
+    {
+      "folder": "Zombie_Tomb_Z",
+      "path": "G:\\Unreal Projects\\Zombie_Tomb_Z",
+      "projectFile": "Zombie_Tomb_Z.uproject",
+      "engine": "5.8",
+      "classification": "USER_CONFIRMED project; descriptor inspected",
+      "modules": [],
+      "enabledPlugins": [
+        "ModelingToolsEditorMode",
+        "GameplayStateTree"
+      ],
+      "sourceFiles": [],
+      "contentRoots": [
+        "__ExternalActors__",
+        "__ExternalObjects__",
+        "Characters",
+        "Collections",
+        "Developers",
+        "FirstPerson",
+        "FPS_Weapon_Bundle",
+        "Game",
+        "Input",
+        "LevelPrototyping",
+        "MilitaryCharDark48",
+        "MilitaryWeapDark",
+        "MilitaryWeapSilver"
+      ],
+      "maps": [
+        "Content\\FirstPerson\\Lvl_FirstPerson.umap",
+        "Content\\FPS_Weapon_Bundle\\Maps\\Weapons_Showcase.umap",
+        "Content\\MilitaryCharDark48\\data\\Content\\MilitaryCharDark\\Showcase.umap",
+        "Content\\MilitaryWeapDark\\data\\Content\\MilitaryWeapDark\\Overview.umap",
+        "Content\\MilitaryWeapSilver\\data\\Content\\MilitaryWeapSilver\\Showcase.umap"
+      ],
+      "assetFileCount": 1332,
+      "archiveChildren": []
+    }
+  ],
+  "errors": []
+}

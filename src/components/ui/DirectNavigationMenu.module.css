@@ -270,3 +270,4 @@
     max-width: 100%;
   }
 }
+.drawer{background:#f4f6eb;color:#31432b;}.header{background:#ecf1e1;border-color:#c0cfae;}.title,.itemTitle,.profileText{color:#30462a;}.closeButton{color:#3d5730;border-color:#b9c9a6;}.recruiterHeader,.credentialsBox,.itemCard{background:#e8eedd;border-color:#bfceac;}.recruiterSummary,.itemDesc,.noteText{color:#4c6240;font-size:14px;line-height:1.8;}.pillarTag,.actionHint{font-size:12px;color:#466037;}.engineBadge,.statusBadge,.statusVerified,.statusSetup,.statPill,.statPillHighlight{color:#3d5b2e;background:#dce8cc;border-color:#a9bf91;font-size:11px;}.statusRequired{color:#775224;background:#f0e3cb;}.itemTitle{font-size:18px;line-height:1.4;}.itemCard:hover,.itemCard:focus-visible{background:#dce8cd;border-color:#7c9a5e;}.drawer button:focus-visible{outline:3px solid #647e4f;outline-offset:3px;}

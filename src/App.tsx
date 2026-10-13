@@ -61,6 +61,7 @@ const PortfolioApp: React.FC = () => {
     dispatch({ type: 'SET_WEBGL_SUPPORTED', payload: false });
   };
 
+  const studyLoading=<div className="study-loading" role="status">Opening study…</div>;
   return (
     <>
       {/* Accessible skip link */}
@@ -114,7 +115,7 @@ const PortfolioApp: React.FC = () => {
           </ErrorBoundary>
 
           {/* Interactive Exhibit Card (Overlaid above Canvas) */}
-          <Suspense fallback={null}>
+          <Suspense fallback={state.activeExhibitId?studyLoading:null}>
             {state.activeExhibitId && <ExhibitCard />}
           </Suspense>
 
@@ -129,15 +130,12 @@ const PortfolioApp: React.FC = () => {
         <>
           <Suspense
             fallback={
-              <div style={{ padding: '3rem 2rem', textAlign: 'center', color: '#94a3b8', background: '#0a0e14', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.75rem' }}>
-                <div style={{ width: '32px', height: '32px', border: '3px solid rgba(56, 189, 248, 0.2)', borderTopColor: '#38bdf8', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-                <span style={{ fontSize: '0.875rem', color: '#cbd5e1' }}>Loading 2D Portfolio Gallery...</span>
-              </div>
+              <div className="study-loading" role="status">Opening project gallery…</div>
             }
           >
             <Static2DView />
           </Suspense>
-          <Suspense fallback={null}>
+          <Suspense fallback={state.activeExhibitId?studyLoading:null}>
             {state.activeExhibitId && <ExhibitCard />}
           </Suspense>
           <Suspense fallback={null}>

@@ -1,236 +1,64 @@
-import React, { lazy, Suspense, useEffect, useRef, useState } from 'react';
-import { usePortfolio } from '../../context/PortfolioContext';
-import { EXHIBITS_MAP } from '../../data/exhibits';
-import { OverviewStoryboardSvg, TransformStoryboardSvg } from '../diagrams/MediaStoryboardDiagrams';
-import { EvidenceStatus } from '../../types/portfolio';
-import styles from './ExhibitCard.module.css';
+import {lazy,Suspense,useEffect,useRef,useState} from 'react';
+import {usePortfolio,projectTrigger} from '../../context/PortfolioContext';
+import {ALL_EXHIBITS,EXHIBITS_MAP} from '../../data/exhibits';
 import {projectPath} from '../../data/projectRoutes';
-const InteractiveStudy = lazy(() => import('../studies/InteractiveStudy'));
+import {OverviewStoryboardSvg,TransformStoryboardSvg} from '../diagrams/MediaStoryboardDiagrams';
+import {ProjectArtwork} from './ProjectArtwork';
+import styles from './ExhibitCard.module.css';
+const InteractiveStudy=lazy(()=>import('../studies/InteractiveStudy'));
 
-export const ExhibitCard: React.FC = () => {
-  const { state, dispatch } = usePortfolio();
-  const cardRef = useRef<HTMLDivElement>(null);
-  const closeBtnRef = useRef<HTMLButtonElement>(null);
-  const originatingElementRef = useRef<HTMLElement | null>(null);
-  const [demoOpen,setDemoOpen]=useState(false);
-  const [shareStatus,setShareStatus]=useState('');
-  useEffect(()=>{setDemoOpen(false);setShareStatus('');},[state.activeExhibitId]);
-
-  const exhibit = state.activeExhibitId ? EXHIBITS_MAP[state.activeExhibitId] : null;
-
-  useEffect(() => {
-    if (!exhibit) return;
-    const previous = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => { document.body.style.overflow = previous; };
-  }, [exhibit]);
-
-  // Capture originating focus and move focus into card
-  useEffect(() => {
-    if (exhibit) {
-      if (document.activeElement && document.activeElement !== document.body) {
-        originatingElementRef.current = document.activeElement as HTMLElement;
-      }
-      const timer = setTimeout(() => {
-        closeBtnRef.current?.focus();
-      }, 50);
-      return () => clearTimeout(timer);
-    }
-  }, [exhibit]);
-
-  // Handle Escape key and Tab trapping inside the card
-  useEffect(() => {
-    if (!exhibit) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // If breakdown drawer is open, let breakdown drawer handle Escape
-      if (state.isBreakdownOpen) return;
-
-      if (e.key === 'Escape') {
-        e.stopImmediatePropagation?.();
-        e.stopPropagation();
-        handleClose();
-        return;
-      }
-
-      if (e.key === 'Tab') {
-        if (!cardRef.current) return;
-        const focusable = cardRef.current.querySelectorAll<HTMLElement>(
-          'button:not([disabled]), [href], input:not([disabled]), [tabindex]:not([tabindex="-1"])'
-        );
-        if (focusable.length === 0) return;
-
-        const first = focusable[0];
-        const last = focusable[focusable.length - 1];
-
-        if (e.shiftKey) {
-          if (document.activeElement === first || !cardRef.current.contains(document.activeElement)) {
-            e.preventDefault();
-            last.focus();
-          }
-        } else {
-          if (document.activeElement === last || !cardRef.current.contains(document.activeElement)) {
-            e.preventDefault();
-            first.focus();
-          }
-        }
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [exhibit, state.isBreakdownOpen]);
-
-  if (!exhibit) {
-    return null;
-  }
-
-  const handleClose = () => {
-    dispatch({ type: 'SET_ACTIVE_EXHIBIT', payload: null });
-    const target = originatingElementRef.current || document.getElementById('direct-portfolio-btn');
-    if (target && typeof target.focus === 'function') {
-      setTimeout(() => {
-        const restored = target.isConnected ? target : document.getElementById(target.id);
-        (restored || document.getElementById('direct-portfolio-btn'))?.focus();
-      }, 0);
-    }
+export function ExhibitCard(){
+ const {state,dispatch}=usePortfolio();
+ const card=useRef<HTMLDivElement>(null),close=useRef<HTMLButtonElement>(null),origin=useRef<HTMLElement|null>(null);
+ const [demoOpen,setDemoOpen]=useState(false),[shareStatus,setShareStatus]=useState('');
+ const exhibit=state.activeExhibitId?EXHIBITS_MAP[state.activeExhibitId]:null;
+ const handleClose=()=>{dispatch({type:'SET_ACTIVE_EXHIBIT',payload:null});requestAnimationFrame(()=>{const target=projectTrigger()||origin.current;(target?.isConnected&&target!==document.body?target:document.getElementById('direct-portfolio-btn'))?.focus();});};
+ useEffect(()=>{
+  if(!exhibit)return;
+  setDemoOpen(false);setShareStatus('');
+  if(!card.current?.contains(document.activeElement))origin.current=document.activeElement as HTMLElement;
+  const previous=document.body.style.overflow;document.body.style.overflow='hidden';
+  card.current?.scrollTo(0,0);close.current?.focus({preventScroll:true});
+  return()=>{document.body.style.overflow=previous;};
+ },[exhibit]);
+ useEffect(()=>{
+  if(!exhibit)return;
+  const key=(e:KeyboardEvent)=>{
+   if(state.isBreakdownOpen)return;
+   if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();handleClose();}
+   if(e.key==='Tab'&&card.current){
+    const items=Array.from(card.current.querySelectorAll<HTMLElement>('button:not([disabled]),a[href],input:not([disabled]),summary,[tabindex]:not([tabindex="-1"])')).filter(el=>el.getClientRects().length>0);
+    const first=items[0],last=items[items.length-1];
+    if(e.shiftKey&&(document.activeElement===first||!card.current.contains(document.activeElement))){e.preventDefault();last?.focus();}
+    else if(!e.shiftKey&&(document.activeElement===last||!card.current.contains(document.activeElement))){e.preventDefault();first?.focus();}
+   }
   };
-
-  const inspectBtnId =
-    exhibit.id === 'sheeshh-prop-hunt' || exhibit.id === 'EX-PH-TRANSFORM'
-      ? 'inspect-transform-btn'
-      : 'inspect-architecture-btn';
-
-  const getStatusBadgeClass = (status: EvidenceStatus, badgeLabel: string) => {
-    if (badgeLabel === 'Evidence needed' || status === 'EVIDENCE_REQUIRED') {
-      return styles.statusRequired;
-    }
-    if (badgeLabel === 'Asset presence verified' || status === 'ASSET_PRESENCE_VERIFIED') {
-      return styles.statusSetup;
-    }
-    return styles.statusVerified;
-  };
-
-  const isEvidenceRequired = exhibit.evidenceStatus === 'EVIDENCE_REQUIRED';
-  const demoKind = ['sheeshh-prop-hunt','EX-PH-TRANSFORM'].includes(exhibit.id) ? 'transform' : exhibit.id==='EX-PH-COMBAT' ? 'combat' : null;
-  const shareUrl=new URL(projectPath(exhibit.id),window.location.origin).href;
-  const copyLink=async()=>{
-    try{await navigator.clipboard.writeText(shareUrl);setShareStatus('Project link copied.');}
-    catch{setShareStatus('Copy the project address below.');}
-  };
-
-  return (
-    <aside
-      className={styles.cardContainer}
-      role="dialog"
-      aria-modal="true"
-      aria-label={`${exhibit.title} Exhibit Card`}
-    >
-      <div ref={cardRef} className={styles.card}>
-        <div className={styles.header}>
-          <div>
-            <div className={styles.metaRow}>
-              <span className={styles.engineBadge}>{exhibit.engine}</span>
-              <span className={getStatusBadgeClass(exhibit.evidenceStatus, exhibit.badgeLabel)}>
-                {exhibit.badgeLabel}
-              </span>
-            </div>
-            <h2 className={styles.title}>{exhibit.title}</h2>
-            <p className={styles.subtitle}>{exhibit.subtitle}</p>
-          </div>
-          <button
-            ref={closeBtnRef}
-            type="button"
-            className={styles.closeBtn}
-            onClick={handleClose}
-            aria-label="Close Exhibit Card"
-          >
-            ✕
-          </button>
-        </div>
-
-        <div className={styles.body}>
-          {/* Evidence Request Callout for Pillar 3 */}
-          {isEvidenceRequired && (
-            <div className={styles.evidenceBanner}>
-              <div className={styles.evidenceBannerTitle}>⚠️ Evidence Required · Candidate Submission Pending</div>
-              <p className={styles.evidenceBannerText}>
-                No original source asset has been selected for this exhibit yet. This card defines the exact technical
-                and media standards that Ashish Ranjan must provide before work can be marked as verified.
-              </p>
-            </div>
-          )}
-
-          {/* Tool Badges */}
-          <div className={styles.tagList} aria-label="Key Technologies">
-            {exhibit.tools.map((tool) => (
-              <span key={tool} className={styles.toolTag}>
-                {tool}
-              </span>
-            ))}
-          </div>
-
-          {/* System Summary */}
-          <p className={styles.summary}>{exhibit.summary}</p>
-          <div className={styles.shareSection}><button onClick={copyLink}>Copy project link ↗</button><p role="status">{shareStatus}</p>{shareStatus==='Copy the project address below.'&&<input aria-label="Project address" readOnly value={shareUrl} onFocus={e=>e.target.select()}/>}</div>
-
-          {demoKind && <>
-            <button className={styles.demoButton} aria-expanded={demoOpen} onClick={()=>setDemoOpen(!demoOpen)}>{demoOpen?'Close interactive study':'Try the interactive study'} <span aria-hidden="true">{demoOpen?'−':'↗'}</span></button>
-            {demoOpen && <Suspense fallback={<p role="status">Opening browser study…</p>}><InteractiveStudy key={exhibit.id} kind={demoKind}/></Suspense>}
-          </>}
-
-          {/* Deep-Dive Drawer Action Button */}
-          <div className={styles.actionSection}>
-            <button
-              id={inspectBtnId}
-              type="button"
-              className={styles.inspectButton}
-              onClick={() => dispatch({ type: 'SET_BREAKDOWN_OPEN', payload: true })}
-            >
-              <span>
-                {isEvidenceRequired
-                  ? `Inspect Submission Checklist & Standards →`
-                  : `Inspect ${exhibit.shortTitle} Architecture →`}
-              </span>
-            </button>
-          </div>
-
-          {/* Structured Media Placeholders with Inline Storyboards */}
-          <div className={styles.placeholderGrid}>
-            {exhibit.mediaPlaceholders.map((media) => (
-              <div key={media.id} className={styles.placeholderCard}>
-                <div className={styles.placeholderHeader}>
-                  <span className={styles.badgePending}>
-                    {isEvidenceRequired ? 'Source asset needed' : 'Media coming soon'}
-                  </span>
-                  <span className={styles.mediaId}>{media.id}</span>
-                </div>
-                <h4 className={styles.placeholderTitle}>{media.label}</h4>
-                {media.id === 'PH-OVERVIEW' && <OverviewStoryboardSvg />}
-                {media.id === 'PH-TRANSFORM' && <TransformStoryboardSvg />}
-                <p className={styles.placeholderDesc}>{media.description}</p>
-                <div className={styles.placeholderFooter}>
-                  <span className={styles.evidenceReq}>{media.requirement === 'RUNTIME_VERIFIED' ? 'Gameplay recording needed' : media.requirement === 'ASSET_INSPECTION_REQUIRED' ? 'Editor inspection needed' : 'Supporting evidence needed'}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Sourcing and Evidence Boundaries */}
-          <div className={styles.provenanceBox}>
-            <span className={styles.provenanceTag}>Provenance &amp; Sourcing</span>
-            <p className={styles.provenanceText}>{exhibit.provenanceNote}</p>
-          </div>
-        </div>
-
-        <div className={styles.footer}>
-          <button type="button" className={styles.dismissButton} onClick={handleClose}>
-            Back to portfolio
-          </button>
-        </div>
-      </div>
-    </aside>
-  );
-};
-
+  window.addEventListener('keydown',key);return()=>window.removeEventListener('keydown',key);
+ },[exhibit,state.isBreakdownOpen,dispatch]);
+ if(!exhibit)return null;
+ const required=exhibit.evidenceStatus==='EVIDENCE_REQUIRED';
+ const kind=['sheeshh-prop-hunt','EX-PH-TRANSFORM'].includes(exhibit.id)?'transform':exhibit.id==='EX-PH-COMBAT'?'combat':null;
+ const url=new URL(projectPath(exhibit.id),window.location.origin).href;
+ const copy=async()=>{try{await navigator.clipboard.writeText(url);setShareStatus('Project link copied.');}catch{setShareStatus('Copy the project address below.');}};
+ const index=ALL_EXHIBITS.findIndex(item=>item.id===exhibit.id),next=ALL_EXHIBITS[(index+1)%ALL_EXHIBITS.length];
+ return <aside className={styles.overlay} role="dialog" aria-modal="true" aria-labelledby="study-title">
+  <div ref={card} className={styles.page} inert={state.isBreakdownOpen}>
+   <header className={styles.toolbar}><button onClick={handleClose}>← Back to portfolio</button><span>THE WORK / {exhibit.shortId}</span><button ref={close} onClick={handleClose} aria-label="Close Exhibit Card">✕</button></header>
+   <div className={styles.hero}>
+    <figure><ProjectArtwork id={exhibit.id}/><figcaption>Concept illustration · project recordings coming later</figcaption></figure>
+    <div className={styles.intro}><p className={styles.eyebrow}>{exhibit.category}</p><h1 id="study-title">{exhibit.title}</h1><p className={styles.subtitle}>{exhibit.subtitle}</p><div className={styles.badges}><span>{exhibit.engine}</span><span>{exhibit.badgeLabel}</span></div><button className={styles.share} onClick={copy}>Copy project link ↗</button><p className={styles.shareStatus} role="status">{shareStatus}</p>{shareStatus==='Copy the project address below.'&&<input aria-label="Project address" readOnly value={url} onFocus={e=>e.target.select()}/>}</div>
+   </div>
+   <div className={styles.content}>
+    <article className={styles.main}>
+     <section><p className={styles.eyebrow}>01 / THE STUDY</p><h2>{required?'What this study will show':'A closer look at the system.'}</h2><p className={styles.summary}>{exhibit.summary}</p><div className={styles.tools}>{exhibit.tools.map(tool=><span key={tool}>{tool}</span>)}</div></section>
+     {kind&&<section><button className={styles.demo} aria-expanded={demoOpen} aria-controls="browser-study" onClick={()=>setDemoOpen(!demoOpen)}>{demoOpen?'Close interactive study':'Try the interactive study'} <span>{demoOpen?'−':'↗'}</span></button>{demoOpen&&<div id="browser-study"><Suspense fallback={<p className={styles.loading} role="status">Opening browser study…</p>}><InteractiveStudy key={exhibit.id} kind={kind}/></Suspense></div>}</section>}
+     <section><p className={styles.eyebrow}>02 / HOW IT IS STRUCTURED</p><h2>{required?'Submission standards':'Technical notes, at your pace.'}</h2><p>Expand a section for the implementation detail and its limits.</p><div className={styles.steps}>{exhibit.steps.map((step,i)=><details key={exhibit.id+'-'+i} open={i===0?true:undefined}><summary><span>{String(i+1).padStart(2,'0')}</span>{step.title}</summary><div><p>{step.desc}</p>{step.codeSnippet&&<pre><code>{step.codeSnippet}</code></pre>}</div></details>)}</div><button className={styles.secondary} id={['sheeshh-prop-hunt','EX-PH-TRANSFORM'].includes(exhibit.id)?'inspect-transform-btn':'inspect-architecture-btn'} onClick={()=>dispatch({type:'SET_BREAKDOWN_OPEN',payload:true})}>{required?'Open full submission checklist':'Open architecture diagrams & evidence'} →</button></section>
+     <section><p className={styles.eyebrow}>03 / SEE IT IN ACTION</p><h2>Footage is being prepared.</h2><p>These slots describe the recording each study needs. The artwork above is conceptual.</p><div className={styles.media}>{exhibit.mediaPlaceholders.map(media=><article key={media.id}><span className={styles.pending}>{required?'Source asset needed':'Recording pending'}</span><h3>{media.label}</h3><p>{media.description}</p>{['PH-OVERVIEW','PH-TRANSFORM'].includes(media.id)&&<details><summary>View capture storyboard</summary>{media.id==='PH-OVERVIEW'?<OverviewStoryboardSvg/>:<TransformStoryboardSvg/>}</details>}</article>)}</div></section>
+    </article>
+    <aside className={styles.notes} aria-label="Study evidence and credits"><section><p className={styles.eyebrow}>WHAT IS ESTABLISHED</p><h3>{exhibit.badgeLabel}</h3><p>{exhibit.boundaryDescription}</p>{exhibit.boundaryFormula&&<code>{exhibit.boundaryFormula}</code>}</section><section><p className={styles.eyebrow}>CONTRIBUTION & CREDITS</p><p>{exhibit.authorshipStatus}</p><details><summary>Source and provenance</summary><p>{exhibit.provenanceNote}</p></details></section></aside>
+   </div>
+   <footer className={styles.footer}><button onClick={handleClose}>← All portfolio work</button><button onClick={()=>dispatch({type:'SET_ACTIVE_EXHIBIT',payload:next.id})}>Next study: {next.shortTitle} →</button></footer>
+  </div>
+ </aside>;
+}
 export default ExhibitCard;

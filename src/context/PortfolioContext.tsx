@@ -9,6 +9,8 @@ function savedPreferences(): {quality: QualityMode; motionPaused: boolean} {
   } catch { return {quality:'auto',motionPaused:false}; }
 }
 const preferences=savedPreferences();
+let projectReturnFocus:HTMLElement|null=null;
+export function projectTrigger(){return projectReturnFocus;}
 
 function checkInitialReducedMotion(): boolean {
   if (typeof window !== 'undefined' && window.matchMedia) {
@@ -35,6 +37,8 @@ const initialState: PortfolioState = {
 export function getStationForExhibit(exhibitId: string | null): CameraFocus {
   if (!exhibitId) return 'center';
   if(exhibitId.startsWith('EX-TA-'))return 'technical-art';
+  if(exhibitId.startsWith('EX-3D-'))return 'technical-art';
+  if(exhibitId.startsWith('EX-PG-')||exhibitId.startsWith('EX-VR-')||exhibitId.startsWith('EX-ZT-')||exhibitId.startsWith('EX-CLASS-'))return 'systems-console';
   const systemsExhibits = new Set([
     'EX-PH-COMBAT',
     'EX-PH-AUDIO',
@@ -133,6 +137,8 @@ export const PortfolioProvider: React.FC<{ children: ReactNode }> = ({ children 
   const [state, send] = useReducer(portfolioReducer, initialState);
   const dispatch=useCallback((action:PortfolioAction)=>{
     if(action.type==='SET_ACTIVE_EXHIBIT'){
+      const el=document.activeElement as HTMLElement;
+      if(action.payload&&el!==document.body&&!el.closest('[role="dialog"]'))projectReturnFocus=el;
       const url=new URL(window.location.href);
       url.pathname=projectPath(action.payload);
       url.searchParams.delete('view');

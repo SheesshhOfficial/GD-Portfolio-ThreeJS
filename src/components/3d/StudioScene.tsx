@@ -35,6 +35,15 @@ function Plant({ position }: {position: [number,number,number]}) {
   </group>;
 }
 
+const rigPoints:[number,number,number][]=[[0,.65,0],[0,.42,0],[0,.05,0],[-.3,.42,0],[.3,.42,0],[-.43,.12,0],[.43,.12,0],[-.21,-.5,0],[.21,-.5,0]];
+const rigEdges=[[0,1],[1,2],[1,3],[1,4],[3,5],[4,6],[2,7],[2,8]];
+function RigSculpture({active}:{active:boolean}){
+ return <group position={[.3,1.9,-2.06]}>
+  {rigEdges.map(([a,b],i)=>{const from=new THREE.Vector3(...rigPoints[a]),to=new THREE.Vector3(...rigPoints[b]);const mid=from.clone().add(to).multiplyScalar(.5);const orientation=new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0),to.clone().sub(from).normalize());return <mesh key={i} position={mid} quaternion={orientation} castShadow><cylinderGeometry args={[.022,.022,from.distanceTo(to),8]}/><meshStandardMaterial color="#6c7d54" metalness={.55} roughness={.32}/></mesh>;})}
+  {rigPoints.map((position,i)=><mesh key={i} position={position} castShadow><sphereGeometry args={[i===0?.075:.043,12,8]}/><meshStandardMaterial color={active?'#b6cc83':'#b6a17c'} emissive={active?'#68873c':'#000000'} emissiveIntensity={.2} metalness={.4} roughness={.4}/></mesh>)}
+ </group>;
+}
+
 export function StudioScene({economy=false}: {economy?: boolean}) {
   const {state,dispatch} = usePortfolio();
   const {camera,size,pointer,invalidate} = useThree();
@@ -46,6 +55,8 @@ export function StudioScene({economy=false}: {economy?: boolean}) {
   const target = useRef(new THREE.Vector3());
   const aim = useRef(new THREE.Vector3());
   const [hotspotsReady, setHotspotsReady] = useState(false);
+  const [settled,setSettled]=useState(false);
+  const settledRef=useRef(false);
   const readyRef = useRef(false);
   const mobile = size.width < 760;
   const open = (id: string) => { dispatch({type:'COMPLETE_ENTRANCE'}); dispatch({type:'SET_ACTIVE_EXHIBIT',payload:id}); };
@@ -57,7 +68,7 @@ export function StudioScene({economy=false}: {economy?: boolean}) {
     }
     if (state.cameraFocus === 'transformation-bench') { target.current.set(4.7,3.1,6); aim.current.set(.5,1.6,0); }
     else if (state.cameraFocus === 'systems-console') { target.current.set(1.2,2.3,5.5); aim.current.set(-1.35,.9,1.3); }
-    else if (state.cameraFocus === 'technical-art') { target.current.set(5.7,3.5,5); aim.current.set(.1,1.9,-1.3); }
+    else if (state.cameraFocus === 'technical-art') { target.current.set(3,3.2,1); aim.current.set(.3,1.8,-1.8); }
     else if (mobile) { target.current.set(7,6.5,12); aim.current.set(0,3.1,0); }
     else { target.current.set(7,5.2,10); aim.current.set(-2,1.25,0); }
     if (!paused && !mobile && state.cameraFocus === 'center') {
@@ -69,6 +80,8 @@ export function StudioScene({economy=false}: {economy?: boolean}) {
     camera.position.lerp(target.current,speed);
     look.current.lerp(aim.current,speed);
     camera.lookAt(look.current);
+    const arrived=camera.position.distanceTo(target.current)<.08&&look.current.distanceTo(aim.current)<.08;
+    if(arrived!==settledRef.current){settledRef.current=arrived;setSettled(arrived);}
     if(paused && (camera.position.distanceTo(target.current)>.002 || look.current.distanceTo(aim.current)>.002 || state.isEntranceActive))invalidate();
     const ready = !state.activeExhibitId && !state.isEntranceActive && camera.position.distanceTo(target.current)<.35;
     if (ready !== readyRef.current) {
@@ -79,14 +92,16 @@ export function StudioScene({economy=false}: {economy?: boolean}) {
   return <>
     <color attach="background" args={['#f1f1e8']} />
     <fog attach="fog" args={['#f1f1e8',19,38]} />
-    <hemisphereLight args={['#fff9e9','#8d9c7d',1.35]} />
+    <hemisphereLight args={['#fff9e9','#80936a',1.05]} />
     <directionalLight position={[-3,9,5]} intensity={2.3} color="#fff7e6" castShadow={!economy} shadow-mapSize={[2048,2048]} shadow-camera-left={-5} shadow-camera-right={5} shadow-camera-top={5} shadow-camera-bottom={-5} shadow-camera-near={.5} shadow-camera-far={22} shadow-bias={-.0002} shadow-normalBias={.018} />
-    <directionalLight position={[7,4,-3]} intensity={.65} color="#dce7de" />
+    <directionalLight position={[7,4,-3]} intensity={.85} color="#dce7de" />
+    <pointLight position={[.8,2.5,-1.6]} intensity={1.2} color="#ffdeb0" distance={4} decay={2}/>
     <mesh rotation={[-Math.PI/2,0,0]} position={[0,-.09,0]} receiveShadow><planeGeometry args={[100,100]} /><meshStandardMaterial color="#eeeee3" roughness={1} /></mesh>
     <Contact position={[.65,-.085,0]} scale={[9,9]} opacity={.3}/>
     <group position={[.65,0,0]}>
       <mesh position={[0,.04,0]} receiveShadow><cylinderGeometry args={[3.7,3.8,.15,80]} /><meshStandardMaterial color="#d7dccb" roughness={.94} /></mesh>
       <mesh position={[0,.14,0]} receiveShadow><cylinderGeometry args={[3.25,3.3,.12,80]} /><meshStandardMaterial color="#e5e7da" roughness={.9} /></mesh>
+      <mesh position={[0,.105,0]}><cylinderGeometry args={[3.72,3.72,.017,80]} /><meshStandardMaterial color="#a6a080" roughness={.45} metalness={.45}/></mesh>
       {/* Architectural backdrop: softened concrete and open timber fins. */}
       <Block position={[0,1.75,-2.3]} scale={[4.7,3.2,.18]} color="#c5cfb9" />
       <Block position={[2.45,.8,-1.05]} scale={[.18,1.3,2.6]} color="#d4dcc8" />
@@ -99,13 +114,14 @@ export function StudioScene({economy=false}: {economy?: boolean}) {
       {Array.from({length:10},(_,i)=><Block key={i} position={[-2.25+i*.47,3.43,-1.2]} scale={[.085,.16,2.6]} color="#ad9873" wood />)}
       <mesh position={[.3,1.9,-2.18]}><ringGeometry args={[.91,1.02,64]} /><meshStandardMaterial color="#8d9b74" roughness={.5} metalness={.2} /></mesh>
       <mesh position={[.3,1.9,-2.2]}><circleGeometry args={[.9,64]} /><meshStandardMaterial color="#d9e1c9" /></mesh>
+      <RigSculpture active={state.cameraFocus==='technical-art'}/>
       <Block position={[.45,.61,0]} scale={[1.65,.85,1.65]} color="#bac7a6" />
       <Block position={[.45,1.065,0]} scale={[1.75,.08,1.75]} color="#e5e9d9" />
       <Contact position={[.45,.206,0]} scale={[2.7,2.7]} opacity={.5}/>
       <Contact position={[.45,1.108,0]} scale={[1.7,1.7]} opacity={.22}/>
       <group ref={sculpture} position={[.45,2.15,0]} rotation={[.25,.4,.15]} onClick={e=>{e.stopPropagation();document.body.style.cursor='auto';open('sheeshh-prop-hunt');}} onPointerOver={()=>{document.body.style.cursor='pointer';}} onPointerOut={()=>{document.body.style.cursor='auto';}}>
         {[-1,1].flatMap(x=>[-1,1].flatMap(y=>[-1,1].map(z=><mesh key={`${x}${y}${z}`} position={[x*.34,y*.34,z*.34]} scale={.61} castShadow receiveShadow>
-          <primitive object={softBox} attach="geometry" /><meshPhysicalMaterial color={x===y ? '#859963' : '#c4cfaa'} roughness={.28} metalness={.16} clearcoat={.4} clearcoatRoughness={.3} />
+          <primitive object={softBox} attach="geometry" /><meshPhysicalMaterial color={x===y ? '#6e8950' : y===z?'#c9d5b0':'#eee4cf'} roughness={x===y?.28:.48} metalness={.16} clearcoat={.4} clearcoatRoughness={.3} />
         </mesh>)))}
         <mesh rotation={[Math.PI/2,0,0]}><torusGeometry args={[1.08,.012,8,100]} /><meshStandardMaterial color="#82906d" metalness={.6} roughness={.3} /></mesh>
       </group>
@@ -116,6 +132,7 @@ export function StudioScene({economy=false}: {economy?: boolean}) {
       <Block position={[-1.55,1.43,1.43]} scale={[.06,.55,.06]} color="#59684e" />
       <Block position={[-1.55,1.72,1.4]} scale={[.9,.51,.055]} color="#4c5d43" />
       <Block position={[-1.55,1.72,1.44]} scale={[.81,.42,.015]} color="#a7bb8e" />
+      <mesh position={[-1.55,1.72,1.459]}><planeGeometry args={[.77,.38]}/><meshStandardMaterial color="#a7bb8e" emissive="#9fb578" emissiveIntensity={state.cameraFocus==='systems-console'?.45:.1}/></mesh>
       {Array.from({length:4},(_,i)=><Block key={i} position={[-1.83+i*.15,1.69,1.455]} scale={[.07,.12+i*.05,.01]} color="#657b54" />)}
       <Plant position={[1.85,.2,-1.25]} /><Plant position={[-2.5,.2,-1.25]} />
       <Contact position={[1.85,.206,-1.25]} scale={[.8,.8]}/><Contact position={[-2.5,.206,-1.25]} scale={[.8,.8]}/>
@@ -124,7 +141,9 @@ export function StudioScene({economy=false}: {economy?: boolean}) {
       {hotspotsReady && state.tourStep===null && !state.activeExhibitId && !state.isDirectMenuOpen && !state.isEntranceActive && <>
         <Html position={[1.5,1.85,.5]} center zIndexRange={[5,0]}><button className="scene-hotspot" id="hotspot-btn-bench" onClick={()=>open('sheeshh-prop-hunt')} aria-label="Explore prop transformation"><span>+</span><small>PROP TRANSFORMATION</small></button></Html>
         <Html position={[-1.75,1.1,2]} center zIndexRange={[5,0]}><button className="scene-hotspot" id="hotspot-btn-systems" onClick={()=>open('EX-PH-COMBAT')} aria-label="Explore gameplay systems"><span>+</span><small>GAMEPLAY SYSTEMS</small></button></Html>
+        <Html position={[.3,2.3,-1.8]} center zIndexRange={[5,0]}><button className="scene-hotspot" id="hotspot-btn-art" onClick={()=>open('EX-TA-IKRETARGET')} aria-label="Explore technical art"><span>+</span><small>TECHNICAL ART</small></button></Html>
       </>}
+      {state.tourStep!==null&&state.cameraFocus!=='center'&&<Html position={state.cameraFocus==='technical-art'?[.3,2.95,-1.8]:[-1.55,2.4,1.5]} center zIndexRange={[5,0]}><div className="scene-location" role="status"><span className={settled?'':'is-moving'}/>{settled?'You’re at':'Moving to'} {state.cameraFocus==='technical-art'?'the technical art wall':'the gameplay console'}</div></Html>}
     </group>
   </>;
 }

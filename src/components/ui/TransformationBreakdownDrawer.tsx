@@ -107,7 +107,7 @@ export const TransformationBreakdownDrawer: React.FC<TransformationBreakdownDraw
     if (badgeLabel === 'Evidence needed' || status === 'EVIDENCE_REQUIRED') {
       return styles.statusRequired;
     }
-    if (badgeLabel === 'Asset presence verified' || status === 'ASSET_PRESENCE_VERIFIED') {
+    if (status==='USER_CONFIRMED' || badgeLabel === 'Asset presence verified' || status === 'ASSET_PRESENCE_VERIFIED') {
       return styles.statusSetup;
     }
     return styles.statusVerified;
@@ -120,7 +120,7 @@ export const TransformationBreakdownDrawer: React.FC<TransformationBreakdownDraw
     if (status === 'ASSET_PRESENCE_VERIFIED' || badgeLabel === 'Asset presence verified') {
       return 'Asset presence verified';
     }
-    return 'VERIFIED_IMPLEMENTATION';
+    return badgeLabel;
   };
 
   const isEvidenceRequired = exhibit.evidenceStatus === 'EVIDENCE_REQUIRED';
@@ -165,14 +165,14 @@ export const TransformationBreakdownDrawer: React.FC<TransformationBreakdownDraw
           {/* Section 1: Inspected Implementation Steps or Submission Specifications */}
           <section className={styles.section}>
             <h3 className={styles.sectionHeading}>
-              {isEvidenceRequired ? '1. Technical Standards & Submission Criteria' : exhibit.pillarId === 2 ? '1. Asset Inspection Checklist' : '1. Inspected Implementation Steps'}
+              {isEvidenceRequired ? '1. Technical Standards & Submission Criteria' : exhibit.evidenceStatus==='USER_CONFIRMED'?'1. Project Snapshot & Capture Plan':exhibit.pillarId === 2 ? '1. Asset Inspection Checklist' : '1. Inspected Implementation Steps'}
             </h3>
             <p className={styles.stepDesc}>
               {isEvidenceRequired
                 ? 'Required specifications for model authoring, topology, units, and media capture before this exhibit can be reviewed:'
                 : exhibit.pillarId === 2
                 ? 'Asset files are present. The following editor checks are still needed to verify their setup and motion quality:'
-                : 'Verified Blueprint node connectivity, C++ source methods, and configuration parameters inspected in project assets:'}
+                : exhibit.evidenceStatus==='USER_CONFIRMED'?'Project descriptors and file structure were inspected. Gameplay and contribution evidence remain pending:':'Blueprint connectivity or C++ source paths were inspected. Runtime results and authorship are separate checks:'}
             </p>
 
             {/* Candidate Submission Checklist for Evidence Required Exhibits */}
@@ -220,8 +220,9 @@ export const TransformationBreakdownDrawer: React.FC<TransformationBreakdownDraw
                 ? 'Vector schematic illustrating the authoring criteria, conversion steps, and deliverables required for this pipeline:'
                 : exhibit.pillarId === 2
                 ? 'An inspection checklist for the available assets. Internal rig configuration and animation results remain unverified:'
-                : 'Vector schematic reflecting the verified asset hierarchy, node connectivity, and execution paths inspected in the project source:'}
+                : exhibit.evidenceStatus==='USER_CONFIRMED'?'Capture the corresponding Blueprint or editor setup before adding a system diagram.':'Schematic outline of inspected logic. This is portfolio explanation, not an Unreal graph screenshot:'}
             </p>
+            {exhibit.id.startsWith('EX-PG-')&&<ol className={styles.sourceFlow} aria-label="Inspected C++ source outline">{exhibit.steps.map(step=><li key={step.title}>{step.title}</li>)}</ol>}
             {exhibit.shortId === 'EX-PH-TRANSFORM' && <BlueprintFlowDiagram />}
             {exhibit.shortId === 'EX-PH-DECOY' && <DecoySpawnFlowDiagram />}
             {exhibit.shortId === 'EX-PH-COMBAT' && <CombatTraceFlowDiagram />}

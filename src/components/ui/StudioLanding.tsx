@@ -23,7 +23,7 @@ export function StudioLanding() {
         <div className="selected-heading"><span>SELECTED EXPLORATIONS</span><span>Choose a project to go deeper ↓</span></div>
         <div className="selected-grid">
           <button onClick={() => open('sheeshh-prop-hunt')}><span className="project-glyph glyph-cube" aria-hidden="true">◇</span><span><small>01 / GAMEPLAY</small><strong>Hide. Transform. Survive.</strong><span>Prop Hunt · Unreal Engine</span></span><span className="project-arrow" aria-hidden="true">↗</span></button>
-          <button onClick={() => open('EX-PH-COMBAT')}><span className="project-glyph glyph-target" aria-hidden="true">⊕</span><span><small>02 / SYSTEMS</small><strong>The logic behind the action.</strong><span>Combat · Damage · Multiplayer</span></span><span className="project-arrow" aria-hidden="true">↗</span></button>
+          <button onClick={() => open('EX-PG-DUNGEON')}><span className="project-glyph glyph-target" aria-hidden="true">⊞</span><span><small>02 / PROCEDURAL</small><strong>Rooms that find their place.</strong><span>Dungeon generation · C++</span></span><span className="project-arrow" aria-hidden="true">↗</span></button>
           <button onClick={() => open('EX-TA-IKRETARGET')}><span className="project-glyph glyph-motion" aria-hidden="true">≋</span><span><small>03 / TECHNICAL ART</small><strong>Making movement matter.</strong><span>Rigging & retargeting · Asset study</span></span><span className="project-arrow" aria-hidden="true">↗</span></button>
         </div>
       </section>

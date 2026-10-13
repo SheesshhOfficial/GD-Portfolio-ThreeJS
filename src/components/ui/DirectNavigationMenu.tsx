@@ -76,10 +76,6 @@ export const DirectNavigationMenu: React.FC = () => {
 
   const handleSelectExhibit = (exhibitId: string) => {
     dispatch({ type: 'SET_ACTIVE_EXHIBIT', payload: exhibitId });
-    dispatch({
-      type: 'SET_CAMERA_FOCUS',
-      payload: exhibitId === 'sheeshh-prop-hunt' || exhibitId === 'EX-PH-TRANSFORM' ? 'transformation-bench' : 'systems-console',
-    });
     dispatch({ type: 'SET_DIRECT_MENU', payload: false });
   };
 
@@ -87,7 +83,7 @@ export const DirectNavigationMenu: React.FC = () => {
     if (badgeLabel === 'Evidence needed' || status === 'EVIDENCE_REQUIRED') {
       return styles.statusRequired;
     }
-    if (badgeLabel === 'Asset presence verified' || status === 'ASSET_PRESENCE_VERIFIED') {
+    if (status==='USER_CONFIRMED' || badgeLabel === 'Asset presence verified' || status === 'ASSET_PRESENCE_VERIFIED') {
       return styles.statusSetup;
     }
     return styles.statusVerified;
@@ -128,18 +124,18 @@ export const DirectNavigationMenu: React.FC = () => {
           {/* Recruiter Overview & Fast Stats */}
           <div className={styles.recruiterHeader}>
             <div className={styles.recruiterStats}>
-              <span className={styles.statPill}><strong>10</strong> Total Exhibits</span>
+              <span className={styles.statPill}><strong>{EXHIBIT_INDEX.length}</strong> Studies &amp; Snapshots</span>
               <span className={styles.statPill}><strong>3</strong> Technical Pillars</span>
-              <span className={styles.statPillHighlight}>Unreal Engine 5.7.4 &amp; Blender</span>
+              <span className={styles.statPillHighlight}>Unreal Engine 5.7 / 5.8 &amp; Blender</span>
             </div>
             <p className={styles.recruiterSummary}>
-              Direct technical index for reviewers: select any exhibit below to position the studio camera and inspect verified engineering breakdowns.
+              Select a study to explore its approach, inspected evidence and contribution boundaries. Project snapshots identify recordings still needed.
             </p>
           </div>
 
           {/* Pillar 1: Verified Gameplay Systems Exhibits */}
           <section className={styles.section}>
-            <span className={styles.pillarTag}>Pillar 1: Verified Sheeshh Prop Hunt Gameplay Systems</span>
+            <span className={styles.pillarTag}>Gameplay, C++ systems &amp; project workspaces</span>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', marginTop: '0.4rem' }}>
               {pillar1Exhibits.map((exhibit) => (
                 <button
